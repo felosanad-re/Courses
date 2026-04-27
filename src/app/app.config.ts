@@ -3,7 +3,16 @@ import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
 import { provideClientHydration } from '@angular/platform-browser';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { errorHandlerInterceptor } from './Core/Interceptors/error-handler.interceptor';
+import { tokenHandlerInterceptor } from './Core/Interceptors/token-handler.interceptor';
 
 export const appConfig: ApplicationConfig = {
-  providers: [provideRouter(routes), provideClientHydration()]
+  providers: [
+    provideRouter(routes),
+    provideClientHydration(),
+    provideHttpClient(
+      withInterceptors([tokenHandlerInterceptor, errorHandlerInterceptor]),
+    ),
+  ],
 };
