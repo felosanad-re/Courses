@@ -1,1 +1,76 @@
-<p>student-nav works!</p>
+<nav class="student-navbar">
+  <div class="student-navbar__container">
+    <!-- Brand -->
+    <a class="student-navbar__brand" routerLink="/">
+      <div class="student-navbar__logo">
+        <i class="pi pi-graduation-cap"></i>
+      </div>
+      <span class="student-navbar__name">Coursat</span>
+    </a>
+
+    <!-- Desktop Navigation -->
+    <ul
+      class="student-navbar__nav"
+      [class.student-navbar__nav--open]="isMenuOpen"
+    >
+      <li class="student-navbar__item">
+        <a
+          class="student-navbar__link"
+          routerLink="/"
+          routerLinkActive="student-navbar__link--active"
+          [routerLinkActiveOptions]="{ exact: true }"
+        >
+          <i class="pi pi-home"></i>
+          <span>Home</span>
+        </a>
+      </li>
+      <li class="student-navbar__item">
+        <a
+          class="student-navbar__link"
+          routerLink="/courses"
+          routerLinkActive="student-navbar__link--active"
+        >
+          <i class="pi pi-book"></i>
+          <span>Courses</span>
+        </a>
+      </li>
+      <li class="student-navbar__item">
+        <a
+          class="student-navbar__link"
+          routerLink="/my-courses"
+          routerLinkActive="student-navbar__link--active"
+        >
+          <i class="pi pi-play-circle"></i>
+          <span>My Courses</span>
+        </a>
+      </li>
+      <li class="student-navbar__item">
+        <a
+          class="student-navbar__link"
+          routerLink="/profile"
+          routerLinkActive="student-navbar__link--active"
+        >
+          <i class="pi pi-user"></i>
+          <span>Profile</span>
+        </a>
+      </li>
+    </ul>
+
+    <!-- Right Actions -->
+    <div class="student-navbar__actions">
+      <button
+        class="student-navbar__logout"
+        (click)="logout()"
+        routerLink="/login"
+      >
+        <i class="pi pi-sign-out"></i>
+        <span>Logout</span>
+      </button>
+
+      <!-- Mobile Toggle -->
+      <button class="student-navbar__toggle" (click)="toggleMenu()">
+        <i [class]="isMenuOpen ? 'pi pi-times' : 'pi pi-bars'"></i>
+      </button>
+    </div>
+  </div>
+</nav>

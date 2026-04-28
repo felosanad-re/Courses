@@ -1,1 +1,93 @@
-<p>login works!</p>
+<div class="auth-card">
+  <!-- Header -->
+  <div class="auth-card__header">
+    <div class="auth-card__icon">
+      <i class="pi pi-sign-in"></i>
+    </div>
+    <h1 class="auth-card__title">Welcome Back</h1>
+    <p class="auth-card__subtitle">Sign in to continue learning</p>
+  </div>
+
+  <!-- Form -->
+  <form class="auth-card__form" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+    <!-- Email -->
+    <div class="form-field">
+      <label class="form-field__label" for="loginEmail">Email Address</label>
+      <div
+        class="form-field__input-wrapper"
+        [class.form-field__input-wrapper--error]="
+          email?.invalid && email?.touched
+        "
+      >
+        <i class="pi pi-envelope form-field__icon"></i>
+        <input
+          class="form-field__input"
+          id="loginEmail"
+          type="email"
+          formControlName="email"
+          placeholder="you@example.com"
+          autocomplete="email"
+        />
+      </div>
+      <div class="form-field__error" *ngIf="email?.invalid && email?.touched">
+        <span *ngIf="email?.errors?.['required']">Email is required</span>
+        <span *ngIf="email?.errors?.['email']">Please enter a valid email</span>
+      </div>
+    </div>
+
+    <!-- Password -->
+    <div class="form-field">
+      <label class="form-field__label" for="loginPassword">Password</label>
+      <div
+        class="form-field__input-wrapper"
+        [class.form-field__input-wrapper--error]="
+          password?.invalid && password?.touched
+        "
+      >
+        <i class="pi pi-lock form-field__icon"></i>
+        <input
+          class="form-field__input"
+          id="loginPassword"
+          type="password"
+          formControlName="password"
+          placeholder="Enter your password"
+          autocomplete="current-password"
+        />
+      </div>
+      <div
+        class="form-field__error"
+        *ngIf="password?.invalid && password?.touched"
+      >
+        <span *ngIf="password?.errors?.['required']">Password is required</span>
+        <span *ngIf="password?.errors?.['minlength']"
+          >Password must be at least 6 characters</span
+        >
+      </div>
+    </div>
+
+    <!-- Forgot Password -->
+    <div class="auth-card__forgot">
+      <a class="auth-card__link" routerLink="/forgetPassword"
+        >Forgot password?</a
+      >
+    </div>
+
+    <!-- Submit -->
+    <button class="auth-card__btn" type="submit" [disabled]="isSubmitting">
+      <span *ngIf="!isSubmitting">Sign In</span>
+      <span *ngIf="isSubmitting" class="auth-card__spinner">
+        <i class="pi pi-spin pi-spinner"></i> Signing in...
+      </span>
+    </button>
+  </form>
+
+  <!-- Footer -->
+  <div class="auth-card__footer">
+    <p>
+      Don't have an account?
+      <a class="auth-card__link auth-card__link--bold" routerLink="/register"
+        >Create one</a
+      >
+    </p>
+  </div>
+</div>

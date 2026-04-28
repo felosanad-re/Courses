@@ -1,0 +1,77 @@
+.auth-footer {
+  padding: 1.25rem 2rem;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid rgba(108, 99, 255, 0.06);
+
+  &__container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  &__brand {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  &__logo {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    background: linear-gradient(
+      135deg,
+      var(--primary) 0%,
+      var(--primary-light) 100%
+    );
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--white);
+    font-size: 0.75rem;
+  }
+
+  &__name {
+    font-size: 1rem;
+    font-weight: 700;
+    background: linear-gradient(
+      135deg,
+      var(--primary) 0%,
+      var(--primary-light) 100%
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  &__copy {
+    font-size: 0.8125rem;
+    color: var(--gray-500);
+  }
+
+  &__links {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  &__link {
+    font-size: 0.8125rem;
+    color: var(--gray-500);
+    transition: var(--transition);
+
+    &:hover {
+      color: var(--primary);
+    }
+  }
+
+  &__divider {
+    color: var(--gray-300);
+    font-size: 0.75rem;
+  }
+}

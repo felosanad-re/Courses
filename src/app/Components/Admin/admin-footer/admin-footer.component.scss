@@ -1,0 +1,65 @@
+.admin-footer {
+  padding: 1.25rem 2rem;
+  background: var(--dark);
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+
+  &__container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  &__brand {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  &__logo {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    background: linear-gradient(135deg, var(--secondary) 0%, #ff8fa3 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--white);
+    font-size: 0.75rem;
+  }
+
+  &__name {
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: var(--white);
+  }
+
+  &__copy {
+    font-size: 0.8125rem;
+    color: rgba(255, 255, 255, 0.4);
+  }
+
+  &__links {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  &__link {
+    font-size: 0.8125rem;
+    color: rgba(255, 255, 255, 0.4);
+    transition: var(--transition);
+
+    &:hover {
+      color: var(--secondary);
+    }
+  }
+
+  &__divider {
+    color: rgba(255, 255, 255, 0.15);
+    font-size: 0.75rem;
+  }
+}

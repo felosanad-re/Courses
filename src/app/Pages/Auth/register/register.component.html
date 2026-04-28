@@ -1,1 +1,251 @@
-<p>register works!</p>
+<div class="auth-card">
+  <!-- Header -->
+  <div class="auth-card__header">
+    <div class="auth-card__icon">
+      <i class="pi pi-user-plus"></i>
+    </div>
+    <h1 class="auth-card__title">Create Account</h1>
+    <p class="auth-card__subtitle">Start your learning journey today</p>
+  </div>
+
+  <!-- Form -->
+  <form
+    class="auth-card__form"
+    [formGroup]="registerForm"
+    (ngSubmit)="onSubmit()"
+  >
+    <!-- Name Row -->
+    <div class="auth-card__row">
+      <!-- First Name -->
+      <div class="form-field">
+        <label class="form-field__label" for="regFirstName">First Name</label>
+        <div
+          class="form-field__input-wrapper"
+          [class.form-field__input-wrapper--error]="
+            firstName?.invalid && firstName?.touched
+          "
+        >
+          <i class="pi pi-user form-field__icon"></i>
+          <input
+            class="form-field__input"
+            id="regFirstName"
+            type="text"
+            formControlName="firstName"
+            placeholder="Ahmed"
+          />
+        </div>
+        <div
+          class="form-field__error"
+          *ngIf="firstName?.invalid && firstName?.touched"
+        >
+          <span *ngIf="firstName?.errors?.['required']"
+            >First name is required</span
+          >
+          <span *ngIf="firstName?.errors?.['minlength']"
+            >At least 2 characters</span
+          >
+        </div>
+      </div>
+
+      <!-- Last Name -->
+      <div class="form-field">
+        <label class="form-field__label" for="regLastName">Last Name</label>
+        <div
+          class="form-field__input-wrapper"
+          [class.form-field__input-wrapper--error]="
+            lastName?.invalid && lastName?.touched
+          "
+        >
+          <i class="pi pi-user form-field__icon"></i>
+          <input
+            class="form-field__input"
+            id="regLastName"
+            type="text"
+            formControlName="lastName"
+            placeholder="Mohamed"
+          />
+        </div>
+        <div
+          class="form-field__error"
+          *ngIf="lastName?.invalid && lastName?.touched"
+        >
+          <span *ngIf="lastName?.errors?.['required']"
+            >Last name is required</span
+          >
+          <span *ngIf="lastName?.errors?.['minlength']"
+            >At least 2 characters</span
+          >
+        </div>
+      </div>
+    </div>
+
+    <!-- Email -->
+    <div class="form-field">
+      <label class="form-field__label" for="regEmail">Email Address</label>
+      <div
+        class="form-field__input-wrapper"
+        [class.form-field__input-wrapper--error]="
+          email?.invalid && email?.touched
+        "
+      >
+        <i class="pi pi-envelope form-field__icon"></i>
+        <input
+          class="form-field__input"
+          id="regEmail"
+          type="email"
+          formControlName="email"
+          placeholder="you@example.com"
+          autocomplete="email"
+        />
+      </div>
+      <div class="form-field__error" *ngIf="email?.invalid && email?.touched">
+        <span *ngIf="email?.errors?.['required']">Email is required</span>
+        <span *ngIf="email?.errors?.['email']">Please enter a valid email</span>
+      </div>
+    </div>
+
+    <!-- Phone -->
+    <div class="form-field">
+      <label class="form-field__label" for="regPhone">Phone Number</label>
+      <div
+        class="form-field__input-wrapper"
+        [class.form-field__input-wrapper--error]="
+          phone?.invalid && phone?.touched
+        "
+      >
+        <i class="pi pi-phone form-field__icon"></i>
+        <input
+          class="form-field__input"
+          id="regPhone"
+          type="tel"
+          formControlName="phone"
+          placeholder="01xxxxxxxxx"
+        />
+      </div>
+      <div class="form-field__error" *ngIf="phone?.invalid && phone?.touched">
+        <span *ngIf="phone?.errors?.['required']"
+          >Phone number is required</span
+        >
+        <span *ngIf="phone?.errors?.['pattern']"
+          >Enter a valid Egyptian phone number</span
+        >
+      </div>
+    </div>
+
+    <!-- Address -->
+    <div class="form-field">
+      <label class="form-field__label" for="regAddress">Address</label>
+      <div
+        class="form-field__input-wrapper"
+        [class.form-field__input-wrapper--error]="
+          address?.invalid && address?.touched
+        "
+      >
+        <i class="pi pi-map-marker form-field__icon"></i>
+        <input
+          class="form-field__input"
+          id="regAddress"
+          type="text"
+          formControlName="address"
+          placeholder="Enter your address"
+        />
+      </div>
+      <div
+        class="form-field__error"
+        *ngIf="address?.invalid && address?.touched"
+      >
+        <span *ngIf="address?.errors?.['required']">Address is required</span>
+        <span *ngIf="address?.errors?.['minlength']"
+          >At least 5 characters</span
+        >
+      </div>
+    </div>
+
+    <!-- Password -->
+    <div class="form-field">
+      <label class="form-field__label" for="regPassword">Password</label>
+      <div
+        class="form-field__input-wrapper"
+        [class.form-field__input-wrapper--error]="
+          password?.invalid && password?.touched
+        "
+      >
+        <i class="pi pi-lock form-field__icon"></i>
+        <input
+          class="form-field__input"
+          id="regPassword"
+          type="password"
+          formControlName="password"
+          placeholder="At least 6 characters"
+          autocomplete="new-password"
+        />
+      </div>
+      <div
+        class="form-field__error"
+        *ngIf="password?.invalid && password?.touched"
+      >
+        <span *ngIf="password?.errors?.['required']">Password is required</span>
+        <span *ngIf="password?.errors?.['minlength']"
+          >At least 6 characters</span
+        >
+      </div>
+    </div>
+
+    <!-- Confirm Password -->
+    <div class="form-field">
+      <label class="form-field__label" for="regConfirmPassword"
+        >Confirm Password</label
+      >
+      <div
+        class="form-field__input-wrapper"
+        [class.form-field__input-wrapper--error]="
+          confirmPassword?.invalid && confirmPassword?.touched
+        "
+      >
+        <i class="pi pi-lock form-field__icon"></i>
+        <input
+          class="form-field__input"
+          id="regConfirmPassword"
+          type="password"
+          formControlName="confirmPassword"
+          placeholder="Re-enter your password"
+          autocomplete="new-password"
+        />
+      </div>
+      <div
+        class="form-field__error"
+        *ngIf="confirmPassword?.invalid && confirmPassword?.touched"
+      >
+        <span *ngIf="confirmPassword?.errors?.['required']"
+          >Please confirm your password</span
+        >
+      </div>
+      <div
+        class="form-field__error"
+        *ngIf="
+          registerForm.errors?.['passwordMismatch'] && confirmPassword?.touched
+        "
+      >
+        <span>Passwords do not match</span>
+      </div>
+    </div>
+
+    <!-- Submit -->
+    <button class="auth-card__btn" type="submit" [disabled]="isSubmitting">
+      <span *ngIf="!isSubmitting">Create Account</span>
+      <span *ngIf="isSubmitting" class="auth-card__spinner">
+        <i class="pi pi-spin pi-spinner"></i> Creating...
+      </span>
+    </button>
+  </form>
+
+  <!-- Footer -->
+  <div class="auth-card__footer">
+    <p>
+      Already have an account?
+      <a class="auth-card__link auth-card__link--bold" routerLink="/login"
+        >Sign in</a
+      >
+    </p>
+  </div>
+</div>

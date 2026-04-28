@@ -1,1 +1,85 @@
-<p>confirm-account works!</p>
+<div class="auth-card">
+  <!-- Header -->
+  <div class="auth-card__header">
+    <div class="auth-card__icon">
+      <i class="pi pi-check-circle"></i>
+    </div>
+    <h1 class="auth-card__title">Confirm Account</h1>
+    <p class="auth-card__subtitle">
+      Enter the verification code sent to your email
+    </p>
+  </div>
+
+  <!-- Form -->
+  <form
+    class="auth-card__form"
+    [formGroup]="confirmForm"
+    (ngSubmit)="onSubmit()"
+  >
+    <!-- Email -->
+    <div class="form-field">
+      <label class="form-field__label" for="confirmEmail">Email Address</label>
+      <div
+        class="form-field__input-wrapper"
+        [class.form-field__input-wrapper--error]="
+          email?.invalid && email?.touched
+        "
+      >
+        <i class="pi pi-envelope form-field__icon"></i>
+        <input
+          class="form-field__input"
+          id="confirmEmail"
+          type="email"
+          formControlName="email"
+          placeholder="you@example.com"
+          autocomplete="email"
+        />
+      </div>
+      <div class="form-field__error" *ngIf="email?.invalid && email?.touched">
+        <span *ngIf="email?.errors?.['required']">Email is required</span>
+        <span *ngIf="email?.errors?.['email']">Please enter a valid email</span>
+      </div>
+    </div>
+
+    <!-- Verification Code -->
+    <div class="form-field">
+      <label class="form-field__label" for="confirmCode"
+        >Verification Code</label
+      >
+      <div
+        class="form-field__input-wrapper"
+        [class.form-field__input-wrapper--error]="
+          code?.invalid && code?.touched
+        "
+      >
+        <i class="pi pi-key form-field__icon"></i>
+        <input
+          class="form-field__input"
+          id="confirmCode"
+          type="text"
+          formControlName="code"
+          placeholder="Enter your code"
+          autocomplete="one-time-code"
+        />
+      </div>
+      <div class="form-field__error" *ngIf="code?.invalid && code?.touched">
+        <span *ngIf="code?.errors?.['required']"
+          >Verification code is required</span
+        >
+      </div>
+    </div>
+
+    <!-- Submit -->
+    <button class="auth-card__btn" type="submit" [disabled]="isSubmitting">
+      <span *ngIf="!isSubmitting">Confirm Account</span>
+      <span *ngIf="isSubmitting" class="auth-card__spinner">
+        <i class="pi pi-spin pi-spinner"></i> Confirming...
+      </span>
+    </button>
+  </form>
+
+  <!-- Footer -->
+  <div class="auth-card__footer">
+    <p><a class="auth-card__link" routerLink="/login">Back to Sign in</a></p>
+  </div>
+</div>

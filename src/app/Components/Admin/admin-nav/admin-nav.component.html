@@ -1,1 +1,76 @@
-<p>admin-nav works!</p>
+<nav class="admin-navbar">
+  <div class="admin-navbar__container">
+    <!-- Brand -->
+    <a class="admin-navbar__brand" routerLink="/admin">
+      <div class="admin-navbar__logo">
+        <i class="pi pi-shield"></i>
+      </div>
+      <div class="admin-navbar__brand-text">
+        <span class="admin-navbar__name">Coursat</span>
+        <span class="admin-navbar__badge">Admin</span>
+      </div>
+    </a>
+
+    <!-- Desktop Navigation -->
+    <ul class="admin-navbar__nav" [class.admin-navbar__nav--open]="isMenuOpen">
+      <li class="admin-navbar__item">
+        <a
+          class="admin-navbar__link"
+          routerLink="/admin"
+          routerLinkActive="admin-navbar__link--active"
+          [routerLinkActiveOptions]="{ exact: true }"
+        >
+          <i class="pi pi-home"></i>
+          <span>Dashboard</span>
+        </a>
+      </li>
+      <li class="admin-navbar__item">
+        <a
+          class="admin-navbar__link"
+          routerLink="/admin/courses"
+          routerLinkActive="admin-navbar__link--active"
+        >
+          <i class="pi pi-book"></i>
+          <span>Courses</span>
+        </a>
+      </li>
+      <li class="admin-navbar__item">
+        <a
+          class="admin-navbar__link"
+          routerLink="/admin/users"
+          routerLinkActive="admin-navbar__link--active"
+        >
+          <i class="pi pi-users"></i>
+          <span>Users</span>
+        </a>
+      </li>
+      <li class="admin-navbar__item">
+        <a
+          class="admin-navbar__link"
+          routerLink="/admin/settings"
+          routerLinkActive="admin-navbar__link--active"
+        >
+          <i class="pi pi-cog"></i>
+          <span>Settings</span>
+        </a>
+      </li>
+    </ul>
+
+    <!-- Right Actions -->
+    <div class="admin-navbar__actions">
+      <button
+        class="admin-navbar__logout"
+        (click)="logout()"
+        routerLink="/login"
+      >
+        <i class="pi pi-sign-out"></i>
+        <span>Logout</span>
+      </button>
+
+      <!-- Mobile Toggle -->
+      <button class="admin-navbar__toggle" (click)="toggleMenu()">
+        <i [class]="isMenuOpen ? 'pi pi-times' : 'pi pi-bars'"></i>
+      </button>
+    </div>
+  </div>
+</nav>

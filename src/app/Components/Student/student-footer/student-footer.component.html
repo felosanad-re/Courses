@@ -1,1 +1,43 @@
-<p>student-footer works!</p>
+<footer class="student-footer">
+  <div class="student-footer__container">
+    <!-- Brand Column -->
+    <div class="student-footer__brand">
+      <div class="student-footer__logo-row">
+        <div class="student-footer__logo">
+          <i class="pi pi-graduation-cap"></i>
+        </div>
+        <span class="student-footer__name">Coursat</span>
+      </div>
+      <p class="student-footer__desc">
+        Your gateway to online learning. Explore thousands of courses and grow
+        your skills.
+      </p>
+    </div>
+
+    <!-- Links Column -->
+    <div class="student-footer__links-group">
+      <h4 class="student-footer__heading">Platform</h4>
+      <a class="student-footer__link" routerLink="/courses">Browse Courses</a>
+      <a class="student-footer__link" routerLink="/my-courses">My Courses</a>
+      <a class="student-footer__link" routerLink="/profile">Profile</a>
+    </div>
+
+    <div class="student-footer__links-group">
+      <h4 class="student-footer__heading">Support</h4>
+      <a class="student-footer__link" href="#">Help Center</a>
+      <a class="student-footer__link" href="#">Contact Us</a>
+      <a class="student-footer__link" href="#">FAQ</a>
+    </div>
+
+    <div class="student-footer__links-group">
+      <h4 class="student-footer__heading">Legal</h4>
+      <a class="student-footer__link" href="#">Privacy Policy</a>
+      <a class="student-footer__link" href="#">Terms of Service</a>
+    </div>
+  </div>
+
+  <!-- Bottom Bar -->
+  <div class="student-footer__bottom">
+    <p>&copy; {{ currentYear }} Coursat. All rights reserved.</p>
+  </div>
+</footer>
