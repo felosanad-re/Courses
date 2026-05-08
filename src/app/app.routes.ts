@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 
 export const routes: Routes = [
+  // Auth
   {
     path: '',
     loadComponent: () =>
@@ -54,6 +55,35 @@ export const routes: Routes = [
           import(`./Pages/Auth/forget-password/forget-password.component`).then(
             (c) => c.ForgetPasswordComponent,
           ),
+      },
+    ],
+  },
+  // Instructor
+  {
+    path: 'instructor',
+    loadComponent: () =>
+      import(`./Layouts/instructor-layout/instructor-layout.component`).then(
+        (c) => c.InstructorLayoutComponent,
+      ),
+    children: [
+      {
+        path: '',
+        redirectTo: 'dashboard',
+        pathMatch: 'full',
+      },
+      {
+        path: 'dashboard',
+        loadComponent: () =>
+          import(
+            `./Pages/Instructors/instructor-dashboard/instructor-dashboard.component`
+          ).then((c) => c.InstructorDashboardComponent),
+      },
+      {
+        path: 'create-course',
+        loadComponent: () =>
+          import(
+            `./Pages/Instructors/create-course/create-course.component`
+          ).then((c) => c.CreateCourseComponent),
       },
     ],
   },

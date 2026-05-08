@@ -1,0 +1,516 @@
+:host {
+  display: block;
+}
+
+// Variables
+$primary-color: #4f46e5;
+$primary-hover: #4338ca;
+$primary-light: #818cf8;
+$sidebar-bg: #1e1b2e;
+$sidebar-hover: #2d2640;
+$text-dark: #1f2937;
+$text-muted: #6b7280;
+$text-light: #9ca3af;
+$bg-light: #f3f4f6;
+$white: #ffffff;
+$success: #10b981;
+$warning: #f59e0b;
+$danger: #ef4444;
+$border-color: #e5e7eb;
+
+// Mixins
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin transition {
+  transition: all 0.3s ease;
+}
+
+// Dashboard
+.dashboard {
+  padding: 24px;
+  max-width: 1600px;
+  margin: 0 auto;
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+
+  &__welcome {
+    flex: 1;
+  }
+
+  &__title {
+    font-size: 28px;
+    font-weight: 700;
+    color: $text-dark;
+    margin: 0 0 8px;
+  }
+
+  &__subtitle {
+    font-size: 15px;
+    color: $text-muted;
+    margin: 0;
+  }
+
+  &__actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  &__btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    @include transition;
+
+    i {
+      font-size: 16px;
+    }
+
+    &--primary {
+      background: linear-gradient(135deg, $primary-color, $primary-light);
+      color: $white;
+
+      &:hover {
+        background: linear-gradient(135deg, $primary-hover, $primary-color);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba($primary-color, 0.3);
+      }
+    }
+
+    &--secondary {
+      background: $bg-light;
+      color: $text-dark;
+
+      &:hover {
+        background: #e5e7eb;
+      }
+    }
+  }
+
+  // Stats Cards
+  &__stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    margin-bottom: 32px;
+
+    @media (max-width: 1200px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    @media (max-width: 576px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  // Main Grid
+  &__grid {
+    display: grid;
+    grid-template-columns: 1fr 400px;
+    gap: 24px;
+
+    @media (max-width: 1200px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &__right {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  // Sections
+  &__section {
+    background: $white;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+
+    &--courses {
+      grid-column: 1;
+    }
+
+    &-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    &-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: $text-dark;
+      margin: 0;
+    }
+
+    &-link {
+      font-size: 14px;
+      color: $primary-color;
+      text-decoration: none;
+      font-weight: 500;
+
+      &:hover {
+        color: $primary-hover;
+      }
+    }
+  }
+}
+
+// Stat Card
+.stat-card {
+  background: $white;
+  border-radius: 16px;
+  padding: 24px;
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  @include transition;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  }
+
+  &__icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 14px;
+    @include flex-center;
+
+    i {
+      font-size: 24px;
+      color: $white;
+    }
+
+    &--total-courses {
+      background: linear-gradient(135deg, #6366f1, #818cf8);
+    }
+
+    &--total-students {
+      background: linear-gradient(135deg, #10b981, #34d399);
+    }
+
+    &--total-revenue {
+      background: linear-gradient(135deg, #f59e0b, #fbbf24);
+    }
+
+    &--average-rating {
+      background: linear-gradient(135deg, #ec4899, #f472b6);
+    }
+  }
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  &__title {
+    font-size: 13px;
+    color: $text-light;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  &__value {
+    font-size: 28px;
+    font-weight: 700;
+    color: $text-dark;
+  }
+
+  &__change {
+    font-size: 13px;
+    font-weight: 500;
+
+    &--positive {
+      color: $success;
+    }
+
+    &--negative {
+      color: $danger;
+    }
+  }
+}
+
+// Courses List
+.courses-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  &__loading,
+  &__empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    color: $text-light;
+    gap: 12px;
+
+    i {
+      font-size: 40px;
+    }
+  }
+}
+
+// Course Card
+.course-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  background: $bg-light;
+  border-radius: 12px;
+  @include transition;
+
+  &:hover {
+    background: #e5e7eb;
+  }
+
+  &__thumbnail {
+    width: 64px;
+    height: 64px;
+    background: linear-gradient(135deg, $primary-color, $primary-light);
+    border-radius: 12px;
+    @include flex-center;
+    flex-shrink: 0;
+
+    i {
+      font-size: 24px;
+      color: $white;
+    }
+  }
+
+  &__info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__title {
+    font-size: 16px;
+    font-weight: 600;
+    color: $text-dark;
+    margin: 0 0 6px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__meta {
+    display: flex;
+    gap: 16px;
+    font-size: 13px;
+    color: $text-muted;
+  }
+
+  &__students,
+  &__rating {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    i {
+      font-size: 14px;
+    }
+  }
+
+  &__rating {
+    i.pi-star-fill {
+      color: #fbbf24;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  &__btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    @include transition;
+
+    &--edit {
+      background: $white;
+      color: $text-dark;
+      border: 1px solid $border-color;
+
+      &:hover {
+        background: $primary-color;
+        color: $white;
+        border-color: $primary-color;
+      }
+    }
+
+    &--view {
+      background: transparent;
+      color: $primary-color;
+
+      &:hover {
+        background: rgba($primary-color, 0.1);
+      }
+    }
+  }
+}
+
+// Activity List
+.activity-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.activity-item {
+  display: flex;
+  gap: 12px;
+
+  &__icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    @include flex-center;
+    flex-shrink: 0;
+
+    i {
+      font-size: 16px;
+    }
+
+    &--enrollment {
+      background: rgba($success, 0.1);
+      color: $success;
+    }
+
+    &--review {
+      background: rgba(#fbbf24, 0.1);
+      color: #fbbf24;
+    }
+
+    &--payment {
+      background: rgba($primary-color, 0.1);
+      color: $primary-color;
+    }
+
+    &--course {
+      background: rgba($primary-light, 0.1);
+      color: $primary-light;
+    }
+  }
+
+  &__content {
+    flex: 1;
+  }
+
+  &__message {
+    font-size: 14px;
+    color: $text-dark;
+    margin: 0 0 4px;
+    line-height: 1.4;
+  }
+
+  &__time {
+    font-size: 12px;
+    color: $text-light;
+  }
+}
+
+// Reviews List
+.reviews-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.review-card {
+  padding: 16px;
+  background: $bg-light;
+  border-radius: 12px;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+
+  &__avatar {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, $primary-color, $primary-light);
+    border-radius: 10px;
+    @include flex-center;
+    color: $white;
+    font-size: 16px;
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+
+  &__info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__name {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: $text-dark;
+  }
+
+  &__course {
+    display: block;
+    font-size: 12px;
+    color: $text-light;
+  }
+
+  &__rating {
+    display: flex;
+    gap: 2px;
+
+    i {
+      font-size: 12px;
+      color: #fbbf24;
+    }
+  }
+
+  &__comment {
+    font-size: 14px;
+    color: $text-dark;
+    margin: 0 0 8px;
+    line-height: 1.5;
+  }
+
+  &__date {
+    font-size: 12px;
+    color: $text-light;
+  }
+}

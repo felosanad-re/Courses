@@ -1,0 +1,7 @@
+<app-instructor-nav />
+
+<div class="layout-content" [class.collapsed]="isSidebarCollapsed">
+  <router-outlet />
+</div>
+
+<app-instructor-footer [class.collapsed]="isSidebarCollapsed" />
