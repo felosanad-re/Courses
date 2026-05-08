@@ -1,0 +1,209 @@
+<div class="create-course">
+  <!-- Header -->
+  <div class="create-course__header">
+    <div class="create-course__breadcrumb">
+      <a routerLink="/instructor/dashboard">Dashboard</a>
+      <i class="pi pi-angle-right"></i>
+      <span>Create New Course</span>
+    </div>
+    <h1 class="create-course__title">Create New Course</h1>
+    <p class="create-course__subtitle">Fill in the details to create your new course</p>
+  </div>
+
+  <!-- Progress Steps -->
+  <div class="create-course__steps">
+    @for (step of [1, 2]; track step) {
+      <div
+        class="step"
+        [class.step--active]="currentStep >= step"
+        [class.step--completed]="currentStep > step"
+        [class.step--current]="currentStep === step"
+      >
+        <div class="step__number">
+          @if (currentStep > step) {
+            <i class="pi pi-check"></i>
+          } @else {
+            {{ step }}
+          }
+        </div>
+        <span class="step__label">{{ getStepTitle(step) }}</span>
+      </div>
+      @if (step < 2) {
+        <div class="step__line" [class.step__line--active]="currentStep > step"></div>
+      }
+    }
+  </div>
+
+  <!-- Form -->
+  <form [formGroup]="courseForm" (ngSubmit)="onSubmit()" class="create-course__form">
+    <!-- Step 1: Basic Info -->
+    @if (currentStep === 1) {
+      <div class="form-section">
+        <h2 class="form-section__title">Basic Information</h2>
+        <p class="form-section__desc">Start with the basics of your course</p>
+
+        <div class="form-group">
+          <label for="name">Course Name *</label>
+          <input
+            type="text"
+            id="name"
+            formControlName="name"
+            placeholder="e.g., Complete Web Development Bootcamp"
+            [class.error]="isFieldInvalid('name')"
+          />
+          @if (isFieldInvalid('name')) {
+            <span class="error-msg">Name must be at least 3 characters</span>
+          }
+        </div>
+
+        <div class="form-group">
+          <label for="description">Description *</label>
+          <textarea
+            id="description"
+            formControlName="description"
+            rows="6"
+            placeholder="Describe what students will learn..."
+            [class.error]="isFieldInvalid('description')"
+          ></textarea>
+          @if (isFieldInvalid('description')) {
+            <span class="error-msg">Description must be at least 10 characters</span>
+          }
+        </div>
+
+        <!-- Image Upload -->
+        <div class="form-group">
+          <label>Course Image</label>
+          @if (selectedImage) {
+            <div class="image-preview">
+              <img [src]="selectedImage" alt="Course image" class="image-preview__img" />
+              <button type="button" class="image-preview__remove" (click)="removeImage()">
+                <i class="pi pi-times"></i>
+              </button>
+            </div>
+          } @else {
+            <label class="upload-zone">
+              <input
+                type="file"
+                id="image"
+                accept="image/*"
+                (change)="onFileSelected($event)"
+                hidden
+              />
+              <div class="upload-zone__content">
+                @if (isUploading) {
+                  <i class="pi pi-spin pi-spinner"></i>
+                  <span>Uploading...</span>
+                } @else {
+                  <i class="pi pi-cloud-upload"></i>
+                  <span>Click to upload image</span>
+                  <span class="upload-zone__hint">PNG, JPG up to 5MB</span>
+                }
+              </div>
+            </label>
+          }
+        </div>
+      </div>
+    }
+
+    <!-- Step 2: Pricing -->
+    @if (currentStep === 2) {
+      <div class="form-section">
+        <h2 class="form-section__title">Pricing</h2>
+        <p class="form-section__desc">Set your course price</p>
+
+        <div class="form-group">
+          <label for="isPaid">Is Paid Course?</label>
+          <div class="checkbox-wrapper">
+            <input
+              type="checkbox"
+              id="isPaid"
+              formControlName="isPaid"
+            />
+            <label for="isPaid">This is a paid course</label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="price">Price (USD)</label>
+          <div class="price-input">
+            <span class="price-input__currency">$</span>
+            <input
+              type="number"
+              id="price"
+              formControlName="price"
+              min="0"
+              step="0.01"
+              placeholder="0.00"
+            />
+          </div>
+        </div>
+
+        <!-- Preview Card -->
+        <div class="course-preview">
+          <h3 class="course-preview__title">Preview</h3>
+          <div class="course-preview__card">
+            <div class="course-preview__image">
+              @if (selectedImage) {
+                <img [src]="selectedImage" alt="Course image" />
+              } @else {
+                <i class="pi pi-image"></i>
+              }
+            </div>
+            <div class="course-preview__info">
+              <h4>{{ courseForm.get('name')?.value || 'Course Name' }}</h4>
+              <p>{{ courseForm.get('description')?.value || 'Course description...' }}</p>
+              <div class="course-preview__meta">
+                <span>
+                  <i class="pi pi-tag"></i>
+                  {{ courseForm.get('isPaid')?.value ? 'Paid' : 'Free' }}
+                </span>
+                <span>
+                  <i class="pi pi-dollar"></i>
+                  {{ courseForm.get('price')?.value || 0 }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- Actions -->
+    <div class="form-actions">
+      @if (currentStep > 1) {
+        <button type="button" class="btn btn--secondary" (click)="prevStep()">
+          <i class="pi pi-arrow-left"></i>
+          Previous
+        </button>
+      }
+
+      @if (currentStep < totalSteps) {
+        <button
+          type="button"
+          class="btn btn--primary"
+          (click)="nextStep()"
+          [disabled]="!canProceed()"
+        >
+          Next
+          <i class="pi pi-arrow-right"></i>
+        </button>
+      }
+
+      @if (currentStep === totalSteps) {
+        <button
+          type="submit"
+          class="btn btn--primary"
+          [disabled]="courseForm.invalid || isSubmitting"
+        >
+          @if (isSubmitting) {
+            <i class="pi pi-spin pi-spinner"></i>
+            Creating...
+          } @else {
+            <i class="pi pi-check"></i>
+            Create Course
+          }
+        </button>
+      }
+    </div>
+  </form>
+</div>

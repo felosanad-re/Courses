@@ -1,0 +1,124 @@
+<!-- Overlay for mobile -->
+<div
+  class="sidebar-overlay"
+  [class.sidebar-overlay--active]="isSidebarOpen"
+  (click)="toggleSidebar()"
+></div>
+
+<!-- Main Navbar -->
+<nav class="instructor-navbar">
+  <div class="instructor-navbar__container">
+    <!-- Left: Menu Toggle & Brand -->
+    <div class="instructor-navbar__left">
+      <button class="instructor-navbar__menu-toggle" (click)="toggleSidebar()">
+        <i class="pi pi-bars"></i>
+      </button>
+
+      <a class="instructor-navbar__brand" routerLink="/instructor/dashboard">
+        <div class="instructor-navbar__logo">
+          <i class="pi pi-graduation-cap"></i>
+        </div>
+        <span class="instructor-navbar__name">Coursat</span>
+        <span class="instructor-navbar__badge">Instructor</span>
+      </a>
+    </div>
+
+    <!-- Center: Search -->
+    <div class="instructor-navbar__center">
+      <div class="instructor-navbar__search">
+        <i class="pi pi-search"></i>
+        <input type="text" placeholder="Search courses, students..." />
+      </div>
+    </div>
+
+    <!-- Right: Actions -->
+    <div class="instructor-navbar__right">
+      <button class="instructor-navbar__icon-btn">
+        <i class="pi pi-bell"></i>
+        <span class="instructor-navbar__notification-dot"></span>
+      </button>
+
+      <button class="instructor-navbar__icon-btn">
+        <i class="pi pi-envelope"></i>
+      </button>
+
+      <div class="instructor-navbar__user">
+        <button class="instructor-navbar__user-btn" (click)="toggleUserMenu()">
+          <div class="instructor-navbar__avatar">
+            <i class="pi pi-user"></i>
+          </div>
+          <span class="instructor-navbar__username">Ahmed Mohamed</span>
+          <i class="pi pi-chevron-down"></i>
+        </button>
+
+        <div class="instructor-navbar__user-dropdown" [class.instructor-navbar__user-dropdown--open]="isUserMenuOpen">
+          <a routerLink="/instructor/profile">
+            <i class="pi pi-user-edit"></i>
+            Profile
+          </a>
+          <a routerLink="/instructor/settings">
+            <i class="pi pi-cog"></i>
+            Settings
+          </a>
+          <hr />
+          <button (click)="logout()">
+            <i class="pi pi-sign-out"></i>
+            Logout
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- Sidebar -->
+<aside class="sidebar" [class.sidebar--open]="isSidebarOpen" [class.sidebar--collapsed]="isSidebarCollapsed">
+  <div class="sidebar__header">
+    <div class="sidebar__user-info" [class.sidebar__user-info--collapsed]="isSidebarCollapsed">
+      <div class="sidebar__user-avatar">
+        <i class="pi pi-user"></i>
+      </div>
+      <div class="sidebar__user-details">
+        <span class="sidebar__user-name">Ahmed Mohamed</span>
+        <span class="sidebar__user-role">Mathematics Instructor</span>
+      </div>
+    </div>
+    <button class="sidebar__collapse" (click)="toggleSidebarCollapse()">
+      <i [class]="isSidebarCollapsed ? 'pi pi-angle-right' : 'pi pi-angle-left'"></i>
+    </button>
+    <button class="sidebar__close" (click)="toggleSidebar()">
+      <i class="pi pi-times"></i>
+    </button>
+  </div>
+
+  <nav class="sidebar__nav">
+    @for (item of navItems; track item.route) {
+      <a
+        class="sidebar__link"
+        [routerLink]="item.route"
+        routerLinkActive="sidebar__link--active"
+        (click)="closeSidebarOnMobile()"
+      >
+        <i class="pi {{ item.icon }}"></i>
+        <span>{{ item.label }}</span>
+      </a>
+    }
+  </nav>
+
+  <div class="sidebar__footer">
+    <div class="sidebar__stats">
+      <div class="sidebar__stat">
+        <span class="sidebar__stat-value">12</span>
+        <span class="sidebar__stat-label">Courses</span>
+      </div>
+      <div class="sidebar__stat">
+        <span class="sidebar__stat-value">1.2K</span>
+        <span class="sidebar__stat-label">Students</span>
+      </div>
+      <div class="sidebar__stat">
+        <span class="sidebar__stat-value">$4.5K</span>
+        <span class="sidebar__stat-label">Earnings</span>
+      </div>
+    </div>
+  </div>
+</aside>

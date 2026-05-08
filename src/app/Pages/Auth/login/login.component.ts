@@ -58,6 +58,7 @@ export class LoginComponent {
         this.isSubmitting = false;
         if (isPlatformBrowser(this._platformId)) {
           localStorage.setItem('token', response.token);
+          localStorage.setItem('username', response.userName);
         }
         this._notifications.showSuccess('Logged in successfully', 'Success');
         this._router.navigate(['/']);
