@@ -1,0 +1,64 @@
+<div class="select-role-container">
+  <div class="select-role-card">
+    <!-- Header -->
+    <div class="select-role-card__header">
+      <div class="select-role-card__icon">
+        <i class="pi pi-user-plus"></i>
+      </div>
+      <h1 class="select-role-card__title">Choose Your Role</h1>
+      <p class="select-role-card__subtitle">
+        Tell us how you want to use Coursat
+      </p>
+    </div>
+
+    <!-- Role Options -->
+    <div class="role-options">
+      @for (role of roles; track role.value) {
+        <div
+          class="role-card"
+          [class.role-card--selected]="selectedRole() === role.value"
+          (click)="selectRole(role.value)"
+        >
+          <div class="role-card__icon">
+            <i class="pi {{ role.icon }}"></i>
+          </div>
+          <div class="role-card__content">
+            <h3 class="role-card__title">{{ role.title }}</h3>
+            <p class="role-card__description">{{ role.description }}</p>
+            <ul class="role-card__features">
+              @for (feature of role.features; track feature) {
+                <li>
+                  <i class="pi pi-check-circle"></i>
+                  {{ feature }}
+                </li>
+              }
+            </ul>
+          </div>
+          <div class="role-card__check">
+            <i class="pi pi-check-circle"></i>
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- Submit Button -->
+    <button
+      class="select-role-card__btn"
+      [disabled]="!selectedRole() || isSubmitting()"
+      (click)="onSubmit()"
+    >
+      <span *ngIf="!isSubmitting() && selectedRole()">
+        Continue as {{ selectedRole() === 'student' ? 'Student' : 'Instructor' }}
+      </span>
+      <span *ngIf="!selectedRole()">Select a role to continue</span>
+      <span *ngIf="isSubmitting()" class="select-role-card__spinner">
+        <i class="pi pi-spin pi-spinner"></i> Setting up...
+      </span>
+    </button>
+
+    <!-- Skip Link -->
+    <div class="select-role-card__skip">
+      <a (click)="onSubmit()">Skip for now</a>
+    </div>
+  </div>
+</div>
