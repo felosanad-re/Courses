@@ -1,0 +1,121 @@
+<div class="instructor-request-container">
+  <div class="instructor-request-card">
+    <!-- Header -->
+    <div class="instructor-request-card__header">
+      <div class="instructor-request-card__icon">
+        <i class="pi pi-briefcase"></i>
+      </div>
+      <h1 class="instructor-request-card__title">Become an Instructor</h1>
+      <p class="instructor-request-card__subtitle">
+        Share your knowledge and start teaching on Coursat
+      </p>
+    </div>
+
+    <!-- Error Message -->
+    <div class="instructor-request-card__error" *ngIf="errorMessage()">
+      <i class="pi pi-exclamation-circle"></i>
+      {{ errorMessage() }}
+    </div>
+
+    <!-- Form -->
+    <form class="instructor-request-card__form" [formGroup]="instructorForm" (ngSubmit)="onSubmit()">
+      <!-- Specialty -->
+      <div class="form-field">
+        <label class="form-field__label" for="specialty">Your Specialty</label>
+        <div
+          class="form-field__input-wrapper"
+          [class.form-field__input-wrapper--error]="
+            specialty?.invalid && specialty?.touched
+          "
+        >
+          <i class="pi pi-bookmark form-field__icon"></i>
+          <input
+            class="form-field__input"
+            id="specialty"
+            type="text"
+            formControlName="specialty"
+            placeholder="e.g., Web Development, Data Science"
+          />
+        </div>
+        <div class="form-field__error" *ngIf="specialty?.invalid && specialty?.touched">
+          <span *ngIf="specialty?.errors?.['required']">Specialty is required</span>
+          <span *ngIf="specialty?.errors?.['minlength']">At least 2 characters required</span>
+          <span *ngIf="specialty?.errors?.['maxlength']">Maximum 100 characters allowed</span>
+        </div>
+      </div>
+
+      <!-- Experience Years -->
+      <div class="form-field">
+        <label class="form-field__label" for="experienceYears">Years of Experience</label>
+        <div
+          class="form-field__input-wrapper"
+          [class.form-field__input-wrapper--error]="
+            experienceYears?.invalid && experienceYears?.touched
+          "
+        >
+          <i class="pi pi-calendar form-field__icon"></i>
+          <input
+            class="form-field__input"
+            id="experienceYears"
+            type="number"
+            formControlName="experienceYears"
+            placeholder="e.g., 5"
+            min="1"
+            max="50"
+          />
+        </div>
+        <div class="form-field__error" *ngIf="experienceYears?.invalid && experienceYears?.touched">
+          <span *ngIf="experienceYears?.errors?.['required']">Years of experience is required</span>
+          <span *ngIf="experienceYears?.errors?.['min']">Minimum 1 year required</span>
+          <span *ngIf="experienceYears?.errors?.['max']">Maximum 50 years allowed</span>
+        </div>
+      </div>
+
+      <!-- Bio -->
+      <div class="form-field">
+        <label class="form-field__label" for="bio">Bio / Introduction</label>
+        <div
+          class="form-field__textarea-wrapper"
+          [class.form-field__textarea-wrapper--error]="
+            bio?.invalid && bio?.touched
+          "
+        >
+          <i class="pi pi-align-left form-field__icon"></i>
+          <textarea
+            class="form-field__textarea"
+            id="bio"
+            formControlName="bio"
+            placeholder="Tell us about yourself, your teaching experience, and what you want to teach..."
+            rows="5"
+          ></textarea>
+        </div>
+        <div class="form-field__hint">
+          {{ bio?.value?.length || 0 }}/500 characters (minimum 50)
+        </div>
+        <div class="form-field__error" *ngIf="bio?.invalid && bio?.touched">
+          <span *ngIf="bio?.errors?.['required']">Bio is required</span>
+          <span *ngIf="bio?.errors?.['minlength']">Minimum 50 characters required</span>
+          <span *ngIf="bio?.errors?.['maxlength']">Maximum 500 characters allowed</span>
+        </div>
+      </div>
+
+      <!-- Info Box -->
+      <div class="instructor-request-card__info">
+        <i class="pi pi-info-circle"></i>
+        <span>Your request will be reviewed by our team. You can check your request status in your dashboard.</span>
+      </div>
+
+      <!-- Submit -->
+      <button
+        class="instructor-request-card__btn"
+        type="submit"
+        [disabled]="isSubmitting()"
+      >
+        <span *ngIf="!isSubmitting()">Submit Request</span>
+        <span *ngIf="isSubmitting()" class="instructor-request-card__spinner">
+          <i class="pi pi-spin pi-spinner"></i> Submitting...
+        </span>
+      </button>
+    </form>
+  </div>
+</div>

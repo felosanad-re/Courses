@@ -56,6 +56,20 @@ export const routes: Routes = [
             (c) => c.ForgetPasswordComponent,
           ),
       },
+      {
+        path: 'selectRole',
+        loadComponent: () =>
+          import(`./Pages/onboarding/select-role/select-role.component`).then(
+            (c) => c.SelectRoleComponent,
+          ),
+      },
+      {
+        path: 'set-instructor-role',
+        loadComponent: () =>
+          import(`./Pages/onboarding/set-instructor-role/set-instructor-role.component`).then(
+            (c) => c.SetInstructorRoleComponent,
+          ),
+      },
     ],
   },
   // Instructor
