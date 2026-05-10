@@ -1,4 +1,6 @@
 export interface AccountResponse {
-  isExist: boolean;
-  isConfirmed: boolean;
+  exists: boolean;
+  requiresOTP: boolean;
+  canResetPassword: boolean;
+  token: string;
 }

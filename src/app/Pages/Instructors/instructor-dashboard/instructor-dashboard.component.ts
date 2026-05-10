@@ -163,7 +163,7 @@ export class InstructorDashboardComponent implements OnInit {
   loadCourses(): void {
     this._instructorsService.getAllCourses().subscribe({
       next: (response: ApplicationResult<CourseResponseForInstructor[]>) => {
-        if (response.succeeded && response.data) {
+        if (response.succeed && response.data) {
           this.courses = response.data;
           this.updateStats();
         }

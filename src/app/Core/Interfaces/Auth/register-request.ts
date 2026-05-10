@@ -4,6 +4,6 @@ export interface RegisterRequest {
   email: string;
   password: string;
   confirmPassword: string;
-  phone: string;
+  userName: string;
   address: string;
 }

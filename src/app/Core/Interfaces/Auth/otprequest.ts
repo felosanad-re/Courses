@@ -1,4 +1,4 @@
 export interface OTPRequest {
-  email: string;
-  otp: string;
+  token: string;
+  otp: Number;
 }

@@ -1,3 +1,5 @@
 export interface ForgetPasswordRequest {
-  email: string;
+  token: string;
+  password: string;
+  confirmPassword: string;
 }

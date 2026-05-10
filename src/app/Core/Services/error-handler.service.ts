@@ -1,10 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-
-import {
-  ErrorResponse,
-  ResponseValidationError,
-} from '../Models/error-response.model';
+import { MessageService } from 'primeng/api';
 
 export interface HandledError {
   statusCode: number;
@@ -20,6 +16,8 @@ export interface HandledError {
 export class ErrorHandlerService {
   private readonly _errors$ = new BehaviorSubject<HandledError | null>(null);
   public readonly errors$ = this._errors$.asObservable();
+
+  constructor(private readonly _message: MessageService) {}
 
   /**
    * Returns the default message for a given HTTP status code.
@@ -64,8 +62,11 @@ export class ErrorHandlerService {
         statusCode = body.statusCode;
       }
 
+      // Handle message as array or string
       if (Array.isArray(body.message) && body.message.length > 0) {
         messages = body.message;
+      } else if (typeof body.message === 'string' && body.message) {
+        messages = [body.message];
       }
 
       // ResponseValidationError has an `errors` array
@@ -75,6 +76,19 @@ export class ErrorHandlerService {
         if (messages.length === 0) {
           messages = [...body.errors];
         }
+      }
+
+      // Handle object errors: { "Password": ["error"], "Email": ["error"] }
+      if (body.errors && typeof body.errors === 'object' && !Array.isArray(body.errors)) {
+        Object.entries(body.errors).forEach(([key, value]) => {
+          if (Array.isArray(value)) {
+            value.forEach((msg: string) => {
+              messages.push(msg);
+            });
+          } else if (typeof value === 'string') {
+            messages.push(value);
+          }
+        });
       }
     }
 
@@ -90,6 +104,16 @@ export class ErrorHandlerService {
     };
 
     this._errors$.next(handledError);
+
+    // Show toast for each error message
+    messages.forEach((msg) => {
+      this._message.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: msg,
+      });
+    });
+
     return handledError;
   }
 

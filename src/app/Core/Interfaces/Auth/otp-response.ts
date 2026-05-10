@@ -1,4 +1,4 @@
 export interface OTPResponse {
-  succeeded: boolean;
-  message: string;
+  isValid: boolean;
+  token: string;
 }

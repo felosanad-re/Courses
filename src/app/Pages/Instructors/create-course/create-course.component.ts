@@ -31,7 +31,7 @@ export class CreateCourseComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private instructorsService: InstructorsService,
-    private router: Router
+    private router: Router,
   ) {}
 
   ngOnInit(): void {
@@ -138,7 +138,7 @@ export class CreateCourseComponent implements OnInit {
 
     this.instructorsService.addCourse(courseData).subscribe({
       next: (response: ApplicationResult<CourseResponseForInstructor>) => {
-        if (response.succeeded) {
+        if (response.succeed) {
           this.router.navigate(['/instructor/dashboard']);
         }
         this.isSubmitting = false;

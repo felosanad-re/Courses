@@ -12,31 +12,6 @@
 
   <!-- Form -->
   <form class="auth-card__form" [formGroup]="otpForm" (ngSubmit)="onSubmit()">
-    <!-- Email -->
-    <div class="form-field">
-      <label class="form-field__label" for="otpEmail">Email Address</label>
-      <div
-        class="form-field__input-wrapper"
-        [class.form-field__input-wrapper--error]="
-          email?.invalid && email?.touched
-        "
-      >
-        <i class="pi pi-envelope form-field__icon"></i>
-        <input
-          class="form-field__input"
-          id="otpEmail"
-          type="email"
-          formControlName="email"
-          placeholder="you@example.com"
-          autocomplete="email"
-        />
-      </div>
-      <div class="form-field__error" *ngIf="email?.invalid && email?.touched">
-        <span *ngIf="email?.errors?.['required']">Email is required</span>
-        <span *ngIf="email?.errors?.['email']">Please enter a valid email</span>
-      </div>
-    </div>
-
     <!-- OTP -->
     <div class="form-field">
       <label class="form-field__label" for="otpCode">OTP Code</label>
@@ -71,7 +46,7 @@
   <!-- Footer -->
   <div class="auth-card__footer">
     <p>
-      <a class="auth-card__link" routerLink="/forgetPassword">Resend OTP</a> ·
+      <a class="auth-card__link" routerLink="/#">Resend OTP</a> ·
       <a class="auth-card__link" routerLink="/login">Back to Sign in</a>
     </p>
   </div>

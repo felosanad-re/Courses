@@ -75,7 +75,7 @@ export class SetInstructorRoleComponent {
     this._instructorService.applyRequest(this.instructorForm.value).subscribe({
       next: (response: ApplicationResult<ApplyInstructorResponse>) => {
         this.isSubmitting.set(false);
-        if (response.succeeded) {
+        if (response.succeed) {
           // Redirect to home after successful request
           this._router.navigate(['/']);
         } else {
