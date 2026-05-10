@@ -11,6 +11,8 @@ import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../../Core/Services/Auth/auth.service';
 import { NotificationsService } from '../../../Core/Services/notifications.service';
 import { LoginRequest } from '../../../Core/Interfaces/Auth/login-request';
+import { ApplicationResult } from '../../../Core/Interfaces/application-result';
+import { LoginResponse } from '../../../Core/Interfaces/login-response';
 
 @Component({
   selector: 'app-login',
@@ -31,13 +33,13 @@ export class LoginComponent {
     @Inject(PLATFORM_ID) private readonly _platformId: object,
   ) {
     this.loginForm = this._fb.group({
-      email: ['', [Validators.required, Validators.email]],
+      userNameOrEmail: ['', [Validators.required]],
       password: ['', [Validators.required, Validators.minLength(6)]],
     });
   }
 
-  get email() {
-    return this.loginForm.get('email');
+  get userNameOrEmail() {
+    return this.loginForm.get('userNameOrEmail');
   }
 
   get password() {
@@ -54,13 +56,16 @@ export class LoginComponent {
     const data: LoginRequest = this.loginForm.value;
 
     this._authService.login(data).subscribe({
-      next: (response) => {
+      next: (response: ApplicationResult<LoginResponse>) => {
         this.isSubmitting = false;
         if (isPlatformBrowser(this._platformId)) {
-          localStorage.setItem('token', response.token);
-          localStorage.setItem('username', response.userName);
+          localStorage.setItem('token', response.data.token);
+          localStorage.setItem('username', response.data.userName);
         }
-        this._notifications.showSuccess('Logged in successfully', 'Success');
+        this._notifications.showSuccess(
+          response.message || 'Login successful',
+          'Success',
+        );
         this._router.navigate(['/']);
       },
       error: () => {

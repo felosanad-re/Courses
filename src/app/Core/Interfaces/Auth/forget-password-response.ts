@@ -1,4 +1,4 @@
 export interface ForgetPasswordResponse {
-  succeeded: boolean;
-  message: string;
+  userId: boolean;
+  email: string;
 }

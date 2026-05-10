@@ -11,6 +11,9 @@ import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../../Core/Services/Auth/auth.service';
 import { NotificationsService } from '../../../Core/Services/notifications.service';
 import { RegisterRequest } from '../../../Core/Interfaces/Auth/register-request';
+import { Application } from 'express';
+import { ApplicationResult } from '../../../Core/Interfaces/application-result';
+import { RegisterResponse } from '../../../Core/Interfaces/Auth/register-response';
 
 @Component({
   selector: 'app-register',
@@ -34,7 +37,7 @@ export class RegisterComponent {
         firstName: ['', [Validators.required, Validators.minLength(2)]],
         lastName: ['', [Validators.required, Validators.minLength(2)]],
         email: ['', [Validators.required, Validators.email]],
-        phone: ['', [Validators.required, Validators.pattern(/^01[0-9]{9}$/)]],
+        userName: ['', [Validators.required]],
         address: ['', [Validators.required, Validators.minLength(5)]],
         password: ['', [Validators.required, Validators.minLength(6)]],
         confirmPassword: ['', [Validators.required]],
@@ -57,8 +60,8 @@ export class RegisterComponent {
     return this.registerForm.get('email');
   }
 
-  get phone() {
-    return this.registerForm.get('phone');
+  get userName() {
+    return this.registerForm.get('userName');
   }
 
   get address() {
@@ -95,15 +98,15 @@ export class RegisterComponent {
     const data: RegisterRequest = this.registerForm.value;
 
     this._authService.register(data).subscribe({
-      next: (response) => {
+      next: (response: ApplicationResult<RegisterResponse>) => {
         this.isSubmitting = false;
         this._notifications.showSuccess(
           response.message ||
             'Registration successful. Please confirm your account.',
           'Success',
         );
-        this._router.navigate(['/confirmAccount'], {
-          queryParams: { email: data.email },
+        this._router.navigate(['/login'], {
+          queryParams: { email: data.email, registered: true },
         });
       },
       error: () => {

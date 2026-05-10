@@ -1,3 +1,3 @@
 export interface AccountRequest {
-  email: string;
+  userNameOrEmail: string;
 }

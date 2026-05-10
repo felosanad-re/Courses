@@ -29,7 +29,7 @@ export const routes: Routes = [
           ),
       },
       {
-        path: 'confirmAccount',
+        path: 'confirmAccount/:userId/:token',
         loadComponent: () =>
           import(`./Pages/Auth/confirm-account/confirm-account.component`).then(
             (c) => c.ConfirmAccountComponent,
@@ -57,6 +57,13 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'checkConfirm',
+        loadComponent: () =>
+          import(`./Pages/Auth/check-confirm/check-confirm.component`).then(
+            (c) => c.CheckConfirmComponent,
+          ),
+      },
+      {
         path: 'selectRole',
         loadComponent: () =>
           import(`./Pages/onboarding/select-role/select-role.component`).then(
@@ -66,9 +73,9 @@ export const routes: Routes = [
       {
         path: 'set-instructor-role',
         loadComponent: () =>
-          import(`./Pages/onboarding/set-instructor-role/set-instructor-role.component`).then(
-            (c) => c.SetInstructorRoleComponent,
-          ),
+          import(
+            `./Pages/onboarding/set-instructor-role/set-instructor-role.component`
+          ).then((c) => c.SetInstructorRoleComponent),
       },
     ],
   },

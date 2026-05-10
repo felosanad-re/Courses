@@ -1,5 +1,5 @@
 export interface ApplicationResult<T> {
-  succeeded: boolean;
+  succeed: boolean;
   message?: string;
   errors: string[] | null;
   data: T;

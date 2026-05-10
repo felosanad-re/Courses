@@ -12,11 +12,13 @@
   <form class="auth-card__form" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
     <!-- Email -->
     <div class="form-field">
-      <label class="form-field__label" for="loginEmail">Email Address</label>
+      <label class="form-field__label" for="loginEmail"
+        >Email Or UserName</label
+      >
       <div
         class="form-field__input-wrapper"
         [class.form-field__input-wrapper--error]="
-          email?.invalid && email?.touched
+          userNameOrEmail?.invalid && userNameOrEmail?.touched
         "
       >
         <i class="pi pi-envelope form-field__icon"></i>
@@ -24,14 +26,21 @@
           class="form-field__input"
           id="loginEmail"
           type="email"
-          formControlName="email"
+          formControlName="userNameOrEmail"
           placeholder="you@example.com"
           autocomplete="email"
         />
       </div>
-      <div class="form-field__error" *ngIf="email?.invalid && email?.touched">
-        <span *ngIf="email?.errors?.['required']">Email is required</span>
-        <span *ngIf="email?.errors?.['email']">Please enter a valid email</span>
+      <div
+        class="form-field__error"
+        *ngIf="userNameOrEmail?.invalid && userNameOrEmail?.touched"
+      >
+        <span *ngIf="userNameOrEmail?.errors?.['required']"
+          >UserName Or Email is required</span
+        >
+        <span *ngIf="userNameOrEmail?.errors?.['userNameOrEmail']"
+          >Please enter a valid UserName Or Email</span
+        >
       </div>
     </div>
 
@@ -67,9 +76,7 @@
 
     <!-- Forgot Password -->
     <div class="auth-card__forgot">
-      <a class="auth-card__link" routerLink="/forgetPassword"
-        >Forgot password?</a
-      >
+      <a class="auth-card__link" routerLink="/checkAccount">Forgot password?</a>
     </div>
 
     <!-- Submit -->
@@ -78,6 +85,15 @@
       <span *ngIf="isSubmitting" class="auth-card__spinner">
         <i class="pi pi-spin pi-spinner"></i> Signing in...
       </span>
+    </button>
+
+    <!-- Resend Confirmation Button -->
+    <button
+      class="auth-card__btn auth-card__btn--secondary"
+      type="button"
+      routerLink="/checkConfirm"
+    >
+      Resend Confirmation Email
     </button>
   </form>
 

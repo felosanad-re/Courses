@@ -1,0 +1,58 @@
+<div class="auth-card">
+  <!-- Header -->
+  <div class="auth-card__header">
+    <div class="auth-card__icon">
+      <i class="pi pi-search"></i>
+    </div>
+    <h1 class="auth-card__title">{{ pageTitle }}</h1>
+    <p class="auth-card__subtitle">{{ pageSubtitle }}</p>
+  </div>
+
+  <!-- Form -->
+  <form
+    class="auth-card__form"
+    [formGroup]="checkAccountForm"
+    (ngSubmit)="onSubmit()"
+  >
+    <!-- Email -->
+    <div class="form-field">
+      <label class="form-field__label" for="fieldInput">
+        {{ fieldName === 'email' ? 'Email Address' : 'Email or Username' }}
+      </label>
+      <div
+        class="form-field__input-wrapper"
+        [class.form-field__input-wrapper--error]="
+          userNameOrEmail?.invalid && userNameOrEmail?.touched
+        "
+      >
+        <i class="pi pi-envelope form-field__icon"></i>
+        <input
+          class="form-field__input"
+          id="fieldInput"
+          type="text"
+          formControlName="userNameOrEmail"
+          [placeholder]="fieldName === 'email' ? 'you@example.com' : 'you@example.com or username'"
+          autocomplete="email"
+        />
+      </div>
+      <div class="form-field__error" *ngIf="userNameOrEmail?.invalid && userNameOrEmail?.touched">
+        <span *ngIf="userNameOrEmail?.errors?.['required']">
+          {{ fieldName === 'email' ? 'Email is required' : 'Email or Username is required' }}
+        </span>
+      </div>
+    </div>
+
+    <!-- Submit -->
+    <button class="auth-card__btn" type="submit" [disabled]="isSubmitting">
+      <span *ngIf="!isSubmitting">{{ buttonText }}</span>
+      <span *ngIf="isSubmitting" class="auth-card__spinner">
+        <i class="pi pi-spin pi-spinner"></i> Checking...
+      </span>
+    </button>
+  </form>
+
+  <!-- Footer -->
+  <div class="auth-card__footer">
+    <p><a class="auth-card__link" routerLink="/login">Back to Sign in</a></p>
+  </div>
+</div>
