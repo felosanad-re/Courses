@@ -8,6 +8,8 @@ import { CoursesService } from '../../../Core/Services/Courses/courses.service';
 import { NotificationsService } from '../../../Core/Services/notifications.service';
 import { ApplicationResult } from '../../../Core/Interfaces/application-result';
 import { Pagination } from '../../../Core/Interfaces/Courses/pagination';
+import { CourseTypeService } from '../../../Core/Services/CourseType/course-type.service';
+import { CourseTypeToReturnDTO } from '../../../Core/Interfaces/courseTypes/course-type-to-return-dto';
 
 @Component({
   selector: 'app-home',
@@ -18,6 +20,7 @@ import { Pagination } from '../../../Core/Interfaces/Courses/pagination';
 })
 export class HomeComponent {
   courses: CoursesToReturnDTO[] = [];
+  types: CourseTypeToReturnDTO[] = [];
   courseDetails!: CourseDetailsToReturnDTO;
   courseParams = new CoursesParams();
   isLoading = false;
@@ -33,14 +36,17 @@ export class HomeComponent {
 
   constructor(
     private readonly _courseService: CoursesService,
+    private readonly _courseTypesService: CourseTypeService,
     private readonly _notifications: NotificationsService,
     private readonly _router: Router,
   ) {}
 
   ngOnInit() {
     this.getAllCourses();
+    this.getAllCoursesTypes();
   }
 
+  // Search
   onSearchChange(event: Event): void {
     const input = event.target as HTMLInputElement;
     const query = input.value;
@@ -52,12 +58,25 @@ export class HomeComponent {
       this.getAllCourses(true);
     }, 500);
   }
-
+  // Search
   onPageChange(pageIndex: number): void {
     this.courseParams.pageIndex = pageIndex;
     this.getAllCourses();
   }
 
+  // Filter
+  onTypeChange(event: Event): void {
+    const select = event.target as HTMLSelectElement;
+    this.courseParams.type = select.value || undefined;
+    this.getAllCourses(true);
+  }
+
+  clearFilter(): void {
+    this.courseParams.type = undefined;
+    this.getAllCourses(true);
+  }
+
+  // Pagination
   getPageNumbers(): number[] {
     const pages = [];
     const current = this.pagination.pageIndex;
@@ -120,5 +139,15 @@ export class HomeComponent {
       'Enrollment process started for course: ' + courseId,
       'Enrollment',
     );
+  }
+
+  getAllCoursesTypes() {
+    this._courseTypesService.getAllCourseTypes().subscribe({
+      next: (res: ApplicationResult<CourseTypeToReturnDTO[]>) => {
+        if (res.succeed && res.data) {
+          this.types = res.data;
+        }
+      },
+    });
   }
 }

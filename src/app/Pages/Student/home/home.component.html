@@ -3,6 +3,7 @@
     <h1>Discover Courses</h1>
     <p>Expand your knowledge with our curated collection of courses</p>
 
+    <!-- Search Section -->
     <div class="search-container">
       <input
         type="text"
@@ -23,6 +24,58 @@
         <path d="m21 21-4.35-4.35"></path>
       </svg>
     </div>
+  </div>
+
+  <!-- Filter Section -->
+  <div class="filter-section">
+    <div class="filter-wrapper">
+      <svg
+        class="filter-icon"
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+      >
+        <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+      </svg>
+      <select (change)="onTypeChange($event)" class="type-filter">
+        <option value="">All Course Types</option>
+        <option *ngFor="let type of types" [value]="type.id">
+          {{ type.name }}
+        </option>
+      </select>
+      <svg
+        class="dropdown-arrow"
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+      >
+        <polyline points="6 9 12 15 18 9"></polyline>
+      </svg>
+    </div>
+    <button
+      *ngIf="courseParams.type"
+      class="clear-filter"
+      (click)="clearFilter()"
+    >
+      <svg
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+      >
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
+      Clear
+    </button>
   </div>
 
   <div *ngIf="isLoading" class="loading">
