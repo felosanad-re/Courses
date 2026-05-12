@@ -1,1 +1,94 @@
-<p>home works!</p>
+<div class="home-container">
+  <div class="header">
+    <h1>Discover Courses</h1>
+    <p>Expand your knowledge with our curated collection of courses</p>
+
+    <div class="search-container">
+      <input
+        type="text"
+        placeholder="Search for courses..."
+        (input)="onSearchChange($event)"
+        class="search-input"
+      />
+      <svg
+        class="search-icon"
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+      >
+        <circle cx="11" cy="11" r="8"></circle>
+        <path d="m21 21-4.35-4.35"></path>
+      </svg>
+    </div>
+  </div>
+
+  <div *ngIf="isLoading" class="loading">
+    <div class="spinner"></div>
+    <p>Loading courses...</p>
+  </div>
+
+  <div *ngIf="!isLoading && courses.length > 0" class="courses-grid">
+    <div *ngFor="let course of courses" class="course-card">
+      <div class="course-image">
+        <img [src]="course.image" [alt]="course.name" />
+      </div>
+      <div class="course-content">
+        <div class="course-header">
+          <h3>{{ course.name }}</h3>
+          <div class="price-tag" [ngClass]="{ free: !course.isPaid }">
+            {{ course.isPaid ? "$" + course.price : "FREE" }}
+          </div>
+        </div>
+        <p class="course-description">{{ course.description }}</p>
+        <div class="course-actions">
+          <button class="btn-details" (click)="viewCourseDetails(course.id)">
+            View Details
+          </button>
+          <button
+            class="btn-enroll"
+            [ngClass]="{ free: !course.isPaid }"
+            (click)="enrollInCourse(course.id)"
+          >
+            {{ course.isPaid ? "Enroll Now" : "Start Learning" }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="!isLoading && courses.length === 0" class="no-courses">
+    <p>{{ noCoursesMessage }}</p>
+  </div>
+
+  <div *ngIf="!isLoading && pagination.totalPages > 1" class="pagination">
+    <button
+      class="pagination-btn"
+      (click)="onPageChange(pagination.pageIndex - 1)"
+      [disabled]="pagination.pageIndex === 1"
+    >
+      Previous
+    </button>
+
+    <div class="page-numbers">
+      <button
+        *ngFor="let page of getPageNumbers()"
+        class="page-btn"
+        [ngClass]="{ active: page === pagination.pageIndex }"
+        (click)="onPageChange(page)"
+      >
+        {{ page }}
+      </button>
+    </div>
+
+    <button
+      class="pagination-btn"
+      (click)="onPageChange(pagination.pageIndex + 1)"
+      [disabled]="pagination.pageIndex === pagination.totalPages"
+    >
+      Next
+    </button>
+  </div>
+</div>
