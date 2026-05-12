@@ -66,7 +66,7 @@ export class LoginComponent {
           response.message || 'Login successful',
           'Success',
         );
-        this._router.navigate(['/']);
+        this._router.navigate(['/student/home']);
       },
       error: () => {
         this.isSubmitting = false;

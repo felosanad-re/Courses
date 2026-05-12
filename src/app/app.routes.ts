@@ -108,4 +108,33 @@ export const routes: Routes = [
       },
     ],
   },
+  // student
+  {
+    path: 'student',
+    loadComponent: () =>
+      import(`./Layouts/student-layout/student-layout.component`).then(
+        (c) => c.StudentLayoutComponent,
+      ),
+    children: [
+      {
+        path: '',
+        pathMatch: 'full',
+        redirectTo: 'home',
+      },
+      {
+        path: 'home',
+        loadComponent: () =>
+          import(`./Pages/Student/home/home.component`).then(
+            (c) => c.HomeComponent,
+          ),
+      },
+      {
+        path: 'course-details/:courseId',
+        loadComponent: () =>
+          import(`./Pages/Student/course-details/course-details.component`).then(
+            (c) => c.CourseDetailsComponent,
+          ),
+      },
+    ],
+  },
 ];

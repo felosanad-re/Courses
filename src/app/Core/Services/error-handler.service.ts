@@ -79,7 +79,11 @@ export class ErrorHandlerService {
       }
 
       // Handle object errors: { "Password": ["error"], "Email": ["error"] }
-      if (body.errors && typeof body.errors === 'object' && !Array.isArray(body.errors)) {
+      if (
+        body.errors &&
+        typeof body.errors === 'object' &&
+        !Array.isArray(body.errors)
+      ) {
         Object.entries(body.errors).forEach(([key, value]) => {
           if (Array.isArray(value)) {
             value.forEach((msg: string) => {
@@ -105,14 +109,17 @@ export class ErrorHandlerService {
 
     this._errors$.next(handledError);
 
-    // Show toast for each error message
-    messages.forEach((msg) => {
-      this._message.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: msg,
+    // Skip showing toast for network connection errors (status 0)
+    if (statusCode !== 0) {
+      // Show toast for each error message
+      messages.forEach((msg) => {
+        this._message.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: msg,
+        });
       });
-    });
+    }
 
     return handledError;
   }
