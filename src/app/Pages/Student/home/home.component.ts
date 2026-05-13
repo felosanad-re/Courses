@@ -10,6 +10,8 @@ import { ApplicationResult } from '../../../Core/Interfaces/application-result';
 import { Pagination } from '../../../Core/Interfaces/Courses/pagination';
 import { CourseTypeService } from '../../../Core/Services/CourseType/course-type.service';
 import { CourseTypeToReturnDTO } from '../../../Core/Interfaces/courseTypes/course-type-to-return-dto';
+import { EnrollmentService } from '../../../Core/Services/Enrollments/enrollment.service';
+import { EnrollmentWithCourseResponse } from '../../../Core/Interfaces/Enrollments/enrollment-with-course-response';
 
 @Component({
   selector: 'app-home',
@@ -37,6 +39,7 @@ export class HomeComponent {
   constructor(
     private readonly _courseService: CoursesService,
     private readonly _courseTypesService: CourseTypeService,
+    private readonly _enrollmentServices: EnrollmentService,
     private readonly _notifications: NotificationsService,
     private readonly _router: Router,
   ) {}
@@ -135,10 +138,16 @@ export class HomeComponent {
   }
 
   enrollInCourse(courseId: number) {
-    this._notifications.showSuccess(
-      'Enrollment process started for course: ' + courseId,
-      'Enrollment',
-    );
+    this._enrollmentServices.createEnrollment({ courseId }).subscribe({
+      next: (res: ApplicationResult<EnrollmentWithCourseResponse>) => {
+        if (res.succeed && res.data) {
+          this._notifications.showSuccess(
+            res.message || 'Enrollment successful',
+            'Enrollment',
+          );
+        }
+      },
+    });
   }
 
   getAllCoursesTypes() {
