@@ -4,7 +4,7 @@ import {
   HttpRequest,
   HttpHandlerFn,
 } from '@angular/common/http';
-import { Inject, PLATFORM_ID } from '@angular/core';
+import { inject, PLATFORM_ID } from '@angular/core';
 
 /**
  * Token interceptor that attaches the JWT Bearer token to every outgoing HTTP request.
@@ -16,7 +16,7 @@ import { Inject, PLATFORM_ID } from '@angular/core';
  * If no token exists, the request is forwarded unchanged.
  */
 export const tokenHandlerInterceptor: HttpInterceptorFn = (req, next) => {
-  const platformId = Inject(PLATFORM_ID);
+  const platformId = inject(PLATFORM_ID);
   let token: string | null = null;
   if (isPlatformBrowser(platformId) && !req.headers.has('Authorization')) {
     token = localStorage.getItem('token');
