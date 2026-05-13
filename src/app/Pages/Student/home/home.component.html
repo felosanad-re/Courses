@@ -1,147 +1,197 @@
-<div class="home-container">
-  <div class="header">
-    <h1>Discover Courses</h1>
-    <p>Expand your knowledge with our curated collection of courses</p>
-
-    <!-- Search Section -->
-    <div class="search-container">
+<!-- ===== Hero Section ===== -->
+<section class="hero">
+  <div class="hero__overlay"></div>
+  <div class="hero__content">
+    <h1 class="hero__title">Unlock Your Potential</h1>
+    <p class="hero__subtitle">Explore top courses and start learning today</p>
+    <div class="hero__search">
+      <i class="pi pi-search hero__search-icon"></i>
       <input
         type="text"
         placeholder="Search for courses..."
         (input)="onSearchChange($event)"
-        class="search-input"
+        class="hero__search-input"
       />
-      <svg
-        class="search-icon"
-        width="20"
-        height="20"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-      >
-        <circle cx="11" cy="11" r="8"></circle>
-        <path d="m21 21-4.35-4.35"></path>
-      </svg>
     </div>
   </div>
+</section>
 
-  <!-- Filter Section -->
-  <div class="filter-section">
-    <div class="filter-wrapper">
-      <svg
-        class="filter-icon"
-        width="20"
-        height="20"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-      >
-        <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
-      </svg>
-      <select (change)="onTypeChange($event)" class="type-filter">
-        <option value="">All Course Types</option>
-        <option *ngFor="let type of types" [value]="type.id">
-          {{ type.name }}
-        </option>
-      </select>
-      <svg
-        class="dropdown-arrow"
-        width="16"
-        height="16"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-      >
-        <polyline points="6 9 12 15 18 9"></polyline>
-      </svg>
-    </div>
+<!-- ===== Category Filter Chips ===== -->
+<section class="categories" *ngIf="types.length > 0">
+  <div class="categories__wrapper">
     <button
-      *ngIf="courseParams.type"
-      class="clear-filter"
+      class="categories__chip"
+      [ngClass]="{ 'categories__chip--active': !courseParams.type }"
       (click)="clearFilter()"
     >
-      <svg
-        width="16"
-        height="16"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-      >
-        <line x1="18" y1="6" x2="6" y2="18"></line>
-        <line x1="6" y1="6" x2="18" y2="18"></line>
-      </svg>
-      Clear
+      <i class="pi pi-th-large"></i>
+      All
+    </button>
+    <button
+      *ngFor="let type of types"
+      class="categories__chip"
+      [ngClass]="{ 'categories__chip--active': isActiveType(type.id) }"
+      (click)="filterByType(type.id)"
+    >
+      {{ type.name }}
     </button>
   </div>
+</section>
 
-  <div *ngIf="isLoading" class="loading">
-    <div class="spinner"></div>
-    <p>Loading courses...</p>
-  </div>
-
-  <div *ngIf="!isLoading && courses.length > 0" class="courses-grid">
-    <div *ngFor="let course of courses" class="course-card">
-      <div class="course-image">
-        <img [src]="course.image" [alt]="course.name" />
-      </div>
-      <div class="course-content">
-        <div class="course-header">
-          <h3>{{ course.name }}</h3>
-          <div class="price-tag" [ngClass]="{ free: !course.isPaid }">
-            {{ course.isPaid ? "$" + course.price : "FREE" }}
-          </div>
-        </div>
-        <p class="course-description">{{ course.description }}</p>
-        <div class="course-actions">
-          <button class="btn-details" (click)="viewCourseDetails(course.id)">
-            View Details
-          </button>
-          <button
-            class="btn-enroll"
-            [ngClass]="{ free: !course.isPaid }"
-            (click)="enrollInCourse(course.id)"
-          >
-            {{ course.isPaid ? "Enroll Now" : "Start Learning" }}
-          </button>
-        </div>
+<!-- ===== Loading Skeleton ===== -->
+<section class="courses-section" *ngIf="isLoading">
+  <div class="courses-grid">
+    <div *ngFor="let i of [1, 2, 3, 4, 5, 6]" class="skeleton-card">
+      <div class="skeleton-card__image skeleton-pulse"></div>
+      <div class="skeleton-card__body">
+        <div class="skeleton-card__badge skeleton-pulse"></div>
+        <div class="skeleton-card__title skeleton-pulse"></div>
+        <div class="skeleton-card__text skeleton-pulse"></div>
+        <div class="skeleton-card__text skeleton-pulse"></div>
+        <div class="skeleton-card__footer skeleton-pulse"></div>
       </div>
     </div>
   </div>
+</section>
 
-  <div *ngIf="!isLoading && courses.length === 0" class="no-courses">
-    <p>{{ noCoursesMessage }}</p>
+<!-- ===== Courses Grid ===== -->
+<section class="courses-section" *ngIf="!isLoading && courses.length > 0">
+  <div class="courses-section__header">
+    <h2 class="courses-section__title">
+      <i class="pi pi-book"></i>
+      Available Courses
+    </h2>
+    <span class="courses-section__count">
+      {{ pagination.totalCount }} course(s) found
+    </span>
   </div>
 
-  <div *ngIf="!isLoading && pagination.totalPages > 1" class="pagination">
+  <div class="courses-grid">
+    <article *ngFor="let course of courses" class="course-card">
+      <div class="course-card__image-wrapper">
+        <img
+          [src]="course.image"
+          [alt]="course.name"
+          class="course-card__image"
+          loading="lazy"
+        />
+        <span
+          class="course-card__type-badge"
+          [ngClass]="{
+            'course-card__type-badge--paid': course.isPaid,
+            'course-card__type-badge--free': !course.isPaid,
+          }"
+        >
+          {{ course.courseType }}
+        </span>
+        <span
+          class="course-card__price-badge"
+          [ngClass]="{ 'course-card__price-badge--free': !course.isPaid }"
+        >
+          {{ course.isPaid ? "$" + course.price : "FREE" }}
+        </span>
+      </div>
+
+      <div class="course-card__body">
+        <h3 class="course-card__title">{{ course.name }}</h3>
+        <p class="course-card__description">{{ course.description }}</p>
+      </div>
+
+      <div class="course-card__footer">
+        <button
+          class="course-card__btn course-card__btn--details"
+          (click)="viewCourseDetails(course.id)"
+        >
+          <i class="pi pi-eye"></i>
+          Details
+        </button>
+        <button
+          class="course-card__btn course-card__btn--enroll"
+          [ngClass]="{ 'course-card__btn--enroll-free': !course.isPaid }"
+          (click)="enrollInCourse(course.id)"
+        >
+          <i class="pi pi-sign-in"></i>
+          {{ course.isPaid ? "Enroll Now" : "Start Free" }}
+        </button>
+      </div>
+    </article>
+  </div>
+
+  <!-- ===== Pagination ===== -->
+  <nav
+    class="pagination"
+    *ngIf="pagination.totalPages > 1"
+    aria-label="Course pagination"
+  >
     <button
-      class="pagination-btn"
+      class="pagination__btn pagination__btn--prev"
       (click)="onPageChange(pagination.pageIndex - 1)"
       [disabled]="pagination.pageIndex === 1"
     >
-      Previous
+      <i class="pi pi-chevron-left"></i>
+      Prev
     </button>
 
-    <div class="page-numbers">
+    <div class="pagination__pages">
+      <button
+        *ngIf="pagination.pageIndex > 3"
+        class="pagination__page"
+        (click)="onPageChange(1)"
+      >
+        1
+      </button>
+      <span *ngIf="pagination.pageIndex > 3" class="pagination__ellipsis"
+        >...</span
+      >
+
       <button
         *ngFor="let page of getPageNumbers()"
-        class="page-btn"
-        [ngClass]="{ active: page === pagination.pageIndex }"
+        class="pagination__page"
+        [ngClass]="{
+          'pagination__page--active': page === pagination.pageIndex,
+        }"
         (click)="onPageChange(page)"
       >
         {{ page }}
       </button>
+
+      <span
+        *ngIf="pagination.pageIndex < pagination.totalPages - 2"
+        class="pagination__ellipsis"
+        >...</span
+      >
+      <button
+        *ngIf="pagination.pageIndex < pagination.totalPages - 2"
+        class="pagination__page"
+        (click)="onPageChange(pagination.totalPages)"
+      >
+        {{ pagination.totalPages }}
+      </button>
     </div>
 
     <button
-      class="pagination-btn"
+      class="pagination__btn pagination__btn--next"
       (click)="onPageChange(pagination.pageIndex + 1)"
       [disabled]="pagination.pageIndex === pagination.totalPages"
     >
       Next
+      <i class="pi pi-chevron-right"></i>
     </button>
+  </nav>
+</section>
+
+<!-- ===== Empty State ===== -->
+<section class="empty-state" *ngIf="!isLoading && courses.length === 0">
+  <div class="empty-state__icon">
+    <i class="pi pi-folder-open"></i>
   </div>
-</div>
+  <h3 class="empty-state__title">No Courses Found</h3>
+  <p class="empty-state__text">{{ noCoursesMessage }}</p>
+  <button
+    class="empty-state__btn"
+    (click)="clearFilter(); courseParams.search = ''; getAllCourses(true)"
+  >
+    <i class="pi pi-refresh"></i>
+    Browse All Courses
+  </button>
+</section>

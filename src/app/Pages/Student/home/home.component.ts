@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { CoursesToReturnDTO } from '../../../Core/Interfaces/Courses/courses-to-return-dto';
-import { CourseDetailsToReturnDTO } from '../../../Core/Interfaces/Courses/course-details-to-return-dto';
 import { CoursesParams } from '../../../Core/Interfaces/Courses/courses-params';
 import { CoursesService } from '../../../Core/Services/Courses/courses.service';
 import { NotificationsService } from '../../../Core/Services/notifications.service';
@@ -23,14 +22,13 @@ import { EnrollmentWithCourseResponse } from '../../../Core/Interfaces/Enrollmen
 export class HomeComponent {
   courses: CoursesToReturnDTO[] = [];
   types: CourseTypeToReturnDTO[] = [];
-  courseDetails!: CourseDetailsToReturnDTO;
   courseParams = new CoursesParams();
   isLoading = false;
   error: string | null = null;
   noCoursesMessage: string = 'No courses available at the moment.';
-  pagination: any = {
+  pagination = {
     pageIndex: 1,
-    pageSize: 10,
+    pageSize: 5,
     totalCount: 0,
     totalPages: 0,
   };
@@ -49,7 +47,7 @@ export class HomeComponent {
     this.getAllCoursesTypes();
   }
 
-  // Search
+  // Search with debounce
   onSearchChange(event: Event): void {
     const input = event.target as HTMLInputElement;
     const query = input.value;
@@ -61,31 +59,37 @@ export class HomeComponent {
       this.getAllCourses(true);
     }, 500);
   }
-  // Search
-  onPageChange(pageIndex: number): void {
-    this.courseParams.pageIndex = pageIndex;
-    this.getAllCourses();
-  }
 
-  // Filter
-  onTypeChange(event: Event): void {
-    const select = event.target as HTMLSelectElement;
-    this.courseParams.type = select.value || undefined;
+  // Pagination
+  onPageChange(pageIndex: number): void {
+    if (pageIndex < 1 || pageIndex > this.pagination.totalPages) return;
+    this.courseParams.pageIndex = pageIndex;
     this.getAllCourses(true);
   }
 
+  // Filter by course type
+  filterByType(typeId: number): void {
+    this.courseParams.type = String(typeId);
+    this.getAllCourses(true);
+  }
+
+  // Check if a type chip is active
+  isActiveType(typeId: number): boolean {
+    return this.courseParams.type === String(typeId);
+  }
+
+  // Clear type filter
   clearFilter(): void {
     this.courseParams.type = undefined;
     this.getAllCourses(true);
   }
 
-  // Pagination
+  // Get visible page numbers for pagination
   getPageNumbers(): number[] {
-    const pages = [];
+    const pages: number[] = [];
     const current = this.pagination.pageIndex;
     const total = this.pagination.totalPages;
 
-    // Show up to 5 page numbers around current page
     const start = Math.max(1, current - 2);
     const end = Math.min(total, current + 2);
 
@@ -96,6 +100,7 @@ export class HomeComponent {
     return pages;
   }
 
+  // Fetch all courses from API
   getAllCourses(isSearch: boolean = false) {
     this.isLoading = true;
     this.error = null;
@@ -106,10 +111,8 @@ export class HomeComponent {
 
     this._courseService.getAllCourses(this.courseParams).subscribe({
       next: (res: ApplicationResult<Pagination<CoursesToReturnDTO[]>>) => {
-        const data = res.data.data;
         if (res.succeed && res.data) {
-          this.courses = data;
-          // Error
+          this.courses = res.data.data;
           this.pagination = {
             pageIndex: res.data.pageIndex,
             pageSize: res.data.pageSize,
@@ -118,14 +121,16 @@ export class HomeComponent {
           };
           this.noCoursesMessage =
             res.message || 'No courses available at the moment.';
-          this._notifications.showSuccess(
-            res.message || 'Courses loaded successfully',
-            'Courses',
-          );
         } else {
+          this.courses = [];
           this.noCoursesMessage =
             res.message || 'No courses available at the moment.';
         }
+      },
+      error: (err) => {
+        this.isLoading = false;
+        this.error = 'Failed to load courses. Please try again.';
+        this._notifications.showError(this.error, 'Error');
       },
       complete: () => {
         this.isLoading = false;
@@ -133,10 +138,12 @@ export class HomeComponent {
     });
   }
 
+  // Navigate to course details
   viewCourseDetails(courseId: number) {
     this._router.navigate(['/student', 'course-details', courseId]);
   }
 
+  // Enroll in a course
   enrollInCourse(courseId: number) {
     this._enrollmentServices.createEnrollment({ courseId }).subscribe({
       next: (res: ApplicationResult<EnrollmentWithCourseResponse>) => {
@@ -145,11 +152,23 @@ export class HomeComponent {
             res.message || 'Enrollment successful',
             'Enrollment',
           );
+        } else {
+          this._notifications.showError(
+            res.message || 'Enrollment failed',
+            'Enrollment',
+          );
         }
+      },
+      error: () => {
+        this._notifications.showError(
+          'Something went wrong. Please try again.',
+          'Enrollment',
+        );
       },
     });
   }
 
+  // Fetch course types for filter chips
   getAllCoursesTypes() {
     this._courseTypesService.getAllCourseTypes().subscribe({
       next: (res: ApplicationResult<CourseTypeToReturnDTO[]>) => {

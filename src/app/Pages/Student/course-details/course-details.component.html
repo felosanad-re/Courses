@@ -1,98 +1,203 @@
-<div *ngIf="isLoading" class="loading">
-  <div class="spinner"></div>
-  <p>Loading course details...</p>
+<!-- ===== Loading Skeleton ===== -->
+<div *ngIf="isLoading" class="details-skeleton">
+  <div class="details-skeleton__hero skeleton-pulse"></div>
+  <div class="details-skeleton__content">
+    <div class="details-skeleton__title skeleton-pulse"></div>
+    <div class="details-skeleton__text skeleton-pulse"></div>
+    <div class="details-skeleton__text skeleton-pulse"></div>
+    <div class="details-skeleton__card skeleton-pulse"></div>
+  </div>
 </div>
 
-<div *ngIf="!isLoading && error" class="error">
-  <p>{{ error }}</p>
+<!-- ===== Error State ===== -->
+<div *ngIf="!isLoading && error" class="error-state">
+  <div class="error-state__icon">
+    <i class="pi pi-exclamation-circle"></i>
+  </div>
+  <h3 class="error-state__title">Something went wrong</h3>
+  <p class="error-state__text">{{ error }}</p>
+  <button class="error-state__btn" (click)="getCourseDetails()">
+    <i class="pi pi-refresh"></i>
+    Try Again
+  </button>
 </div>
 
-<div *ngIf="!isLoading && courseDetails" class="course-details-container">
-  <div class="course-hero">
-    <div class="course-image">
-      <img [src]="courseDetails.image" [alt]="courseDetails.name" />
-    </div>
-    <div class="course-info">
-      <div class="course-header">
-        <h1>{{ courseDetails.name }}</h1>
-        <div class="price-tag" [ngClass]="{ free: !courseDetails.isPaid }">
+<!-- ===== Course Details ===== -->
+<div *ngIf="!isLoading && courseDetails" class="course-details">
+  <!-- Hero Banner -->
+  <section class="course-details__hero">
+    <div class="course-details__hero-overlay"></div>
+    <div class="course-details__hero-content">
+      <span class="course-details__type-badge">{{
+        courseDetails.courseType
+      }}</span>
+      <h1 class="course-details__title">{{ courseDetails.name }}</h1>
+      <p class="course-details__subtitle">{{ courseDetails.description }}</p>
+      <div class="course-details__instructor">
+        <div class="course-details__instructor-avatar">
+          <i class="pi pi-user"></i>
+        </div>
+        <div class="course-details__instructor-info">
+          <span class="course-details__instructor-label">Instructor</span>
+          <strong class="course-details__instructor-name">{{
+            courseDetails.instructorName
+          }}</strong>
+        </div>
+      </div>
+      <div class="course-details__stats">
+        <div class="course-details__stat">
+          <i class="pi pi-list"></i>
+          <span>{{ courseDetails.sections.length }} Sections</span>
+        </div>
+        <div class="course-details__stat">
+          <i class="pi pi-play-circle"></i>
+          <span>{{ getTotalLectures() }} Lectures</span>
+        </div>
+        <span
+          class="course-details__price-hero"
+          [ngClass]="{
+            'course-details__price-hero--free': !courseDetails.isPaid,
+          }"
+        >
           {{ courseDetails.isPaid ? "$" + courseDetails.price : "FREE" }}
-        </div>
+        </span>
       </div>
+    </div>
+  </section>
 
-      <div class="instructor-info">
-        <span>By</span>
-        <strong> {{ courseDetails.instructorName }}</strong>
-      </div>
-
-      <div class="course-description">
-        <p>{{ courseDetails.description }}</p>
-      </div>
-
-      <div class="course-meta">
-        <div class="meta-item">
-          <span class="label">Course Type:</span>
-          <span class="value">{{ courseDetails.courseType }}</span>
+  <!-- Main Content + Sidebar -->
+  <div class="course-details__layout">
+    <!-- Sidebar Card (sticky) -->
+    <aside class="course-details__sidebar">
+      <div class="course-details__card">
+        <div class="course-details__card-image">
+          <img
+            [src]="courseDetails.image"
+            [alt]="courseDetails.name"
+            loading="lazy"
+          />
         </div>
-        <div class="meta-item">
-          <span class="label">Sections:</span>
-          <span class="value">{{ courseDetails.sections.length }}</span>
-        </div>
-        <div class="meta-item">
-          <span class="label">Lectures:</span>
-          <span class="value">{{ getTotalLectures() }}</span>
-        </div>
-      </div>
 
-      <div class="course-actions">
+        <div class="course-details__card-price">
+          <span
+            class="course-details__card-price-value"
+            [ngClass]="{
+              'course-details__card-price-value--free': !courseDetails.isPaid,
+            }"
+          >
+            {{ courseDetails.isPaid ? "$" + courseDetails.price : "FREE" }}
+          </span>
+        </div>
+
         <button
-          class="btn-enroll"
-          [ngClass]="{ free: !courseDetails.isPaid }"
+          class="course-details__card-btn"
+          [ngClass]="{
+            'course-details__card-btn--free': !courseDetails.isPaid,
+          }"
           (click)="enrollInCourse()"
         >
-          {{ courseDetails.isPaid ? "Enroll Now" : "Start Learning" }}
+          <i class="pi pi-sign-in"></i>
+          {{ courseDetails.isPaid ? "Enroll Now" : "Start Free" }}
         </button>
-      </div>
-    </div>
-  </div>
 
-  <div class="course-content">
-    <div class="content-section">
-      <h2>Course Content</h2>
-
-      <div class="sections-list">
-        <div *ngFor="let section of courseDetails.sections" class="section">
-          <div class="section-header">
-            <h3>{{ section.title }}</h3>
-            <span class="section-count"
-              >{{ section.lectures.length }} lectures</span
-            >
+        <div class="course-details__card-info">
+          <div class="course-details__card-info-row">
+            <i class="pi pi-tag"></i>
+            <span>Course Type</span>
+            <strong>{{ courseDetails.courseType }}</strong>
           </div>
+          <div class="course-details__card-info-row">
+            <i class="pi pi-list"></i>
+            <span>Sections</span>
+            <strong>{{ courseDetails.sections.length }}</strong>
+          </div>
+          <div class="course-details__card-info-row">
+            <i class="pi pi-play-circle"></i>
+            <span>Lectures</span>
+            <strong>{{ getTotalLectures() }}</strong>
+          </div>
+          <div class="course-details__card-info-row">
+            <i class="pi pi-user"></i>
+            <span>Instructor</span>
+            <strong>{{ courseDetails.instructorName }}</strong>
+          </div>
+        </div>
+      </div>
+    </aside>
 
-          <div class="lectures-list">
-            <div *ngFor="let lecture of section.lectures" class="lecture">
-              <div class="lecture-icon">
-                <svg
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                >
-                  <polygon points="5 3 19 12 5 21 5 3"></polygon>
-                </svg>
+    <!-- Course Content -->
+    <main class="course-details__content">
+      <!-- Description -->
+      <section class="course-details__section">
+        <h2 class="course-details__section-title">
+          <i class="pi pi-info-circle"></i>
+          About This Course
+        </h2>
+        <p class="course-details__description">
+          {{ courseDetails.description }}
+        </p>
+      </section>
+
+      <!-- Curriculum -->
+      <section class="course-details__section">
+        <h2 class="course-details__section-title">
+          <i class="pi pi-book"></i>
+          Course Curriculum
+        </h2>
+        <div class="course-details__curriculum-summary">
+          <span>{{ courseDetails.sections.length }} sections</span>
+          <span>{{ getTotalLectures() }} lectures</span>
+        </div>
+
+        <div class="course-details__accordion">
+          <div
+            *ngFor="let section of courseDetails.sections; let i = index"
+            class="course-details__accordion-item"
+          >
+            <button
+              class="course-details__accordion-header"
+              (click)="toggleSection(i)"
+              [ngClass]="{
+                'course-details__accordion-header--open': expandedSections[i],
+              }"
+            >
+              <div class="course-details__accordion-header-left">
+                <i
+                  class="pi course-details__accordion-chevron"
+                  [ngClass]="
+                    expandedSections[i] ? 'pi-chevron-down' : 'pi-chevron-right'
+                  "
+                ></i>
+                <span class="course-details__accordion-title">{{
+                  section.title
+                }}</span>
               </div>
-              <div class="lecture-info">
-                <div class="lecture-title">{{ lecture.title }}</div>
-                <div class="lecture-meta">
-                  <span>Section: {{ section.title }}</span>
+              <span class="course-details__accordion-count">
+                {{ section.lectures.length }} lectures
+              </span>
+            </button>
+
+            <div
+              class="course-details__accordion-body"
+              [ngClass]="{
+                'course-details__accordion-body--open': expandedSections[i],
+              }"
+            >
+              <div
+                *ngFor="let lecture of section.lectures"
+                class="course-details__lecture"
+              >
+                <div class="course-details__lecture-icon">
+                  <i class="pi pi-play-circle"></i>
                 </div>
+                <span class="course-details__lecture-title">{{
+                  lecture.title
+                }}</span>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    </div>
+      </section>
+    </main>
   </div>
 </div>
