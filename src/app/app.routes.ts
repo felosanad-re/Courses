@@ -131,8 +131,29 @@ export const routes: Routes = [
       {
         path: 'course-details/:courseId',
         loadComponent: () =>
-          import(`./Pages/Student/course-details/course-details.component`).then(
-            (c) => c.CourseDetailsComponent,
+          import(
+            `./Pages/Student/course-details/course-details.component`
+          ).then((c) => c.CourseDetailsComponent),
+      },
+      {
+        path: 'my-courses',
+        loadComponent: () =>
+          import(`./Pages/Student/my-courses/my-courses.component`).then(
+            (c) => c.MyCoursesComponent,
+          ),
+      },
+      {
+        path: 'view-course',
+        loadComponent: () =>
+          import(`./Pages/Student/my-courses/my-courses.component`).then(
+            (c) => c.MyCoursesComponent,
+          ),
+      },
+      {
+        path: 'view-lecture/:courseId',
+        loadComponent: () =>
+          import(`./Pages/Student/view-lecture/view-lecture.component`).then(
+            (c) => c.ViewLectureComponent,
           ),
       },
     ],

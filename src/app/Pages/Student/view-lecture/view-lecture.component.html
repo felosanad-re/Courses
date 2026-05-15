@@ -1,0 +1,141 @@
+<main class="lecture-page">
+  <aside class="lecture-sidebar">
+    <div class="lecture-sidebar__header">
+      <span class="lecture-sidebar__eyebrow">
+        <i class="pi pi-list"></i>
+        Course content
+      </span>
+      <h2>Sections</h2>
+    </div>
+
+    <div class="lecture-sidebar__loading" *ngIf="isSectionsLoading">
+      <span class="skeleton-pulse"></span>
+      <span class="skeleton-pulse"></span>
+      <span class="skeleton-pulse"></span>
+    </div>
+
+    <div
+      class="lecture-sidebar__error"
+      *ngIf="!isSectionsLoading && sectionsError"
+    >
+      <i class="pi pi-exclamation-circle"></i>
+      <p>{{ sectionsError }}</p>
+      <button type="button" (click)="getSections()">Try again</button>
+    </div>
+
+    <div
+      class="lecture-sidebar__sections"
+      *ngIf="!isSectionsLoading && !sectionsError"
+    >
+      <section
+        class="section-item"
+        *ngFor="
+          let section of sections;
+          let sectionIndex = index;
+          trackBy: trackBySectionId
+        "
+      >
+        <button
+          type="button"
+          class="section-item__header"
+          [class.section-item__header--active]="activeSectionId === section.id"
+          (click)="toggleSection(section.id)"
+        >
+          <span>
+            <strong>Section {{ sectionIndex + 1 }}</strong>
+            {{ section.title }}
+          </span>
+          <i
+            class="pi"
+            [ngClass]="
+              activeSectionId === section.id
+                ? 'pi-chevron-down'
+                : 'pi-chevron-right'
+            "
+          ></i>
+        </button>
+
+        <div
+          class="section-item__lectures"
+          *ngIf="activeSectionId === section.id"
+        >
+          <button
+            type="button"
+            class="lecture-link"
+            *ngFor="let lecture of section.lectures; trackBy: trackByLectureId"
+            [class.lecture-link--active]="activeLectureId === lecture.id"
+            (click)="playLecture(lecture)"
+          >
+            <i class="pi pi-play-circle"></i>
+            <span>{{ lecture.title }}</span>
+          </button>
+
+          <p class="section-item__empty" *ngIf="!section.lectures.length">
+            No lectures in this section.
+          </p>
+        </div>
+      </section>
+    </div>
+  </aside>
+
+  <!-- Play video -->
+  <section class="lecture-player">
+    <div class="lecture-player__top">
+      <div>
+        <span class="lecture-player__label">Now watching</span>
+        <h1>{{ activeVideoTitle }}</h1>
+      </div>
+    </div>
+
+    <div class="lecture-player__frame">
+      <div class="lecture-player__loading" *ngIf="isVideoLoading">
+        <i class="pi pi-spin pi-spinner"></i>
+        <span>Loading video...</span>
+      </div>
+
+      <div
+        class="lecture-player__message"
+        *ngIf="!isVideoLoading && videoError"
+      >
+        <i class="pi pi-exclamation-triangle"></i>
+        <p>{{ videoError }}</p>
+      </div>
+
+      <iframe
+        *ngIf="!isVideoLoading && !videoError && isYoutubeVideo && safeVideoUrl"
+        class="lecture-player__video"
+        [src]="safeVideoUrl"
+        title="Lecture video"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allowfullscreen
+      ></iframe>
+
+      <a
+        *ngIf="!isVideoLoading && !videoError && isYoutubeVideo && originalVideoUrl"
+        class="lecture-player__youtube-link"
+        [href]="originalVideoUrl"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <i class="pi pi-external-link"></i>
+        Open on YouTube
+      </a>
+
+      <video
+        *ngIf="!isVideoLoading && !videoError && !isYoutubeVideo && directVideoUrl"
+        class="lecture-player__video"
+        [src]="directVideoUrl"
+        controls
+        controlsList="nodownload"
+      ></video>
+
+      <div
+        class="lecture-player__message"
+        *ngIf="!isVideoLoading && !videoError && !safeVideoUrl && !directVideoUrl"
+      >
+        <i class="pi pi-video"></i>
+        <p>Select a lecture from the sidebar to start watching.</p>
+      </div>
+    </div>
+  </section>
+</main>

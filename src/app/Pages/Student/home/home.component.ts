@@ -127,11 +127,6 @@ export class HomeComponent {
             res.message || 'No courses available at the moment.';
         }
       },
-      error: (err) => {
-        this.isLoading = false;
-        this.error = 'Failed to load courses. Please try again.';
-        this._notifications.showError(this.error, 'Error');
-      },
       complete: () => {
         this.isLoading = false;
       },

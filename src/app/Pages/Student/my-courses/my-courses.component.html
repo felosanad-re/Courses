@@ -1,0 +1,153 @@
+<section class="my-courses-hero">
+  <div class="my-courses-hero__content">
+    <div>
+      <span class="my-courses-hero__eyebrow">
+        <i class="pi pi-play-circle"></i>
+        My learning
+      </span>
+      <h1 class="my-courses-hero__title">Continue your courses</h1>
+      <p class="my-courses-hero__subtitle">
+        Pick up where you left off and keep building your skills.
+      </p>
+    </div>
+
+    <div class="my-courses-hero__stats">
+      <div class="my-courses-hero__stat">
+        <strong>{{ courses.length }}</strong>
+        <span>Enrolled</span>
+      </div>
+      <div class="my-courses-hero__stat">
+        <strong>{{ filteredCourses.length }}</strong>
+        <span>Showing</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<main class="my-courses">
+  <div class="my-courses__toolbar">
+    <div>
+      <h2 class="my-courses__title">Your courses</h2>
+      <p class="my-courses__caption">
+        {{ courses.length }} course{{ courses.length === 1 ? "" : "s" }} in your
+        library
+      </p>
+    </div>
+
+    <label class="my-courses__search">
+      <i class="pi pi-search"></i>
+      <input
+        type="text"
+        placeholder="Search your courses..."
+        (input)="onSearchChange($event)"
+      />
+    </label>
+  </div>
+
+  <section class="my-courses__skeleton-grid" *ngIf="isLoading">
+    <article class="course-skeleton" *ngFor="let item of [1, 2, 3, 4, 5, 6]">
+      <div class="course-skeleton__image skeleton-pulse"></div>
+      <div class="course-skeleton__body">
+        <span class="course-skeleton__chip skeleton-pulse"></span>
+        <span class="course-skeleton__title skeleton-pulse"></span>
+        <span class="course-skeleton__line skeleton-pulse"></span>
+        <span
+          class="course-skeleton__line course-skeleton__line--short skeleton-pulse"
+        ></span>
+      </div>
+    </article>
+  </section>
+
+  <section class="state-card state-card--error" *ngIf="!isLoading && error">
+    <div class="state-card__icon">
+      <i class="pi pi-exclamation-circle"></i>
+    </div>
+    <h3>We could not load your courses</h3>
+    <p>{{ error }}</p>
+    <button type="button" (click)="getAllCourses()">
+      <i class="pi pi-refresh"></i>
+      Try again
+    </button>
+  </section>
+
+  <section
+    class="courses-grid"
+    *ngIf="!isLoading && !error && filteredCourses.length > 0"
+  >
+    <article
+      class="course-card"
+      *ngFor="let course of filteredCourses; trackBy: trackByCourseId"
+    >
+      <div class="course-card__media">
+        <img [src]="course.image" [alt]="course.name" loading="lazy" />
+        <span class="course-card__badge">{{ course.courseType }}</span>
+      </div>
+
+      <div class="course-card__body">
+        <div class="course-card__meta">
+          <span
+            [ngClass]="
+              course.isPaid
+                ? 'course-card__price'
+                : 'course-card__price course-card__price--free'
+            "
+          >
+            {{ course.isPaid ? "$" + course.price : "FREE" }}
+          </span>
+          <span class="course-card__status">
+            <i class="pi pi-check-circle"></i>
+            Enrolled
+          </span>
+        </div>
+
+        <h3 class="course-card__title">{{ course.name }}</h3>
+        <p class="course-card__description">{{ course.description }}</p>
+
+        <div class="course-card__progress">
+          <div class="course-card__progress-top">
+            <span>Ready to learn</span>
+            <strong>0%</strong>
+          </div>
+          <div class="course-card__progress-bar">
+            <span></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="course-card__footer">
+        <button
+          type="button"
+          class="course-card__button"
+          (click)="viewCourse(course.id)"
+        >
+          <i class="pi pi-play"></i>
+          Continue
+        </button>
+      </div>
+    </article>
+  </section>
+
+  <section
+    class="state-card"
+    *ngIf="!isLoading && !error && courses.length === 0"
+  >
+    <div class="state-card__icon">
+      <i class="pi pi-book"></i>
+    </div>
+    <h3>No enrolled courses yet</h3>
+    <p>When you enroll in a course, it will appear here.</p>
+  </section>
+
+  <section
+    class="state-card"
+    *ngIf="
+      !isLoading && !error && courses.length > 0 && filteredCourses.length === 0
+    "
+  >
+    <div class="state-card__icon">
+      <i class="pi pi-search"></i>
+    </div>
+    <h3>No matching courses</h3>
+    <p>Try searching by another course name, description, or category.</p>
+  </section>
+</main>
