@@ -3,4 +3,5 @@ export interface CourseWithLectureVideoResponse {
   title: string;
   videoUrl: string;
   order: number;
+  lastWatchedSeconds: number;
 }
