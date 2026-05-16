@@ -105,11 +105,13 @@
 
         <div class="course-card__progress">
           <div class="course-card__progress-top">
-            <span>Ready to learn</span>
-            <strong>0%</strong>
+            <span>{{ getCourseProgressLabel(course.id) }}</span>
+            <strong>{{ getCourseProgressPercentage(course.id) }}%</strong>
           </div>
           <div class="course-card__progress-bar">
-            <span></span>
+            <span
+              [style.width.%]="getCourseProgressPercentage(course.id)"
+            ></span>
           </div>
         </div>
       </div>

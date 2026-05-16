@@ -102,16 +102,27 @@
       </div>
 
       <iframe
+        id="youtubePlayer"
         *ngIf="!isVideoLoading && !videoError && isYoutubeVideo && safeVideoUrl"
         class="lecture-player__video"
         [src]="safeVideoUrl"
         title="Lecture video"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allow="
+          accelerometer;
+          autoplay;
+          clipboard-write;
+          encrypted-media;
+          gyroscope;
+          picture-in-picture;
+          web-share;
+        "
         allowfullscreen
       ></iframe>
 
       <a
-        *ngIf="!isVideoLoading && !videoError && isYoutubeVideo && originalVideoUrl"
+        *ngIf="
+          !isVideoLoading && !videoError && isYoutubeVideo && originalVideoUrl
+        "
         class="lecture-player__youtube-link"
         [href]="originalVideoUrl"
         target="_blank"
@@ -122,16 +133,22 @@
       </a>
 
       <video
-        *ngIf="!isVideoLoading && !videoError && !isYoutubeVideo && directVideoUrl"
+        #videoPlayer
+        *ngIf="
+          !isVideoLoading && !videoError && !isYoutubeVideo && directVideoUrl
+        "
         class="lecture-player__video"
         [src]="directVideoUrl"
         controls
         controlsList="nodownload"
+        (timeupdate)="onVideoTimeUpdate($event)"
       ></video>
 
       <div
         class="lecture-player__message"
-        *ngIf="!isVideoLoading && !videoError && !safeVideoUrl && !directVideoUrl"
+        *ngIf="
+          !isVideoLoading && !videoError && !safeVideoUrl && !directVideoUrl
+        "
       >
         <i class="pi pi-video"></i>
         <p>Select a lecture from the sidebar to start watching.</p>

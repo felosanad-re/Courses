@@ -2,8 +2,10 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ApplicationResult } from '../../../Core/Interfaces/application-result';
+import { CourseProgressResponse } from '../../../Core/Interfaces/Progresses/course-progress-response';
 import { CoursesToReturnDTO } from '../../../Core/Interfaces/Courses/courses-to-return-dto';
 import { StudentService } from '../../../Core/Services/Student/student.service';
+import { ProgressService } from '../../../Core/Services/Progress/progress.service';
 
 @Component({
   selector: 'app-my-courses',
@@ -15,12 +17,14 @@ import { StudentService } from '../../../Core/Services/Student/student.service';
 export class MyCoursesComponent implements OnInit {
   courses: CoursesToReturnDTO[] = [];
   filteredCourses: CoursesToReturnDTO[] = [];
+  courseProgressMap = new Map<number, CourseProgressResponse>();
   isLoading = false;
   error: string | null = null;
   searchTerm = '';
 
   constructor(
     private readonly _studentService: StudentService,
+    private readonly _progressService: ProgressService,
     private readonly _router: Router,
   ) {}
 
@@ -38,6 +42,7 @@ export class MyCoursesComponent implements OnInit {
         if (res.succeed && res.data) {
           this.courses = res.data;
           this.filteredCourses = res.data;
+          this.loadCoursesProgress();
           return;
         }
 
@@ -68,6 +73,30 @@ export class MyCoursesComponent implements OnInit {
 
   viewCourse(courseId: number): void {
     this._router.navigate(['/student', 'view-lecture', courseId]);
+  }
+
+  getCourseProgressPercentage(courseId: number): number {
+    return this.courseProgressMap.get(courseId)?.ProgressPercentage ?? 0;
+  }
+
+  getCourseProgressLabel(courseId: number): string {
+    const progress = this.courseProgressMap.get(courseId);
+    if (!progress) return 'Ready to learn';
+    if (progress.ProgressPercentage === 100) return 'Completed!';
+    if (progress.ProgressPercentage > 0) return 'In progress';
+    return 'Ready to learn';
+  }
+
+  private loadCoursesProgress(): void {
+    this.courses.forEach((course) => {
+      this._progressService.getCourseProgress(course.id).subscribe({
+        next: (res: ApplicationResult<CourseProgressResponse>) => {
+          if (res.succeed && res.data) {
+            this.courseProgressMap.set(course.id, res.data);
+          }
+        },
+      });
+    });
   }
 
   trackByCourseId(index: number, course: CoursesToReturnDTO): number {
