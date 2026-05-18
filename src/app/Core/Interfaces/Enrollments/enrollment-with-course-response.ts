@@ -2,10 +2,11 @@ import { CourseDetailsToReturnDTO } from '../Courses/course-details-to-return-dt
 import { EnrollmentStatus } from './enrollment-status';
 
 export interface EnrollmentWithCourseResponse {
-  Status: EnrollmentStatus;
-  EnrollmentId: number;
-  Course: CourseDetailsToReturnDTO;
-  CourseId: number;
-  UserId: string;
-  CheckOutURL: string;
+  status: EnrollmentStatus;
+  enrollmentId: number;
+  course: CourseDetailsToReturnDTO;
+  courseId: number;
+  userId: string;
+  paymentIntentId: string;
+  clientSecret: string;
 }
