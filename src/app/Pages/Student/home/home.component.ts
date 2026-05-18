@@ -139,28 +139,37 @@ export class HomeComponent {
   }
 
   // Enroll in a course
-  enrollInCourse(courseId: number) {
-    this._enrollmentServices.createEnrollment({ courseId }).subscribe({
-      next: (res: ApplicationResult<EnrollmentWithCourseResponse>) => {
-        if (res.succeed && res.data) {
-          this._notifications.showSuccess(
-            res.message || 'Enrollment successful',
-            'Enrollment',
-          );
-        } else {
-          this._notifications.showError(
-            res.message || 'Enrollment failed',
-            'Enrollment',
-          );
-        }
-      },
-      error: () => {
-        this._notifications.showError(
-          'Something went wrong. Please try again.',
-          'Enrollment',
-        );
-      },
-    });
+  enrollInCourse(course: CoursesToReturnDTO) {
+    this._enrollmentServices
+      .createEnrollment({ courseId: course.id })
+      .subscribe({
+        next: (res: ApplicationResult<EnrollmentWithCourseResponse>) => {
+          if (res.succeed && res.data) {
+            if (course.isPaid) {
+              this._notifications.showSuccess(
+                res.message || 'Enrollment created. Complete your payment.',
+                'Enrollment',
+              );
+              this._router.navigate([
+                '/student',
+                'payment',
+                res.data.enrollmentId,
+              ]);
+              return;
+            }
+
+            this._notifications.showSuccess(
+              res.message || 'Enrollment successful',
+              'Enrollment',
+            );
+          } else {
+            this._notifications.showError(
+              res.message || 'Enrollment failed',
+              'Enrollment',
+            );
+          }
+        },
+      });
   }
 
   // Fetch course types for filter chips

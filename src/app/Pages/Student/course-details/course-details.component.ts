@@ -71,6 +71,19 @@ export class CourseDetailsComponent implements OnInit {
       .subscribe({
         next: (res: ApplicationResult<EnrollmentWithCourseResponse>) => {
           if (res.succeed && res.data) {
+            if (this.courseDetails.isPaid) {
+              this._notifications.showSuccess(
+                res.message || 'Enrollment created. Complete your payment.',
+                'Enrollment',
+              );
+              this._router.navigate([
+                '/student',
+                'payment',
+                res.data.enrollmentId,
+              ]);
+              return;
+            }
+
             this._notifications.showSuccess(
               res.message || 'Enrollment successful',
               'Enrollment',
