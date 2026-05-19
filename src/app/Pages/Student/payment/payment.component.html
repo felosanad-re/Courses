@@ -1,0 +1,63 @@
+<section class="payment-page">
+  <div class="payment-page__shell">
+    <header class="payment-page__header">
+      <button
+        type="button"
+        class="payment-page__back"
+        (click)="goBack()"
+        aria-label="Back to courses"
+      >
+        <i class="pi pi-arrow-left"></i>
+      </button>
+      <div>
+        <span class="payment-page__eyebrow">Secure checkout</span>
+        <h1 class="payment-page__title">Complete your enrollment</h1>
+      </div>
+    </header>
+
+    <div class="payment-page__content">
+      <div class="payment-page__summary">
+        <div class="payment-page__summary-icon">
+          <i class="pi pi-shield"></i>
+        </div>
+        <h2 class="payment-page__summary-title">Payment details</h2>
+        <p class="payment-page__summary-text">
+          Enrollment #{{ enrollmentId }}
+        </p>
+      </div>
+
+      <form class="payment-form" (ngSubmit)="confirmPayment()">
+        <div *ngIf="isLoading" class="payment-form__loading">
+          <i class="pi pi-spin pi-spinner"></i>
+          Preparing secure payment...
+        </div>
+
+        <div
+          class="payment-form__stripe"
+          [class.payment-form__stripe--hidden]="isLoading"
+          #paymentElement
+        ></div>
+
+        <div *ngIf="paymentError" class="payment-form__error">
+          <i class="pi pi-exclamation-circle"></i>
+          <span>{{ paymentError }}</span>
+        </div>
+
+        <button
+          type="submit"
+          class="payment-form__submit"
+          [disabled]="isLoading || isSubmitting || !paymentReady"
+        >
+          <span *ngIf="!isSubmitting">
+            <i class="pi pi-credit-card"></i>
+            Pay now
+          </span>
+          <span *ngIf="isSubmitting">
+            <i class="pi pi-spin pi-spinner"></i>
+            Processing...
+          </span>
+        </button>
+      </form>
+    </div>
+  </div>
+</section>

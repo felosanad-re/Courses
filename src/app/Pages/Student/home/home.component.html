@@ -108,7 +108,7 @@
         <button
           class="course-card__btn course-card__btn--enroll"
           [ngClass]="{ 'course-card__btn--enroll-free': !course.isPaid }"
-          (click)="enrollInCourse(course.id)"
+          (click)="enrollInCourse(course)"
         >
           <i class="pi pi-sign-in"></i>
           {{ course.isPaid ? "Enroll Now" : "Start Free" }}

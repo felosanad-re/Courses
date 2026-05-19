@@ -136,6 +136,13 @@ export const routes: Routes = [
           ).then((c) => c.CourseDetailsComponent),
       },
       {
+        path: 'payment/:enrollmentId',
+        loadComponent: () =>
+          import(`./Pages/Student/payment/payment.component`).then(
+            (c) => c.PaymentComponent,
+          ),
+      },
+      {
         path: 'my-courses',
         loadComponent: () =>
           import(`./Pages/Student/my-courses/my-courses.component`).then(
