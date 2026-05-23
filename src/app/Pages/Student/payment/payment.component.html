@@ -20,10 +20,37 @@
         <div class="payment-page__summary-icon">
           <i class="pi pi-shield"></i>
         </div>
-        <h2 class="payment-page__summary-title">Payment details</h2>
-        <p class="payment-page__summary-text">
-          Enrollment #{{ enrollmentId }}
-        </p>
+        <div
+          class="payment-page__course-image"
+          *ngIf="courseDetails?.image"
+        >
+          <img
+            [src]="courseDetails?.image"
+            [alt]="getCourseName()"
+            loading="lazy"
+          />
+        </div>
+        <span class="payment-page__course-type">{{ getCourseType() }}</span>
+        <h2 class="payment-page__summary-title">{{ getCourseName() }}</h2>
+        <p class="payment-page__summary-text">Enrollment #{{ enrollmentId }}</p>
+
+        <div class="payment-page__amount">
+          <span class="payment-page__amount-label">Total amount</span>
+          <strong class="payment-page__amount-value">
+            {{ getFormattedAmount() }}
+          </strong>
+        </div>
+
+        <div class="payment-page__details">
+          <div class="payment-page__detail-row">
+            <span>Payment method</span>
+            <strong>Stripe</strong>
+          </div>
+          <div class="payment-page__detail-row">
+            <span>Status</span>
+            <strong>Pending</strong>
+          </div>
+        </div>
       </div>
 
       <form class="payment-form" (ngSubmit)="confirmPayment()">
