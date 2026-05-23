@@ -1,57 +1,22 @@
-import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 import {
   Component,
   ElementRef,
-  Inject,
   OnDestroy,
   OnInit,
-  PLATFORM_ID,
   ViewChild,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { PaymentService } from '../../../Core/Services/Payments/payment.service';
-import { NotificationsService } from '../../../Core/Services/notifications.service';
 import { ApplicationResult } from '../../../Core/Interfaces/application-result';
+import { CourseDetailsToReturnDTO } from '../../../Core/Interfaces/Courses/course-details-to-return-dto';
 import { PaymentResponse } from '../../../Core/Interfaces/Payments/payment-response';
-import { environment } from '../../../../environments/environment';
-
-type StripePaymentResult = {
-  error?: { message?: string };
-  paymentIntent?: { status?: string };
-};
-
-interface StripePaymentElement {
-  mount(element: HTMLElement): void;
-  unmount(): void;
-  on(
-    eventName: 'change',
-    callback: (event: {
-      complete: boolean;
-      error?: { message?: string };
-    }) => void,
-  ): void;
-}
-
-interface StripeElements {
-  create(type: 'payment'): StripePaymentElement;
-}
-
-interface StripeClient {
-  elements(options: {
-    clientSecret: string;
-    appearance?: Record<string, unknown>;
-  }): StripeElements;
-  confirmPayment(options: {
-    elements: StripeElements;
-    redirect: 'if_required';
-    confirmParams: { return_url: string };
-  }): Promise<StripePaymentResult>;
-}
-
-interface StripeWindow extends Window {
-  Stripe?: (publishableKey: string) => StripeClient;
-}
+import { StripeElements } from '../../../Core/Interfaces/Stripe/stripe-elements';
+import { StripePaymentElement } from '../../../Core/Interfaces/Stripe/stripe-payment-element';
+import { CoursesService } from '../../../Core/Services/Courses/courses.service';
+import { PaymentService } from '../../../Core/Services/Payments/payment.service';
+import { StripeService } from '../../../Core/Services/Stripe/stripe.service';
+import { NotificationsService } from '../../../Core/Services/notifications.service';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-payment',
@@ -62,24 +27,26 @@ interface StripeWindow extends Window {
 })
 export class PaymentComponent implements OnInit, OnDestroy {
   @ViewChild('paymentElement') paymentElementRef?: ElementRef<HTMLElement>;
-
-  enrollmentId!: number;
-  clientSecret: string | null = null;
   isLoading = false;
   isSubmitting = false;
+
+  // Stripe Properties
+  enrollmentId!: number;
+  clientSecret: string | null = null;
   paymentReady = false;
   paymentError: string | null = null;
+  courseDetails: CourseDetailsToReturnDTO | null = null;
 
-  private stripe: StripeClient | null = null;
   private elements: StripeElements | null = null;
   private paymentElement: StripePaymentElement | null = null;
 
   constructor(
     private readonly _route: ActivatedRoute,
     private readonly _paymentService: PaymentService,
+    private readonly _courseService: CoursesService,
+    private readonly _stripeService: StripeService,
     private readonly _notifications: NotificationsService,
     private readonly _router: Router,
-    @Inject(PLATFORM_ID) private readonly _platformId: object,
   ) {}
 
   ngOnInit(): void {
@@ -98,7 +65,7 @@ export class PaymentComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.paymentElement?.unmount();
+    this._stripeService.unmountElement(this.paymentElement);
   }
 
   createPaymentIntent(): void {
@@ -119,14 +86,19 @@ export class PaymentComponent implements OnInit, OnDestroy {
             return;
           }
 
+          if (res.data?.courseId) {
+            this.getCourseDetails(res.data.courseId);
+          }
+
           this.clientSecret = clientSecret;
-          void this.initializeStripe(clientSecret);
+          void this.mountStripeElement(clientSecret); // Create Stripe Elements
         },
       });
   }
 
   async confirmPayment(): Promise<void> {
-    if (!this.stripe || !this.elements || !this.paymentReady) {
+    debugger;
+    if (!this.elements || !this.paymentReady || !this.clientSecret) {
       this.paymentError = 'Please complete your payment details first.';
       return;
     }
@@ -134,32 +106,23 @@ export class PaymentComponent implements OnInit, OnDestroy {
     this.isSubmitting = true;
     this.paymentError = null;
 
-    const result = await this.stripe.confirmPayment({
-      elements: this.elements,
-      redirect: 'if_required',
-      confirmParams: {
-        return_url: `${window.location.origin}/student/my-courses`,
-      },
-    });
+    try {
+      const result = await this._stripeService.confirmPayment(
+        this.elements,
+        `${window.location.origin}/student/my-courses`,
+      );
 
-    // If Stripe redirected the user (3D Secure), we won't reach this code.
-    // The PaymentReturnComponent will handle the redirect instead.
-    this.isSubmitting = false;
+      if (result.error) {
+        this.isSubmitting = false;
+        this.paymentError = result.error.message || 'Payment failed.';
+        this._notifications.showError(this.paymentError, 'Payment');
+        return;
+      }
 
-    if (result.error) {
-      this.paymentError = result.error.message || 'Payment failed.';
-      this._notifications.showError(this.paymentError, 'Payment');
-      return;
-    }
-
-    // Payment succeeded without redirect — verify with backend
-    const paymentIntentId = this.extractPaymentIntentId(this.clientSecret!);
-
-    if (paymentIntentId) {
-      this.verifyWithBackend(paymentIntentId);
-    } else {
-      this.paymentError =
-        'Payment verification failed. Please contact support.';
+      this.verifyWithBackend(this.extractPaymentIntentId(this.clientSecret));
+    } catch {
+      this.isSubmitting = false;
+      this.paymentError = 'Unable to confirm payment. Please try again.';
       this._notifications.showError(this.paymentError, 'Payment');
     }
   }
@@ -168,9 +131,35 @@ export class PaymentComponent implements OnInit, OnDestroy {
     this._router.navigate(['/student', 'home']);
   }
 
-  private extractPaymentIntentId(clientSecret: string): string {
-    // Stripe clientSecret format: "pi_xxx_secret_xxx"
-    return clientSecret.split('_secret_')[0];
+  getCourseName(): string {
+    return this.courseDetails?.name || 'Selected course';
+  }
+
+  getCourseType(): string {
+    return this.courseDetails?.courseType || 'Paid course';
+  }
+
+  getFormattedAmount(): string {
+    const amount = this.courseDetails?.price;
+
+    if (amount === undefined || amount === null) {
+      return 'To be confirmed';
+    }
+
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+    }).format(amount);
+  }
+
+  getCourseDetails(courseId: number): void {
+    this._courseService.getCourseDetails(courseId).subscribe({
+      next: (res: ApplicationResult<CourseDetailsToReturnDTO>) => {
+        if (res.succeed && res.data) {
+          this.courseDetails = res.data;
+        }
+      },
+    });
   }
 
   private verifyWithBackend(paymentIntentId: string): void {
@@ -191,54 +180,34 @@ export class PaymentComponent implements OnInit, OnDestroy {
           this._notifications.showError(this.paymentError, 'Payment');
         }
       },
-      error: () => {
-        this.isSubmitting = false;
-        this.paymentError =
-          'Unable to verify payment with server. Please contact support.';
-        this._notifications.showError(this.paymentError, 'Payment');
-      },
     });
   }
 
-  private async initializeStripe(clientSecret: string): Promise<void> {
-    if (!isPlatformBrowser(this._platformId)) {
-      this.isLoading = false;
-      return;
-    }
-
-    if (!environment.stripePublishableKey) {
-      this.paymentError = 'Stripe publishable key is not configured.';
+  private async mountStripeElement(clientSecret: string): Promise<void> {
+    if (!this.paymentElementRef) {
+      this.paymentError = 'Payment form is not ready. Please try again.';
       this._notifications.showError(this.paymentError, 'Payment');
       this.isLoading = false;
       return;
     }
 
     try {
-      await this.loadStripeScript();
-      const stripeFactory = (window as StripeWindow).Stripe;
-
-      if (!stripeFactory || !this.paymentElementRef) {
-        throw new Error('Stripe failed to load.');
-      }
-
-      this.stripe = stripeFactory(environment.stripePublishableKey);
-      this.elements = this.stripe.elements({
-        clientSecret,
-        appearance: {
-          theme: 'stripe',
-          variables: {
-            borderRadius: '8px',
-            colorPrimary: '#2563eb',
-          },
+      this.elements = await this._stripeService.createElements(clientSecret, {
+        theme: 'stripe',
+        variables: {
+          borderRadius: '8px',
+          colorPrimary: '#2563eb',
         },
       });
 
-      this.paymentElement = this.elements.create('payment');
-      this.paymentElement.on('change', (event) => {
-        this.paymentReady = event.complete;
-        this.paymentError = event.error?.message || null;
-      });
-      this.paymentElement.mount(this.paymentElementRef.nativeElement);
+      this.paymentElement = this._stripeService.createPaymentElement(
+        this.elements,
+        this.paymentElementRef.nativeElement,
+        (event) => {
+          this.paymentReady = event.complete;
+          this.paymentError = event.error?.message || null;
+        },
+      );
     } catch {
       this.paymentError = 'Unable to load Stripe. Please try again.';
       this._notifications.showError(this.paymentError, 'Payment');
@@ -247,23 +216,11 @@ export class PaymentComponent implements OnInit, OnDestroy {
     }
   }
 
-  private loadStripeScript(): Promise<void> {
-    const stripeWindow = window as StripeWindow;
-
-    if (stripeWindow.Stripe) {
-      return Promise.resolve();
-    }
-
-    return new Promise((resolve, reject) => {
-      const script = document.createElement('script');
-      script.src = 'https://js.stripe.com/v3/';
-      script.onload = () => resolve();
-      script.onerror = () => reject();
-      document.head.appendChild(script);
-    });
+  private extractPaymentIntentId(clientSecret: string): string {
+    return clientSecret.split('_secret_')[0];
   }
 
   private getClientSecret(payment: PaymentResponse | null): string | null {
-    return payment?.clientSecret || payment?.ClientSecret || null;
+    return payment?.clientSecret || null;
   }
 }
