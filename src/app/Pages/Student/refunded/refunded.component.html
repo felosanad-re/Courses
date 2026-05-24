@@ -1,0 +1,123 @@
+<!-- Loading State -->
+<div
+  class="flex flex-column align-items-center justify-content-center p-5"
+  *ngIf="!course"
+>
+  <i
+    class="pi pi-spin pi-spinner text-4xl mb-3"
+    style="color: var(--primary)"
+  ></i>
+  <p class="text-lg" style="color: var(--gray-500)">
+    Loading course details...
+  </p>
+</div>
+
+<!-- Refund Page Content -->
+<div
+  class="refund-page flex flex-column align-items-center p-4 mt-4"
+  *ngIf="course"
+>
+  <!-- Page Header -->
+  <div class="refund-header text-center mb-4">
+    <span class="refund-header__eyebrow inline-flex align-items-center mb-2">
+      <i class="pi pi-replay mr-1"></i>
+      Refund Request
+    </span>
+    <h1 class="refund-header__title text-3xl font-bold mb-2">
+      Request a Refund
+    </h1>
+    <p class="refund-header__subtitle text-base" style="color: var(--gray-500)">
+      Review the course details below and submit your refund request.
+    </p>
+  </div>
+
+  <!-- Course Info Card -->
+  <div
+    class="refund-card flex flex-column md:flex-row align-items-center shadow-2 border-round-md p-4 mb-4 w-full"
+    style="max-width: 800px"
+  >
+    <!-- Course Image -->
+    <div class="flex-shrink-0 mb-3 md:mb-0 md:mr-4">
+      <img
+        [src]="course.image"
+        [alt]="course.name"
+        class="refund-card__img border-round-md"
+      />
+    </div>
+
+    <!-- Course Details -->
+    <div class="flex flex-column flex-grow-1">
+      <h2 class="text-xl font-bold mb-2" style="color: var(--dark)">
+        {{ course.name }}
+      </h2>
+      <p class="text-sm mb-2" style="color: var(--gray-500)">
+        {{ course.description }}
+      </p>
+      <div class="flex align-items-center gap-2 mb-2">
+        <i class="pi pi-user text-sm" style="color: var(--primary)"></i>
+        <span class="text-sm font-semibold" style="color: var(--gray-700)">
+          {{ course.instructorName }}
+        </span>
+      </div>
+      <div class="flex align-items-center gap-2">
+        <i class="pi pi-tag text-sm" style="color: var(--primary)"></i>
+        <span class="text-sm" style="color: var(--gray-500)">
+          {{ course.courseType }}
+        </span>
+      </div>
+      <span
+        class="refund-card__price inline-flex align-items-center mt-2 text-lg font-bold"
+        [ngClass]="
+          course.isPaid
+            ? 'refund-card__price--paid'
+            : 'refund-card__price--free'
+        "
+      >
+        {{ course.isPaid ? "$" + course.price : "FREE" }}
+      </span>
+    </div>
+  </div>
+
+  <!-- Refund Form -->
+  <div
+    class="refund-form shadow-2 border-round-md p-4 w-full"
+    style="max-width: 800px"
+  >
+    <h3 class="text-lg font-bold mb-3" style="color: var(--dark)">
+      <i class="pi pi-exclamation-circle mr-2" style="color: var(--error)"></i>
+      Why are you requesting a refund?
+    </h3>
+    <p class="text-sm mb-3" style="color: var(--gray-500)">
+      Please provide a reason for your refund request. This helps us process it
+      faster.
+    </p>
+
+    <textarea
+      [(ngModel)]="cancellationReason"
+      class="refund-form__textarea w-full p-3 border-round-md mb-4"
+      rows="5"
+      placeholder="Tell us why you want to refund this course..."
+    ></textarea>
+
+    <div class="flex justify-content-between align-items-center">
+      <button
+        type="button"
+        class="refund-btn refund-btn--cancel p-2 px-4 border-round-md cursor-pointer"
+        (click)="goBack()"
+      >
+        <i class="pi pi-arrow-left mr-2"></i>
+        Cancel
+      </button>
+
+      <button
+        type="button"
+        class="refund-btn refund-btn--submit p-2 px-4 border-round-md cursor-pointer"
+        (click)="refund()"
+        [disabled]="isSubmitting"
+      >
+        <i class="pi pi-refresh mr-2"></i>
+        {{ isSubmitting ? "Processing..." : "Request Refund" }}
+      </button>
+    </div>
+  </div>
+</div>

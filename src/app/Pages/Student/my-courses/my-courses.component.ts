@@ -1,3 +1,4 @@
+import { RefundRequest } from './../../../Core/Interfaces/Refunds/refund-request';
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
@@ -6,6 +7,10 @@ import { CourseProgressResponse } from '../../../Core/Interfaces/Progresses/cour
 import { CoursesToReturnDTO } from '../../../Core/Interfaces/Courses/courses-to-return-dto';
 import { StudentService } from '../../../Core/Services/Student/student.service';
 import { ProgressService } from '../../../Core/Services/Progress/progress.service';
+import { RefundsService } from '../../../Core/Services/Refunds/refunds.service';
+import { RefundResponse } from '../../../Core/Interfaces/Refunds/refund-response';
+import { NotificationsService } from '../../../Core/Services/notifications.service';
+import { EnrollmentWithCoursesResponse } from '../../../Core/Interfaces/Enrollments/enrollment-with-courses-response';
 
 @Component({
   selector: 'app-my-courses',
@@ -15,8 +20,8 @@ import { ProgressService } from '../../../Core/Services/Progress/progress.servic
   styleUrl: './my-courses.component.scss',
 })
 export class MyCoursesComponent implements OnInit {
-  courses: CoursesToReturnDTO[] = [];
-  filteredCourses: CoursesToReturnDTO[] = [];
+  courses: EnrollmentWithCoursesResponse[] = [];
+  filteredCourses: EnrollmentWithCoursesResponse[] = [];
   courseProgressMap = new Map<number, CourseProgressResponse>();
   isLoading = false;
   error: string | null = null;
@@ -38,7 +43,7 @@ export class MyCoursesComponent implements OnInit {
     this.error = null;
 
     this._studentService.getStudentCourses().subscribe({
-      next: (res: ApplicationResult<CoursesToReturnDTO[]>) => {
+      next: (res: ApplicationResult<EnrollmentWithCoursesResponse[]>) => {
         if (res.succeed && res.data) {
           this.courses = res.data;
           this.filteredCourses = res.data;
@@ -89,17 +94,25 @@ export class MyCoursesComponent implements OnInit {
 
   private loadCoursesProgress(): void {
     this.courses.forEach((course) => {
-      this._progressService.getCourseProgress(course.id).subscribe({
+      this._progressService.getCourseProgress(course.courseId).subscribe({
         next: (res: ApplicationResult<CourseProgressResponse>) => {
           if (res.succeed && res.data) {
-            this.courseProgressMap.set(course.id, res.data);
+            this.courseProgressMap.set(course.courseId, res.data);
           }
         },
       });
     });
   }
 
-  trackByCourseId(index: number, course: CoursesToReturnDTO): number {
-    return course.id;
+  trackByCourseId(
+    index: number,
+    course: EnrollmentWithCoursesResponse,
+  ): number {
+    return course.courseId;
+  }
+
+  refund(course: EnrollmentWithCoursesResponse): void {
+    if (course.isPaid === false) return;
+    this._router.navigate(['/student', 'refund', course.id, course.courseId]);
   }
 }

@@ -163,6 +163,13 @@ export const routes: Routes = [
             (c) => c.ViewLectureComponent,
           ),
       },
+      {
+        path: 'refund/:enrollmentId/:courseId',
+        loadComponent: () =>
+          import(`./Pages/Student/refunded/refunded.component`).then(
+            (c) => c.RefundedComponent,
+          ),
+      },
     ],
   },
 ];
