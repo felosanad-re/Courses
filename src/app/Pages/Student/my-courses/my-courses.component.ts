@@ -1,3 +1,4 @@
+import { RefundRequest } from './../../../Core/Interfaces/Refunds/refund-request';
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
@@ -6,6 +7,9 @@ import { CourseProgressResponse } from '../../../Core/Interfaces/Progresses/cour
 import { CoursesToReturnDTO } from '../../../Core/Interfaces/Courses/courses-to-return-dto';
 import { StudentService } from '../../../Core/Services/Student/student.service';
 import { ProgressService } from '../../../Core/Services/Progress/progress.service';
+import { RefundsService } from '../../../Core/Services/Refunds/refunds.service';
+import { RefundResponse } from '../../../Core/Interfaces/Refunds/refund-response';
+import { NotificationsService } from '../../../Core/Services/notifications.service';
 
 @Component({
   selector: 'app-my-courses',
@@ -21,10 +25,13 @@ export class MyCoursesComponent implements OnInit {
   isLoading = false;
   error: string | null = null;
   searchTerm = '';
+  cancellationReason: string | null = null;
 
   constructor(
     private readonly _studentService: StudentService,
+    private readonly _refundService: RefundsService,
     private readonly _progressService: ProgressService,
+    private readonly _notifications: NotificationsService,
     private readonly _router: Router,
   ) {}
 
@@ -101,5 +108,24 @@ export class MyCoursesComponent implements OnInit {
 
   trackByCourseId(index: number, course: CoursesToReturnDTO): number {
     return course.id;
+  }
+
+  refund() {
+    const data: RefundRequest = {
+      enrollmentId: 1,
+      cancellationReason: this.cancellationReason,
+    };
+
+    this._refundService.createRefund(data).subscribe({
+      next: (res: ApplicationResult<RefundResponse>) => {
+        if (res.succeed) {
+          this._notifications.showSuccess(
+            res.message || 'Refund successful',
+            'Refund',
+          );
+          this.getAllCourses();
+        }
+      },
+    });
   }
 }
