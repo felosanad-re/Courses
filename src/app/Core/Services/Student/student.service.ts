@@ -6,6 +6,7 @@ import { CoursesToReturnDTO } from '../../Interfaces/Courses/courses-to-return-d
 import { environment } from '../../../../environments/environment';
 import { SectionWithCourseResponse } from '../../Interfaces/Courses/section-with-course-response';
 import { CourseWithLectureVideoResponse } from '../../Interfaces/Courses/course-with-lecture-video-response';
+import { EnrollmentWithCoursesResponse } from '../../Interfaces/Enrollments/enrollment-with-courses-response';
 
 @Injectable({
   providedIn: 'root',
@@ -14,8 +15,10 @@ export class StudentService {
   constructor(private readonly _http: HttpClient) {}
 
   // Get Student Courses
-  getStudentCourses(): Observable<ApplicationResult<CoursesToReturnDTO[]>> {
-    return this._http.get<ApplicationResult<CoursesToReturnDTO[]>>(
+  getStudentCourses(): Observable<
+    ApplicationResult<EnrollmentWithCoursesResponse[]>
+  > {
+    return this._http.get<ApplicationResult<EnrollmentWithCoursesResponse[]>>(
       `${environment.apiUrl}/Student/Courses`,
     );
   }
