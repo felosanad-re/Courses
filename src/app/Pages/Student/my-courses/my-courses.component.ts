@@ -26,13 +26,10 @@ export class MyCoursesComponent implements OnInit {
   isLoading = false;
   error: string | null = null;
   searchTerm = '';
-  cancellationReason: string | null = null;
 
   constructor(
     private readonly _studentService: StudentService,
-    private readonly _refundService: RefundsService,
     private readonly _progressService: ProgressService,
-    private readonly _notifications: NotificationsService,
     private readonly _router: Router,
   ) {}
 
@@ -114,22 +111,8 @@ export class MyCoursesComponent implements OnInit {
     return course.courseId;
   }
 
-  refund() {
-    const data: RefundRequest = {
-      enrollmentId: 1,
-      cancellationReason: this.cancellationReason,
-    };
-
-    this._refundService.createRefund(data).subscribe({
-      next: (res: ApplicationResult<RefundResponse>) => {
-        if (res.succeed) {
-          this._notifications.showSuccess(
-            res.message || 'Refund successful',
-            'Refund',
-          );
-          this.getAllCourses();
-        }
-      },
-    });
+  refund(course: EnrollmentWithCoursesResponse): void {
+    if (course.isPaid === false) return;
+    this._router.navigate(['/student', 'refund', course.id, course.courseId]);
   }
 }

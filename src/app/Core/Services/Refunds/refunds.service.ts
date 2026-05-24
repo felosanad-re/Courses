@@ -16,7 +16,7 @@ export class RefundsService {
     data: RefundRequest,
   ): Observable<ApplicationResult<RefundResponse>> {
     return this._http.post<ApplicationResult<RefundResponse>>(
-      `${environment.apiUrl}/refunds/CreateRefund`,
+      `${environment.apiUrl}/refund/CreateRefund`,
       data,
     );
   }

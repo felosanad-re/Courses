@@ -1,0 +1,81 @@
+/* ===== Refund Page – Minimal SCSS (PrimeFlex handles most layout) ===== */
+
+.refund-header__eyebrow {
+  padding: 0.4rem 0.85rem;
+  border-radius: var(--radius-xl);
+  background: rgba(108, 99, 255, 0.12);
+  color: var(--primary);
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.refund-header__title {
+  color: var(--dark);
+}
+
+.refund-card__img {
+  width: 220px;
+  height: 140px;
+  object-fit: cover;
+}
+
+.refund-card__price--paid {
+  color: var(--primary-dark);
+}
+
+.refund-card__price--free {
+  color: var(--success);
+}
+
+.refund-form__textarea {
+  border: 1px solid var(--gray-300);
+  background: var(--gray-100);
+  color: var(--gray-900);
+  font-family: "Inter", sans-serif;
+  font-size: 0.95rem;
+  resize: vertical;
+  transition: var(--transition);
+
+  &:focus {
+    outline: none;
+    border-color: var(--primary);
+    background: var(--white);
+    box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.15);
+  }
+
+  &::placeholder {
+    color: var(--gray-500);
+  }
+}
+
+.refund-btn {
+  font-family: "Inter", sans-serif;
+  font-weight: 600;
+  font-size: 0.95rem;
+  border: none;
+  transition: var(--transition);
+
+  &--cancel {
+    background: var(--gray-100);
+    color: var(--gray-700);
+    border: 1px solid var(--gray-300);
+
+    &:hover {
+      background: var(--gray-300);
+    }
+  }
+
+  &--submit {
+    background: var(--error);
+    color: var(--white);
+
+    &:hover {
+      background: #e0394a;
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+}

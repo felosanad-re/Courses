@@ -120,10 +120,19 @@
         <button
           type="button"
           class="course-card__button"
-          (click)="viewCourse(course.id)"
+          (click)="viewCourse(course.courseId)"
         >
           <i class="pi pi-play"></i>
           Continue
+        </button>
+
+        <button
+          type="button"
+          class="course-card__button my-3"
+          (click)="refund(course)"
+        >
+          <i class="pi pi-times"></i>
+          Refund
         </button>
       </div>
     </article>
