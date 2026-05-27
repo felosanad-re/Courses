@@ -30,7 +30,6 @@ export class CreateCourseComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private instructorsService: InstructorsService,
     private router: Router,
   ) {}
 
@@ -58,8 +57,8 @@ export class CreateCourseComponent implements OnInit {
         return;
       }
 
-      if (file.size > 5 * 1024 * 1024) {
-        alert('Image size must be less than 5MB');
+      if (file.size > 2 * 1024 * 1024) {
+        alert('Image size must be less than 2MB');
         return;
       }
 
@@ -136,18 +135,14 @@ export class CreateCourseComponent implements OnInit {
       price: this.courseForm.get('price')?.value || 0,
     };
 
-    this.instructorsService.addCourse(courseData).subscribe({
-      next: (response: ApplicationResult<CourseResponseForInstructor>) => {
-        if (response.succeed) {
-          this.router.navigate(['/instructor/dashboard']);
-        }
-        this.isSubmitting = false;
-      },
-      error: (error) => {
-        console.error('Error creating course:', error);
-        this.isSubmitting = false;
-      },
-    });
+    // this.instructorsService.addCourse(courseData).subscribe({
+    //   next: (response: ApplicationResult<CourseResponseForInstructor>) => {
+    //     if (response.succeed) {
+    //       this.router.navigate(['/instructor/dashboard']);
+    //     }
+    //     this.isSubmitting = false;
+    //   },
+    // });
   }
 
   getStepTitle(step: number): string {
