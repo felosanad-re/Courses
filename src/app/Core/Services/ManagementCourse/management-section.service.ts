@@ -39,7 +39,7 @@ export class ManagementSectionService {
     sectionId: number,
   ): Observable<ApplicationResult<DeleteSectionResponse>> {
     return this._http.delete<ApplicationResult<DeleteSectionResponse>>(
-      `${environment.apiUrl}/ManagementSection/Update/${sectionId}`,
+      `${environment.apiUrl}/ManagementSection/${sectionId}`,
     );
   }
 
@@ -48,7 +48,7 @@ export class ManagementSectionService {
     sectionIds: number[],
   ): Observable<ApplicationResult<DeleteSectionResponse>> {
     return this._http.post<ApplicationResult<DeleteSectionResponse>>(
-      `${environment.apiUrl}/ManagementSection/Update`,
+      `${environment.apiUrl}/ManagementSection/multi-delete`,
       sectionIds,
     );
   }
