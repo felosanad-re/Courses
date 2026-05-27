@@ -1,1 +1,121 @@
-<p>create-section works!</p>
+<div class="create-section">
+  <!-- Header -->
+  <div class="create-section__header">
+    <div class="create-section__breadcrumb">
+      <a [routerLink]="['/instructor/dashboard']">Dashboard</a>
+      <i class="pi pi-angle-right"></i>
+      <a>Create Course</a>
+      <i class="pi pi-angle-right"></i>
+      <span>Create New Section</span>
+    </div>
+    <h1 class="create-section__title">Create New Section</h1>
+    <p class="create-section__subtitle">
+      Add a new section to organize your course content
+    </p>
+  </div>
+
+  <!-- Toast -->
+  <p-toast position="top-right"></p-toast>
+
+  <!-- Form -->
+  <form
+    [formGroup]="createSectionForm"
+    (ngSubmit)="onSubmit()"
+    class="create-section__form"
+  >
+    <div class="form-section">
+      <h2 class="form-section__title">Section Details</h2>
+      <p class="form-section__desc">
+        Provide the section name and its order in the course curriculum
+      </p>
+
+      <!-- Section Title -->
+      <div class="form-group">
+        <label for="title">Section Title *</label>
+        <input
+          pInputText
+          type="text"
+          id="title"
+          formControlName="title"
+          placeholder="e.g., Introduction to Web Development"
+          class="w-full"
+          [class.p-invalid]="isFieldInvalid('title')"
+        />
+        @if (isFieldInvalid("title")) {
+          <span class="error-msg"
+            >Section title is required and must be at least 3 characters</span
+          >
+        }
+      </div>
+
+      <!-- Section Order -->
+      <div class="form-group">
+        <label for="order">Section Order *</label>
+        <p-inputNumber
+          id="order"
+          formControlName="order"
+          [showButtons]="true"
+          buttonLayout="horizontal"
+          [min]="1"
+          placeholder="e.g., 1"
+          inputStyleClass="w-full"
+          styleClass="w-full order-inputnumber"
+          decrementButtonClass="p-button-outlined p-button-secondary"
+          incrementButtonClass="p-button-outlined p-button-secondary"
+        />
+        @if (isFieldInvalid("order")) {
+          <span class="error-msg"
+            >Section order is required and must be a positive number</span
+          >
+        }
+        <span class="form-hint">
+          <i class="pi pi-info-circle"></i>
+          The order number determines the section's position in the course
+          curriculum (1 = first section)
+        </span>
+      </div>
+
+      <!-- Info Card -->
+      <div class="info-card">
+        <div class="info-card__icon">
+          <i class="pi pi-info"></i>
+        </div>
+        <div class="info-card__content">
+          <h4 class="info-card__title">What is a Section?</h4>
+          <p class="info-card__text">
+            Sections help you organize your course into logical groups. Each
+            section can contain multiple lectures. For example, a course on web
+            development might have sections like "HTML Basics", "CSS
+            Fundamentals", and "JavaScript Introduction".
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="form-actions">
+      <button
+        type="button"
+        class="btn btn--secondary"
+        routerLink="/instructor/dashboard"
+      >
+        <i class="pi pi-arrow-left"></i>
+        Back to Dashboard
+      </button>
+
+      <button
+        type="submit"
+        class="btn btn--primary"
+        [disabled]="createSectionForm.invalid || isSubmitting"
+      >
+        @if (isSubmitting) {
+          <i class="pi pi-spin pi-spinner"></i>
+          Creating...
+        } @else {
+          <i class="pi pi-plus"></i>
+          Create Section
+        }
+      </button>
+    </div>
+  </form>
+</div>

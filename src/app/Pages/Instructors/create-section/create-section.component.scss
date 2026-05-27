@@ -1,0 +1,273 @@
+.create-section {
+  padding: 24px;
+  max-width: 900px;
+  margin: 0 auto;
+
+  &__header {
+    margin-bottom: 32px;
+  }
+
+  &__breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: #6b7280;
+    margin-bottom: 12px;
+
+    a {
+      color: #4f46e5;
+      text-decoration: none;
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+
+    i {
+      font-size: 12px;
+    }
+  }
+
+  &__title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #1f2937;
+    margin: 0 0 8px;
+  }
+
+  &__subtitle {
+    font-size: 16px;
+    color: #6b7280;
+    margin: 0;
+  }
+
+  &__form {
+    background: white;
+    border-radius: 16px;
+    padding: 32px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.form-section {
+  &__title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #1f2937;
+    margin: 0 0 8px;
+  }
+
+  &__desc {
+    font-size: 14px;
+    color: #6b7280;
+    margin: 0 0 24px;
+  }
+}
+
+.form-group {
+  margin-bottom: 20px;
+
+  label {
+    display: block;
+    font-size: 14px;
+    font-weight: 500;
+    color: #374151;
+    margin-bottom: 8px;
+  }
+
+  input,
+  select,
+  textarea {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+    font-size: 15px;
+    color: #1f2937;
+    background: #f9fafb;
+    transition: all 0.2s ease;
+    outline: none;
+
+    &:focus {
+      border-color: #4f46e5;
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+      background: white;
+    }
+
+    &.error {
+      border-color: #ef4444;
+      &:focus {
+        box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+      }
+    }
+  }
+}
+
+.error-msg {
+  display: block;
+  font-size: 13px;
+  color: #ef4444;
+  margin-top: 6px;
+}
+
+.form-hint {
+  display: block;
+  font-size: 13px;
+  color: #9ca3af;
+  margin-top: 6px;
+
+  i {
+    font-size: 12px;
+    margin-right: 4px;
+  }
+}
+
+.info-card {
+  display: flex;
+  gap: 16px;
+  padding: 20px;
+  background: #f0f9ff;
+  border-radius: 12px;
+  border: 1px solid #bae6fd;
+  margin-top: 24px;
+
+  &__icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #0ea5e9, #38bdf8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    i {
+      font-size: 18px;
+      color: white;
+    }
+  }
+
+  &__content {
+    flex: 1;
+  }
+
+  &__title {
+    font-size: 15px;
+    font-weight: 600;
+    color: #0c4a6e;
+    margin: 0 0 8px;
+  }
+
+  &__text {
+    font-size: 14px;
+    color: #6b7280;
+    margin: 0;
+    line-height: 1.6;
+  }
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  &--primary {
+    background: linear-gradient(135deg, #4f46e5, #818cf8);
+    color: white;
+
+    &:hover:not(:disabled) {
+      background: linear-gradient(135deg, #4338ca, #6366f1);
+      transform: translateY(-1px);
+    }
+  }
+
+  &--secondary {
+    background: #f3f4f6;
+    color: #374151;
+
+    &:hover:not(:disabled) {
+      background: #e5e7eb;
+    }
+  }
+}
+
+// Custom PrimeNG InputNumber Styling
+::ng-deep .order-inputnumber {
+  width: 100%;
+
+  .p-inputnumber-input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+    font-size: 15px;
+    color: #1f2937;
+    background: #f9fafb;
+    transition: all 0.2s ease;
+    outline: none;
+
+    &:focus {
+      border-color: #4f46e5;
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+      background: white;
+    }
+
+    &.p-invalid {
+      border-color: #ef4444;
+      &:focus {
+        box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+      }
+    }
+  }
+
+  .p-inputnumber-button-group {
+    .p-button {
+      border-radius: 10px;
+      width: 40px;
+      height: 48px;
+    }
+
+    .p-button-outlined {
+      border: 1px solid #d1d5db;
+      background: #f9fafb;
+      color: #6b7280;
+
+      &:hover {
+        background: #e5e7eb;
+        color: #4f46e5;
+        border-color: #4f46e5;
+      }
+    }
+  }
+}
+
+// Custom PrimeNG InputText Styling
+::ng-deep .p-inputtext {
+  &.p-invalid {
+    border-color: #ef4444 !important;
+    &:focus {
+      box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
+    }
+  }
+}
