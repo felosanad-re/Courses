@@ -106,6 +106,20 @@ export const routes: Routes = [
             `./Pages/Instructors/create-course/create-course.component`
           ).then((c) => c.CreateCourseComponent),
       },
+      {
+        path: 'create-section/:courseId',
+        loadComponent: () =>
+          import(
+            `./Pages/Instructors/create-section/create-section.component`
+          ).then((c) => c.CreateSectionComponent),
+      },
+      {
+        path: 'create-lecture/:sectionId',
+        loadComponent: () =>
+          import(
+            `./Pages/Instructors/create-lectures/create-lectures.component`
+          ).then((c) => c.CreateLecturesComponent),
+      },
     ],
   },
   // student

@@ -7,15 +7,19 @@ import {
   ReactiveFormsModule,
 } from '@angular/forms';
 import { Router } from '@angular/router';
-import { InstructorsService } from '../../../Core/Services/Instructors/instructors.service';
 import { CreatedCourseRequest } from '../../../Core/Interfaces/Instructors/created-course-request';
 import { ApplicationResult } from '../../../Core/Interfaces/application-result';
 import { CourseResponseForInstructor } from '../../../Core/Interfaces/Instructors/course-response-for-instructor';
+import { ManagementCourseService } from '../../../Core/Services/ManagementCourse/management-course.service';
+import { finalize } from 'rxjs';
+import { CourseTypeService } from '../../../Core/Services/CourseType/course-type.service';
+import { CourseTypeToReturnDTO } from '../../../Core/Interfaces/courseTypes/course-type-to-return-dto';
+import { DropdownModule } from 'primeng/dropdown';
 
 @Component({
   selector: 'app-create-course',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, DropdownModule],
   templateUrl: './create-course.component.html',
   styleUrl: './create-course.component.scss',
 })
@@ -24,17 +28,30 @@ export class CreateCourseComponent implements OnInit {
   isSubmitting = false;
   currentStep = 1;
   totalSteps = 2;
+  coursesTypes: CourseTypeToReturnDTO[] = [];
 
   selectedImage: string | null = null;
   isUploading = false;
 
   constructor(
     private fb: FormBuilder,
+    private readonly _managementCourseServices: ManagementCourseService,
+    private readonly _courseTypeServices: CourseTypeService,
     private router: Router,
   ) {}
 
   ngOnInit(): void {
+    this.getCourseTypes();
     this.initForm();
+  }
+
+  getCourseTypes(): void {
+    this._courseTypeServices
+      .getAllCourseTypes()
+      .subscribe(
+        (res: ApplicationResult<CourseTypeToReturnDTO[]>) =>
+          (this.coursesTypes = res.data),
+      );
   }
 
   initForm(): void {
@@ -42,6 +59,7 @@ export class CreateCourseComponent implements OnInit {
       name: ['', [Validators.required, Validators.minLength(3)]],
       description: ['', [Validators.required, Validators.minLength(10)]],
       image: [''],
+      courseTypeId: [0, [Validators.required]],
       isPaid: [false],
       price: [0, [Validators.min(0)]],
     });
@@ -131,18 +149,24 @@ export class CreateCourseComponent implements OnInit {
       name: this.courseForm.get('name')?.value,
       description: this.courseForm.get('description')?.value,
       image: this.courseForm.get('image')?.value || '',
+      courseTypeId: this.courseForm.get('courseTypeId')?.value || 0,
       isPaid: this.courseForm.get('isPaid')?.value || false,
       price: this.courseForm.get('price')?.value || 0,
     };
 
-    // this.instructorsService.addCourse(courseData).subscribe({
-    //   next: (response: ApplicationResult<CourseResponseForInstructor>) => {
-    //     if (response.succeed) {
-    //       this.router.navigate(['/instructor/dashboard']);
-    //     }
-    //     this.isSubmitting = false;
-    //   },
-    // });
+    this._managementCourseServices
+      .addCourse(courseData)
+      // Handle if request failed make sure to set isSubmitting to false
+      .pipe(finalize(() => (this.isSubmitting = false)))
+      .subscribe({
+        next: (response: ApplicationResult<CourseResponseForInstructor>) => {
+          if (response.succeed && response.data) {
+            const courseId = response.data.id;
+            this.router.navigate(['/instructor/create-section', courseId]);
+          }
+          this.isSubmitting = false;
+        },
+      });
   }
 
   getStepTitle(step: number): string {
