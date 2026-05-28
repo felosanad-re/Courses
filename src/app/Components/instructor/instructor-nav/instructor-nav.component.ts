@@ -14,18 +14,27 @@ export class InstructorNavComponent {
   isSidebarOpen = true;
   isUserMenuOpen = false;
   isSidebarCollapsed = false;
+  userName!: string;
 
   constructor(
     @Inject(PLATFORM_ID) private readonly _platformId: object,
-    private sidebarService: SidebarService
+    private sidebarService: SidebarService,
   ) {}
+
+  ngOnInit(): void {
+    this.loadUserName();
+  }
 
   navItems = [
     { icon: 'pi-home', label: 'Dashboard', route: '/instructor/dashboard' },
     { icon: 'pi-book', label: 'My Courses', route: '/instructor/courses' },
     { icon: 'pi-video', label: 'Live Classes', route: '/instructor/live' },
     { icon: 'pi-users', label: 'Students', route: '/instructor/students' },
-    { icon: 'pi-chart-line', label: 'Analytics', route: '/instructor/analytics' },
+    {
+      icon: 'pi-chart-line',
+      label: 'Analytics',
+      route: '/instructor/analytics',
+    },
     { icon: 'pi-wallet', label: 'Earnings', route: '/instructor/earnings' },
     { icon: 'pi-cog', label: 'Settings', route: '/instructor/settings' },
   ];
@@ -36,6 +45,13 @@ export class InstructorNavComponent {
 
   toggleUserMenu(): void {
     this.isUserMenuOpen = !this.isUserMenuOpen;
+  }
+
+  loadUserName(): void {
+    if (isPlatformBrowser(this._platformId)) {
+      const username = localStorage.getItem('username');
+      this.userName = username || 'Instructor';
+    }
   }
 
   logout(): void {

@@ -6,6 +6,5 @@ export interface CourseResponseForInstructor {
   isPaid: boolean;
   price: number;
   instructorId: number;
-  createdAt?: string;
-  updatedAt?: string;
+  courseTypeId: number;
 }

@@ -7,7 +7,9 @@
       <span>Create New Course</span>
     </div>
     <h1 class="create-course__title">Create New Course</h1>
-    <p class="create-course__subtitle">Fill in the details to create your new course</p>
+    <p class="create-course__subtitle">
+      Fill in the details to create your new course
+    </p>
   </div>
 
   <!-- Progress Steps -->
@@ -29,13 +31,20 @@
         <span class="step__label">{{ getStepTitle(step) }}</span>
       </div>
       @if (step < 2) {
-        <div class="step__line" [class.step__line--active]="currentStep > step"></div>
+        <div
+          class="step__line"
+          [class.step__line--active]="currentStep > step"
+        ></div>
       }
     }
   </div>
 
   <!-- Form -->
-  <form [formGroup]="courseForm" (ngSubmit)="onSubmit()" class="create-course__form">
+  <form
+    [formGroup]="courseForm"
+    (ngSubmit)="onSubmit()"
+    class="create-course__form"
+  >
     <!-- Step 1: Basic Info -->
     @if (currentStep === 1) {
       <div class="form-section">
@@ -51,7 +60,7 @@
             placeholder="e.g., Complete Web Development Bootcamp"
             [class.error]="isFieldInvalid('name')"
           />
-          @if (isFieldInvalid('name')) {
+          @if (isFieldInvalid("name")) {
             <span class="error-msg">Name must be at least 3 characters</span>
           }
         </div>
@@ -65,8 +74,30 @@
             placeholder="Describe what students will learn..."
             [class.error]="isFieldInvalid('description')"
           ></textarea>
-          @if (isFieldInvalid('description')) {
-            <span class="error-msg">Description must be at least 10 characters</span>
+          @if (isFieldInvalid("description")) {
+            <span class="error-msg"
+              >Description must be at least 10 characters</span
+            >
+          }
+        </div>
+
+        <div class="form-group p-fluid">
+          <label for="description">Course Type *</label>
+          <p-dropdown
+            formControlName="courseTypeId"
+            [options]="coursesTypes"
+            optionLabel="name"
+            optionValue="id"
+            placeholder="Select a Course Type"
+            [showClear]="true"
+            [filter]="true"
+            filterBy="name"
+            filterPlaceholder="Search course types..."
+            styleClass="course-type-dropdown"
+            panelStyleClass="course-type-dropdown-panel"
+          />
+          @if (isFieldInvalid("courseTypeId")) {
+            <span class="error-msg">You have to select your course type</span>
           }
         </div>
 
@@ -75,8 +106,16 @@
           <label>Course Image</label>
           @if (selectedImage) {
             <div class="image-preview">
-              <img [src]="selectedImage" alt="Course image" class="image-preview__img" />
-              <button type="button" class="image-preview__remove" (click)="removeImage()">
+              <img
+                [src]="selectedImage"
+                alt="Course image"
+                class="image-preview__img"
+              />
+              <button
+                type="button"
+                class="image-preview__remove"
+                (click)="removeImage()"
+              >
                 <i class="pi pi-times"></i>
               </button>
             </div>
@@ -114,11 +153,7 @@
         <div class="form-group">
           <label for="isPaid">Is Paid Course?</label>
           <div class="checkbox-wrapper">
-            <input
-              type="checkbox"
-              id="isPaid"
-              formControlName="isPaid"
-            />
+            <input type="checkbox" id="isPaid" formControlName="isPaid" />
             <label for="isPaid">This is a paid course</label>
           </div>
         </div>
@@ -150,16 +185,21 @@
               }
             </div>
             <div class="course-preview__info">
-              <h4>{{ courseForm.get('name')?.value || 'Course Name' }}</h4>
-              <p>{{ courseForm.get('description')?.value || 'Course description...' }}</p>
+              <h4>{{ courseForm.get("name")?.value || "Course Name" }}</h4>
+              <p>
+                {{
+                  courseForm.get("description")?.value ||
+                    "Course description..."
+                }}
+              </p>
               <div class="course-preview__meta">
                 <span>
                   <i class="pi pi-tag"></i>
-                  {{ courseForm.get('isPaid')?.value ? 'Paid' : 'Free' }}
+                  {{ courseForm.get("isPaid")?.value ? "Paid" : "Free" }}
                 </span>
                 <span>
                   <i class="pi pi-dollar"></i>
-                  {{ courseForm.get('price')?.value || 0 }}
+                  {{ courseForm.get("price")?.value || 0 }}
                 </span>
               </div>
             </div>

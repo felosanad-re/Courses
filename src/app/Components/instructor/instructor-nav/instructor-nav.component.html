@@ -47,11 +47,14 @@
           <div class="instructor-navbar__avatar">
             <i class="pi pi-user"></i>
           </div>
-          <span class="instructor-navbar__username">Ahmed Mohamed</span>
+          <span class="instructor-navbar__username">{{ userName }}</span>
           <i class="pi pi-chevron-down"></i>
         </button>
 
-        <div class="instructor-navbar__user-dropdown" [class.instructor-navbar__user-dropdown--open]="isUserMenuOpen">
+        <div
+          class="instructor-navbar__user-dropdown"
+          [class.instructor-navbar__user-dropdown--open]="isUserMenuOpen"
+        >
           <a routerLink="/instructor/profile">
             <i class="pi pi-user-edit"></i>
             Profile
@@ -72,9 +75,16 @@
 </nav>
 
 <!-- Sidebar -->
-<aside class="sidebar" [class.sidebar--open]="isSidebarOpen" [class.sidebar--collapsed]="isSidebarCollapsed">
+<aside
+  class="sidebar"
+  [class.sidebar--open]="isSidebarOpen"
+  [class.sidebar--collapsed]="isSidebarCollapsed"
+>
   <div class="sidebar__header">
-    <div class="sidebar__user-info" [class.sidebar__user-info--collapsed]="isSidebarCollapsed">
+    <div
+      class="sidebar__user-info"
+      [class.sidebar__user-info--collapsed]="isSidebarCollapsed"
+    >
       <div class="sidebar__user-avatar">
         <i class="pi pi-user"></i>
       </div>
@@ -84,7 +94,9 @@
       </div>
     </div>
     <button class="sidebar__collapse" (click)="toggleSidebarCollapse()">
-      <i [class]="isSidebarCollapsed ? 'pi pi-angle-right' : 'pi pi-angle-left'"></i>
+      <i
+        [class]="isSidebarCollapsed ? 'pi pi-angle-right' : 'pi pi-angle-left'"
+      ></i>
     </button>
     <button class="sidebar__close" (click)="toggleSidebar()">
       <i class="pi pi-times"></i>

@@ -3,10 +3,15 @@
   <div class="dashboard__header">
     <div class="dashboard__welcome">
       <h1 class="dashboard__title">Welcome back, {{ instructorName }}!</h1>
-      <p class="dashboard__subtitle">Here's what's happening with your courses today.</p>
+      <p class="dashboard__subtitle">
+        Here's what's happening with your courses today.
+      </p>
     </div>
     <div class="dashboard__actions">
-      <a routerLink="/instructor/create-course" class="dashboard__btn dashboard__btn--primary">
+      <a
+        routerLink="/instructor/create-course"
+        class="dashboard__btn dashboard__btn--primary"
+      >
         <i class="pi pi-plus"></i>
         Add New Course
       </a>
@@ -21,13 +26,22 @@
   <div class="dashboard__stats">
     @for (stat of statsCards; track stat.title) {
       <div class="stat-card">
-        <div class="stat-card__icon" [class]="'stat-card__icon--' + stat.title.toLowerCase().replace(' ', '-')">
+        <div
+          class="stat-card__icon"
+          [class]="
+            'stat-card__icon--' + stat.title.toLowerCase().replace(' ', '-')
+          "
+        >
           <i class="pi {{ stat.icon }}"></i>
         </div>
         <div class="stat-card__content">
           <span class="stat-card__title">{{ stat.title }}</span>
           <span class="stat-card__value">{{ stat.value }}</span>
-          <span class="stat-card__change" [class.stat-card__change--positive]="stat.changeType === 'positive'" [class.stat-card__change--negative]="stat.changeType === 'negative'">
+          <span
+            class="stat-card__change"
+            [class.stat-card__change--positive]="stat.changeType === 'positive'"
+            [class.stat-card__change--negative]="stat.changeType === 'negative'"
+          >
             {{ stat.change }}
           </span>
         </div>
@@ -41,7 +55,9 @@
     <div class="dashboard__section dashboard__section--courses">
       <div class="dashboard__section-header">
         <h2 class="dashboard__section-title">My Courses</h2>
-        <a routerLink="/instructor/courses" class="dashboard__section-link">View All</a>
+        <a routerLink="/instructor/courses" class="dashboard__section-link"
+          >View All</a
+        >
       </div>
 
       <div class="courses-list">
@@ -60,7 +76,11 @@
             <div class="course-card">
               <div class="course-card__thumbnail">
                 @if (course.image) {
-                  <img [src]="course.image" [alt]="course.name" />
+                  <img
+                    class="w-full"
+                    [src]="course.image"
+                    [alt]="course.name"
+                  />
                 } @else {
                   <i class="pi pi-book"></i>
                 }
@@ -71,7 +91,7 @@
                 <div class="course-card__meta">
                   <span class="course-card__price">
                     <i class="pi pi-tag"></i>
-                    {{ course.isPaid ? '$' + course.price : 'Free' }}
+                    {{ course.isPaid ? "$" + course.price : "Free" }}
                   </span>
                 </div>
               </div>
@@ -101,7 +121,10 @@
         <div class="activity-list">
           @for (activity of recentActivities; track activity.id) {
             <div class="activity-item">
-              <div class="activity-item__icon" [class]="'activity-item__icon--' + activity.type">
+              <div
+                class="activity-item__icon"
+                [class]="'activity-item__icon--' + activity.type"
+              >
                 <i class="pi {{ activity.icon }}"></i>
               </div>
               <div class="activity-item__content">
@@ -124,12 +147,18 @@
               <div class="review-card__header">
                 <div class="review-card__avatar">{{ review.avatar }}</div>
                 <div class="review-card__info">
-                  <span class="review-card__name">{{ review.studentName }}</span>
+                  <span class="review-card__name">{{
+                    review.studentName
+                  }}</span>
                   <span class="review-card__course">{{ review.course }}</span>
                 </div>
                 <div class="review-card__rating">
                   @for (star of getStars(review.rating); track $index) {
-                    <i class="pi" [class.pi-star-fill]="star === 1" [class.pi-star]="star === 0"></i>
+                    <i
+                      class="pi"
+                      [class.pi-star-fill]="star === 1"
+                      [class.pi-star]="star === 0"
+                    ></i>
                   }
                 </div>
               </div>
