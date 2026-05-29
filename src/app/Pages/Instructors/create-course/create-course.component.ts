@@ -31,6 +31,7 @@ export class CreateCourseComponent implements OnInit {
   coursesTypes: CourseTypeToReturnDTO[] = [];
 
   selectedImage: string | null = null;
+  selectedFile: File | null = null;
   isUploading = false;
 
   constructor(
@@ -58,7 +59,6 @@ export class CreateCourseComponent implements OnInit {
     this.courseForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(3)]],
       description: ['', [Validators.required, Validators.minLength(10)]],
-      image: [''],
       courseTypeId: [0, [Validators.required]],
       isPaid: [false],
       price: [0, [Validators.min(0)]],
@@ -80,16 +80,17 @@ export class CreateCourseComponent implements OnInit {
         return;
       }
 
+      this.selectedFile = file;
       this.isUploading = true;
 
       const reader = new FileReader();
       reader.onload = (e) => {
         this.selectedImage = e.target?.result as string;
-        this.courseForm.patchValue({ image: this.selectedImage });
         this.isUploading = false;
       };
       reader.onerror = () => {
         this.isUploading = false;
+        this.selectedFile = null;
         alert('Error reading file');
       };
       reader.readAsDataURL(file);
@@ -98,7 +99,7 @@ export class CreateCourseComponent implements OnInit {
 
   removeImage(): void {
     this.selectedImage = null;
-    this.courseForm.patchValue({ image: '' });
+    this.selectedFile = null;
     const fileInput = document.getElementById('image') as HTMLInputElement;
     if (fileInput) {
       fileInput.value = '';
@@ -148,7 +149,7 @@ export class CreateCourseComponent implements OnInit {
     const courseData: CreatedCourseRequest = {
       name: this.courseForm.get('name')?.value,
       description: this.courseForm.get('description')?.value,
-      image: this.courseForm.get('image')?.value || '',
+      image: this.selectedFile!,
       courseTypeId: this.courseForm.get('courseTypeId')?.value || 0,
       isPaid: this.courseForm.get('isPaid')?.value || false,
       price: this.courseForm.get('price')?.value || 0,
@@ -156,7 +157,6 @@ export class CreateCourseComponent implements OnInit {
 
     this._managementCourseServices
       .addCourse(courseData)
-      // Handle if request failed make sure to set isSubmitting to false
       .pipe(finalize(() => (this.isSubmitting = false)))
       .subscribe({
         next: (response: ApplicationResult<CourseResponseForInstructor>) => {
