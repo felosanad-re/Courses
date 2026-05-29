@@ -14,6 +14,20 @@ import { DeleteCoursesResult } from '../../Interfaces/Instructors/delete-courses
 export class ManagementCourseService {
   constructor(private readonly _http: HttpClient) {}
 
+  // build Form Data
+  buildFormData(obj: any): FormData {
+    const formData = new FormData();
+    formData.append('name', obj.name);
+    formData.append('description', obj.description);
+    if (obj.image) {
+      formData.append('image', obj.image, obj.image.name);
+    }
+    formData.append('courseTypeId', obj.courseTypeId.toString());
+    formData.append('price', obj.price.toString());
+    formData.append('isPaid', obj.isPaid.toString());
+    return formData;
+  }
+
   // Get Course Details
   getCourseDetails(
     id: number,
@@ -27,9 +41,10 @@ export class ManagementCourseService {
   addCourse(
     data: CreatedCourseRequest,
   ): Observable<ApplicationResult<CourseResponseForInstructor>> {
+    const formData = this.buildFormData(data);
     return this._http.post<ApplicationResult<CourseResponseForInstructor>>(
       `${environment.apiUrl}/ManagementCourse/CreateCourse`,
-      data,
+      formData,
     );
   }
 
@@ -38,9 +53,10 @@ export class ManagementCourseService {
     data: UpdatedCourseRequest,
     id: number,
   ): Observable<ApplicationResult<CourseResponseForInstructor>> {
+    const formData = this.buildFormData(data);
     return this._http.put<ApplicationResult<CourseResponseForInstructor>>(
       `${environment.apiUrl}/ManagementCourse/UpdateCourse/${id}`,
-      data,
+      formData,
     );
   }
 
