@@ -1,9 +1,19 @@
-import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
+import {
+  Component,
+  Inject,
+  OnDestroy,
+  OnInit,
+  PLATFORM_ID,
+} from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { InstructorsService } from '../../../Core/Services/Instructors/instructors.service';
 import { ApplicationResult } from '../../../Core/Interfaces/application-result';
 import { CourseResponseForInstructor } from '../../../Core/Interfaces/Instructors/course-response-for-instructor';
+import { SearchService } from '../../../Core/Services/search.service';
+import { CoursesParams } from '../../../Core/Interfaces/Courses/courses-params';
+import { Pagination } from '../../../Core/Interfaces/Courses/pagination';
+import { skip, Subscription } from 'rxjs';
 
 interface StatsCard {
   icon: string;
@@ -38,16 +48,23 @@ interface Review {
   templateUrl: './instructor-dashboard.component.html',
   styleUrl: './instructor-dashboard.component.scss',
 })
-export class InstructorDashboardComponent implements OnInit {
+export class InstructorDashboardComponent implements OnInit, OnDestroy {
   instructorName = '';
   isLoading = true;
   courses: CourseResponseForInstructor[] = [];
+
+  courseCount: number = 0;
+
+  searchTerm: string = '';
+  filteredCourses: CourseResponseForInstructor[] = [];
+
+  private searchSubscription!: Subscription;
 
   statsCards: StatsCard[] = [
     {
       icon: 'pi-book',
       title: 'Total Courses',
-      value: 0,
+      value: this.courseCount,
       change: '+0 this month',
       changeType: 'positive',
     },
@@ -145,11 +162,21 @@ export class InstructorDashboardComponent implements OnInit {
 
   constructor(
     private readonly _instructorsService: InstructorsService,
+    private readonly _searchService: SearchService,
     @Inject(PLATFORM_ID) private readonly _platformId: object,
   ) {}
 
   ngOnInit(): void {
     this.loadUserName();
+
+    // Search
+    this.searchSubscription = this._searchService.$searchTerm
+      .pipe(skip(1))
+      .subscribe((term) => {
+        this.searchTerm = term;
+        this.loadCourses();
+      });
+
     this.loadCourses();
   }
 
@@ -161,10 +188,17 @@ export class InstructorDashboardComponent implements OnInit {
   }
 
   loadCourses(): void {
-    this._instructorsService.getAllCourses().subscribe({
-      next: (response: ApplicationResult<CourseResponseForInstructor[]>) => {
+    const courseParams = new CoursesParams();
+    courseParams.pageIndex = 1;
+    courseParams.pageSize = 10;
+    courseParams.search = this.searchTerm;
+    this._instructorsService.getAllCourses(courseParams).subscribe({
+      next: (
+        response: ApplicationResult<Pagination<CourseResponseForInstructor[]>>,
+      ) => {
         if (response.succeed && response.data) {
-          this.courses = response.data;
+          this.courses = response.data.data;
+          this.courseCount = response.data.count;
           this.updateStats();
         }
         this.isLoading = false;
@@ -175,8 +209,14 @@ export class InstructorDashboardComponent implements OnInit {
     });
   }
 
+  ngOnDestroy() {
+    if (this.searchSubscription) {
+      this.searchSubscription.unsubscribe();
+    }
+  }
+
   updateStats(): void {
-    this.statsCards[0].value = this.courses.length;
+    this.statsCards[0].value = this.courseCount;
     this.statsCards[1].value = '0';
     this.statsCards[3].value = 0;
   }

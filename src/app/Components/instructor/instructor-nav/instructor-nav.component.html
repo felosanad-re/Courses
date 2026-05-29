@@ -29,7 +29,11 @@
     <div class="instructor-navbar__center">
       <div class="instructor-navbar__search">
         <i class="pi pi-search"></i>
-        <input type="text" placeholder="Search courses, students..." />
+        <input
+          type="text"
+          placeholder="Search courses, students..."
+          (input)="onSearch($event)"
+        />
       </div>
     </div>
 

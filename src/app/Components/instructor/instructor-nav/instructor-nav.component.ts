@@ -6,6 +6,7 @@ import {
   SidebarComponent,
   NavItem,
 } from '../../../Shared/sidebar/sidebar.component';
+import { SearchService } from '../../../Core/Services/search.service';
 
 /**
  * InstructorNavComponent - Top navbar + sidebar wrapper for the Instructor role
@@ -65,6 +66,7 @@ export class InstructorNavComponent {
     private readonly _router: Router,
     @Inject(PLATFORM_ID) private readonly _platformId: object,
     private sidebarService: SidebarService,
+    private readonly _searchService: SearchService,
   ) {}
 
   ngOnInit(): void {
@@ -113,5 +115,11 @@ export class InstructorNavComponent {
       localStorage.removeItem('token');
       this._router.navigate(['/login']);
     }
+  }
+
+  // Search
+  onSearch(event: any) {
+    const term = event.target.value.trim();
+    this._searchService.updateSearchTrim(term);
   }
 }
