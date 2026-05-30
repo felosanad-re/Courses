@@ -62,7 +62,7 @@
       Available Courses
     </h2>
     <span class="courses-section__count">
-      {{ pagination.totalCount }} course(s) found
+      {{ courseCount }} course(s) found
     </span>
   </div>
 
@@ -118,66 +118,15 @@
   </div>
 
   <!-- ===== Pagination ===== -->
-  <nav
-    class="pagination"
-    *ngIf="pagination.totalPages > 1"
-    aria-label="Course pagination"
-  >
-    <button
-      class="pagination__btn pagination__btn--prev"
-      (click)="onPageChange(pagination.pageIndex - 1)"
-      [disabled]="pagination.pageIndex === 1"
-    >
-      <i class="pi pi-chevron-left"></i>
-      Prev
-    </button>
-
-    <div class="pagination__pages">
-      <button
-        *ngIf="pagination.pageIndex > 3"
-        class="pagination__page"
-        (click)="onPageChange(1)"
-      >
-        1
-      </button>
-      <span *ngIf="pagination.pageIndex > 3" class="pagination__ellipsis"
-        >...</span
-      >
-
-      <button
-        *ngFor="let page of getPageNumbers()"
-        class="pagination__page"
-        [ngClass]="{
-          'pagination__page--active': page === pagination.pageIndex,
-        }"
-        (click)="onPageChange(page)"
-      >
-        {{ page }}
-      </button>
-
-      <span
-        *ngIf="pagination.pageIndex < pagination.totalPages - 2"
-        class="pagination__ellipsis"
-        >...</span
-      >
-      <button
-        *ngIf="pagination.pageIndex < pagination.totalPages - 2"
-        class="pagination__page"
-        (click)="onPageChange(pagination.totalPages)"
-      >
-        {{ pagination.totalPages }}
-      </button>
-    </div>
-
-    <button
-      class="pagination__btn pagination__btn--next"
-      (click)="onPageChange(pagination.pageIndex + 1)"
-      [disabled]="pagination.pageIndex === pagination.totalPages"
-    >
-      Next
-      <i class="pi pi-chevron-right"></i>
-    </button>
-  </nav>
+  <p-paginator
+    (onPageChange)="onPageChange($event)"
+    [first]="first"
+    [rows]="pageSize"
+    [totalRecords]="courseCount"
+    [showCurrentPageReport]="true"
+    currentPageReportTemplate="there is {totalRecords} showing {first} to {last}"
+    [rowsPerPageOptions]="[5, 10, 20]"
+  />
 </section>
 
 <!-- ===== Empty State ===== -->

@@ -109,9 +109,18 @@
           }
         }
       </div>
+
+      <p-paginator
+        (onPageChange)="onPageChange($event)"
+        [first]="first"
+        [rows]="pageSize"
+        [totalRecords]="courseCount"
+        [showCurrentPageReport]="true"
+        currentPageReportTemplate="there is {totalRecords} showing {first} to {last}"
+        [rowsPerPageOptions]="[5, 10, 20]"
+      />
     </div>
 
-    <!-- Right Column -->
     <div class="dashboard__right">
       <!-- Recent Activity -->
       <div class="dashboard__section">

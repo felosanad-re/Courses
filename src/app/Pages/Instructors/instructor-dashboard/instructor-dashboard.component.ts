@@ -1,9 +1,20 @@
-import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
+import {
+  Component,
+  Inject,
+  OnDestroy,
+  OnInit,
+  PLATFORM_ID,
+} from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { InstructorsService } from '../../../Core/Services/Instructors/instructors.service';
 import { ApplicationResult } from '../../../Core/Interfaces/application-result';
 import { CourseResponseForInstructor } from '../../../Core/Interfaces/Instructors/course-response-for-instructor';
+import { SearchService } from '../../../Core/Services/search.service';
+import { CoursesParams } from '../../../Core/Interfaces/Courses/courses-params';
+import { Pagination } from '../../../Core/Interfaces/Courses/pagination';
+import { skip, Subscription } from 'rxjs';
+import { PaginatorModule } from 'primeng/paginator';
 
 interface StatsCard {
   icon: string;
@@ -34,20 +45,33 @@ interface Review {
 @Component({
   selector: 'app-instructor-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, PaginatorModule],
   templateUrl: './instructor-dashboard.component.html',
   styleUrl: './instructor-dashboard.component.scss',
 })
-export class InstructorDashboardComponent implements OnInit {
+export class InstructorDashboardComponent implements OnInit, OnDestroy {
   instructorName = '';
   isLoading = true;
   courses: CourseResponseForInstructor[] = [];
+
+  // ─── Pagination Variables ───
+  // PrimeNG Paginator uses "first" (offset) and "rows" (pageSize):
+  // - first = 0 → page 1, first = 10 → page 2, etc.
+  // - pageIndex (for backend API) = (first / rows) + 1
+  first: number = 0;
+  pageIndex: number = 1;
+  pageSize: number = 10;
+  courseCount: number = 0;
+
+  searchTerm: string = '';
+
+  private searchSubscription!: Subscription;
 
   statsCards: StatsCard[] = [
     {
       icon: 'pi-book',
       title: 'Total Courses',
-      value: 0,
+      value: this.courseCount,
       change: '+0 this month',
       changeType: 'positive',
     },
@@ -145,11 +169,23 @@ export class InstructorDashboardComponent implements OnInit {
 
   constructor(
     private readonly _instructorsService: InstructorsService,
+    private readonly _searchService: SearchService,
     @Inject(PLATFORM_ID) private readonly _platformId: object,
   ) {}
 
   ngOnInit(): void {
     this.loadUserName();
+
+    // Search: skip(1) to avoid double load on init (BehaviorSubject emits '' initially)
+    this.searchSubscription = this._searchService.$searchTerm
+      .pipe(skip(1))
+      .subscribe((term) => {
+        this.searchTerm = term;
+        // Reset pagination to page 1 when search term changes
+        this.resetPagination();
+        this.loadCourses();
+      });
+
     this.loadCourses();
   }
 
@@ -161,10 +197,17 @@ export class InstructorDashboardComponent implements OnInit {
   }
 
   loadCourses(): void {
-    this._instructorsService.getAllCourses().subscribe({
-      next: (response: ApplicationResult<CourseResponseForInstructor[]>) => {
+    const courseParams = new CoursesParams();
+    courseParams.pageIndex = this.pageIndex;
+    courseParams.pageSize = this.pageSize;
+    courseParams.search = this.searchTerm;
+    this._instructorsService.getAllCourses(courseParams).subscribe({
+      next: (
+        response: ApplicationResult<Pagination<CourseResponseForInstructor[]>>,
+      ) => {
         if (response.succeed && response.data) {
-          this.courses = response.data;
+          this.courses = response.data.data;
+          this.courseCount = response.data.count;
           this.updateStats();
         }
         this.isLoading = false;
@@ -175,8 +218,14 @@ export class InstructorDashboardComponent implements OnInit {
     });
   }
 
+  ngOnDestroy() {
+    if (this.searchSubscription) {
+      this.searchSubscription.unsubscribe();
+    }
+  }
+
   updateStats(): void {
-    this.statsCards[0].value = this.courses.length;
+    this.statsCards[0].value = this.courseCount;
     this.statsCards[1].value = '0';
     this.statsCards[3].value = 0;
   }
@@ -185,5 +234,35 @@ export class InstructorDashboardComponent implements OnInit {
     return Array(5)
       .fill(0)
       .map((_, i) => (i < Math.floor(rating) ? 1 : 0));
+  }
+
+  /**
+   * Handle PrimeNG Paginator onPageChange event
+   *
+   * PrimeNG event structure: { first: number, rows: number, page: number, pageCount: number }
+   * - first = offset (0-based): 0 for page 1, 10 for page 2, etc.
+   * - rows = pageSize (IMPORTANT: PrimeNG uses "rows" not "row")
+   * - page = page number (0-based): 0 for page 1, 1 for page 2, etc.
+   *
+   * We convert to 1-based pageIndex for our backend API: pageIndex = page + 1
+   * Guard against NaN by using fallback values if event properties are undefined
+   */
+  onPageChange(event: any): void {
+    // Guard against NaN: use fallback values if event properties are undefined
+    const rows = event.rows ?? this.pageSize;
+    const page = event.page ?? 0; // 0-based page number from PrimeNG
+
+    this.first = event.first ?? 0;
+    this.pageSize = rows;
+    // Convert 0-based page to 1-based pageIndex for backend API
+    this.pageIndex = page + 1;
+
+    this.loadCourses();
+  }
+
+  /** Reset pagination to page 1 - called when search term changes */
+  resetPagination(): void {
+    this.pageIndex = 1;
+    this.first = 0;
   }
 }
