@@ -11,11 +11,13 @@ import { CourseTypeService } from '../../../Core/Services/CourseType/course-type
 import { CourseTypeToReturnDTO } from '../../../Core/Interfaces/courseTypes/course-type-to-return-dto';
 import { EnrollmentService } from '../../../Core/Services/Enrollments/enrollment.service';
 import { EnrollmentWithCourseResponse } from '../../../Core/Interfaces/Enrollments/enrollment-with-course-response';
+import { PaginatorModule } from 'primeng/paginator';
+import { runInThisContext } from 'vm';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, PaginatorModule],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
 })
@@ -26,12 +28,10 @@ export class HomeComponent {
   isLoading = false;
   error: string | null = null;
   noCoursesMessage: string = 'No courses available at the moment.';
-  pagination = {
-    pageIndex: 1,
-    pageSize: 5,
-    totalCount: 0,
-    totalPages: 0,
-  };
+  first: number = 0;
+  pageSize: number = 10; // rows
+  pageIndex: number = 1;
+  courseCount: number = 0;
   searchTimeout: any;
 
   constructor(
@@ -61,9 +61,10 @@ export class HomeComponent {
   }
 
   // Pagination
-  onPageChange(pageIndex: number): void {
-    if (pageIndex < 1 || pageIndex > this.pagination.totalPages) return;
-    this.courseParams.pageIndex = pageIndex;
+  onPageChange(event: any): void {
+    this.first = event.first ?? 0;
+    this.pageSize = event.rows ?? 10;
+    this.pageIndex = Math.floor(this.first / this.pageSize) + 1;
     this.getAllCourses(true);
   }
 
@@ -84,22 +85,6 @@ export class HomeComponent {
     this.getAllCourses(true);
   }
 
-  // Get visible page numbers for pagination
-  getPageNumbers(): number[] {
-    const pages: number[] = [];
-    const current = this.pagination.pageIndex;
-    const total = this.pagination.totalPages;
-
-    const start = Math.max(1, current - 2);
-    const end = Math.min(total, current + 2);
-
-    for (let i = start; i <= end; i++) {
-      pages.push(i);
-    }
-
-    return pages;
-  }
-
   // Fetch all courses from API
   getAllCourses(isSearch: boolean = false) {
     this.isLoading = true;
@@ -109,16 +94,14 @@ export class HomeComponent {
       this.courseParams.pageIndex = 1;
     }
 
+    this.courseParams.pageIndex = this.pageIndex;
+    this.courseParams.pageSize = this.pageSize;
+
     this._courseService.getAllCourses(this.courseParams).subscribe({
       next: (res: ApplicationResult<Pagination<CoursesToReturnDTO[]>>) => {
         if (res.succeed && res.data) {
           this.courses = res.data.data;
-          this.pagination = {
-            pageIndex: res.data.pageIndex,
-            pageSize: res.data.pageSize,
-            totalCount: res.data.count,
-            totalPages: Math.ceil(res.data.count / res.data.pageSize),
-          };
+          this.courseCount = res.data.count;
           this.noCoursesMessage =
             res.message || 'No courses available at the moment.';
         } else {
