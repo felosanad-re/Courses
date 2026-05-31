@@ -16,11 +16,11 @@ import {
 } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
-import { ManagementLectureService } from '../../../Core/Services/ManagementCourse/management-lecture.service';
-import { CreatedLectureRequest } from '../../../Core/Interfaces/Lectures/created-lecture-request';
-import { ApplicationResult } from '../../../Core/Interfaces/application-result';
-import { LectureWithInstructorResponse } from '../../../Core/Interfaces/Lectures/lecture-with-instructor-response';
-import { NotificationsService } from '../../../Core/Services/notifications.service';
+import { ManagementLectureService } from '../../../../Core/Services/ManagementCourse/management-lecture.service';
+import { CreatedLectureRequest } from '../../../../Core/Interfaces/Lectures/created-lecture-request';
+import { ApplicationResult } from '../../../../Core/Interfaces/application-result';
+import { LectureWithInstructorResponse } from '../../../../Core/Interfaces/Lectures/lecture-with-instructor-response';
+import { NotificationsService } from '../../../../Core/Services/notifications.service';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputNumberModule } from 'primeng/inputnumber';

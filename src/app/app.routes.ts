@@ -103,22 +103,43 @@ export const routes: Routes = [
         path: 'create-course',
         loadComponent: () =>
           import(
-            `./Pages/Instructors/create-course/create-course.component`
+            `./Pages/Instructors/Management-Course/create-course/create-course.component`
           ).then((c) => c.CreateCourseComponent),
+      },
+      {
+        path: 'update-course:/courseId',
+        loadComponent: () =>
+          import(
+            `./Pages/Instructors/Management-Course/update-course/update-course.component`
+          ).then((c) => c.UpdateCourseComponent),
       },
       {
         path: 'create-section/:courseId',
         loadComponent: () =>
           import(
-            `./Pages/Instructors/create-section/create-section.component`
+            `./Pages/Instructors/Management-Course/create-section/create-section.component`
           ).then((c) => c.CreateSectionComponent),
+      },
+      {
+        path: 'update-section/:courseId/:sectionId',
+        loadComponent: () =>
+          import(
+            `./Pages/Instructors/Management-Course/update-section/update-section.component`
+          ).then((c) => c.UpdateSectionComponent),
       },
       {
         path: 'create-lecture/:sectionId',
         loadComponent: () =>
           import(
-            `./Pages/Instructors/create-lectures/create-lectures.component`
+            `./Pages/Instructors/Management-Course/create-lectures/create-lectures.component`
           ).then((c) => c.CreateLecturesComponent),
+      },
+      {
+        path: 'update-lecture/:sectionId/:lectureId',
+        loadComponent: () =>
+          import(
+            `./Pages/Instructors/Management-Course/update-lecture/update-lecture.component`
+          ).then((c) => c.UpdateLectureComponent),
       },
     ],
   },

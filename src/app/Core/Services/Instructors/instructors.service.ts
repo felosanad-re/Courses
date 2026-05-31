@@ -6,9 +6,6 @@ import { Observable } from 'rxjs';
 import { ApplicationResult } from '../../Interfaces/application-result';
 import { CourseResponseForInstructor } from '../../Interfaces/Instructors/course-response-for-instructor';
 import { environment } from '../../../../environments/environment';
-import { CreatedCourseRequest } from '../../Interfaces/Instructors/created-course-request';
-import { UpdatedCourseRequest } from '../../Interfaces/Instructors/updated-course-request';
-import { DeleteCoursesResult } from '../../Interfaces/Instructors/delete-courses-result';
 
 @Injectable({
   providedIn: 'root',
