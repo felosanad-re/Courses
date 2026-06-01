@@ -4,8 +4,7 @@ import { Observable } from 'rxjs';
 import { ApplicationResult } from '../../Interfaces/application-result';
 import { CourseResponseForInstructor } from '../../Interfaces/Instructors/course-response-for-instructor';
 import { environment } from '../../../../environments/environment';
-import { CreatedCourseRequest } from '../../Interfaces/Instructors/created-course-request';
-import { UpdatedCourseRequest } from '../../Interfaces/Instructors/updated-course-request';
+import { CourseFormRequest } from '../../Interfaces/Instructors/CourseFormRequest';
 import { DeleteCoursesResult } from '../../Interfaces/Instructors/delete-courses-result';
 
 @Injectable({
@@ -39,7 +38,7 @@ export class ManagementCourseService {
 
   // Add Course
   addCourse(
-    data: CreatedCourseRequest,
+    data: CourseFormRequest,
   ): Observable<ApplicationResult<CourseResponseForInstructor>> {
     const formData = this.buildFormData(data);
     return this._http.post<ApplicationResult<CourseResponseForInstructor>>(
@@ -50,7 +49,7 @@ export class ManagementCourseService {
 
   // Update Course
   updateCourse(
-    data: UpdatedCourseRequest,
+    data: CourseFormRequest,
     id: number,
   ): Observable<ApplicationResult<CourseResponseForInstructor>> {
     const formData = this.buildFormData(data);

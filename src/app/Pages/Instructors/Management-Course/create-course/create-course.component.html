@@ -1,0 +1,7 @@
+<app-course-form
+  [mode]="'Create New Course'"
+  [courseTypes]="coursesTypes"
+  [isSubmitting]="isSubmitting"
+  [dashboardLink]="'/instructor/dashboard'"
+  (formSubmit)="onFormSubmit($event)"
+></app-course-form>

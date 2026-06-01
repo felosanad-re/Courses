@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CreateSectionRequest } from '../../../Core/Interfaces/Sections/create-section-request';
+import { CreateSectionRequest } from '../../../../Core/Interfaces/Sections/create-section-request';
 import {
   FormBuilder,
   FormGroup,
@@ -7,11 +7,11 @@ import {
   Validators,
 } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { ManagementSectionService } from '../../../Core/Services/ManagementCourse/management-section.service';
+import { ManagementSectionService } from '../../../../Core/Services/ManagementCourse/management-section.service';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
-import { SectionWithCourseResponse } from '../../../Core/Interfaces/Courses/section-with-course-response';
-import { ApplicationResult } from '../../../Core/Interfaces/application-result';
+import { SectionWithCourseResponse } from '../../../../Core/Interfaces/Courses/section-with-course-response';
+import { ApplicationResult } from '../../../../Core/Interfaces/application-result';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputNumberModule } from 'primeng/inputnumber';

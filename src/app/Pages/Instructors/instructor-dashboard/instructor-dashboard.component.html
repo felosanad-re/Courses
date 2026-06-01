@@ -96,7 +96,10 @@
                 </div>
               </div>
               <div class="course-card__actions">
-                <button class="course-card__btn course-card__btn--edit">
+                <button
+                  class="course-card__btn course-card__btn--edit"
+                  (click)="updateCourse(course.id)"
+                >
                   <i class="pi pi-pencil"></i>
                   Edit
                 </button>
