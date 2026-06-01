@@ -6,7 +6,7 @@ import {
   PLATFORM_ID,
 } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { InstructorsService } from '../../../Core/Services/Instructors/instructors.service';
 import { ApplicationResult } from '../../../Core/Interfaces/application-result';
 import { CourseResponseForInstructor } from '../../../Core/Interfaces/Instructors/course-response-for-instructor';
@@ -170,6 +170,7 @@ export class InstructorDashboardComponent implements OnInit, OnDestroy {
   constructor(
     private readonly _instructorsService: InstructorsService,
     private readonly _searchService: SearchService,
+    private readonly _router: Router,
     @Inject(PLATFORM_ID) private readonly _platformId: object,
   ) {}
 
@@ -264,5 +265,10 @@ export class InstructorDashboardComponent implements OnInit, OnDestroy {
   resetPagination(): void {
     this.pageIndex = 1;
     this.first = 0;
+  }
+
+  // edit course
+  updateCourse(courseId: number): void {
+    this._router.navigate(['/instructor', 'update-course', courseId]);
   }
 }

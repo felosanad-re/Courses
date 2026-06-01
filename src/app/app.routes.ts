@@ -107,7 +107,7 @@ export const routes: Routes = [
           ).then((c) => c.CreateCourseComponent),
       },
       {
-        path: 'update-course:/courseId',
+        path: 'update-course/:courseId',
         loadComponent: () =>
           import(
             `./Pages/Instructors/Management-Course/update-course/update-course.component`

@@ -104,10 +104,10 @@
         <!-- Image Upload -->
         <div class="form-group">
           <label>Course Image</label>
-          @if (selectedImage) {
+          @if (selectedImage || initialImageUrl) {
             <div class="image-preview">
               <img
-                [src]="selectedImage"
+                [src]="selectedImage || initialImageUrl"
                 alt="Course image"
                 class="image-preview__img"
               />
@@ -178,8 +178,11 @@
           <h3 class="course-preview__title">Preview</h3>
           <div class="course-preview__card">
             <div class="course-preview__image">
-              @if (selectedImage) {
-                <img [src]="selectedImage" alt="Course image" />
+              @if (selectedImage || initialImageUrl) {
+                <img
+                  [src]="selectedImage || initialImageUrl"
+                  alt="Course image"
+                />
               } @else {
                 <i class="pi pi-image"></i>
               }

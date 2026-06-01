@@ -1,5 +1,13 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnInit,
+  Output,
+  SimpleChanges,
+} from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -19,7 +27,7 @@ import { CourseFormRequest } from '../../../Core/Interfaces/Instructors/CourseFo
   templateUrl: './course-form.component.html',
   styleUrl: './course-form.component.scss',
 })
-export class CourseFormComponent implements OnInit {
+export class CourseFormComponent implements OnInit, OnChanges {
   // ─── Inputs ───────────────────────────────────────────────────────
   @Input({ required: true }) mode: 'Create New Course' | 'Update Course' =
     'Create New Course';
@@ -62,6 +70,13 @@ export class CourseFormComponent implements OnInit {
     this.initForm();
     if (this.initialData) {
       this.populateForm(this.initialData);
+    }
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    // When initialData arrives asynchronously (Update mode), populate the form
+    if (changes['initialData'] && changes['initialData'].currentValue) {
+      this.populateForm(changes['initialData'].currentValue);
     }
   }
 
@@ -126,6 +141,7 @@ export class CourseFormComponent implements OnInit {
   removeImage(): void {
     this.selectedImage = null;
     this.selectedFile = null;
+    this.initialImageUrl = null;
     this.imageWasRemoved = true;
     const fileInput = document.getElementById('image') as HTMLInputElement;
     if (fileInput) {
@@ -181,6 +197,11 @@ export class CourseFormComponent implements OnInit {
       isPaid: this.courseForm.get('isPaid')?.value || false,
       price: this.courseForm.get('price')?.value || 0,
       image: this.selectedFile || null,
+      imageUrl: this.imageWasRemoved
+        ? null
+        : this.selectedFile
+          ? null
+          : this.initialImageUrl,
     });
   }
 
