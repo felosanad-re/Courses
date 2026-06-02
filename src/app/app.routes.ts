@@ -121,6 +121,20 @@ export const routes: Routes = [
           ).then((c) => c.CreateSectionComponent),
       },
       {
+        path: 'course-sections-details/:courseId',
+        loadComponent: () =>
+          import(
+            `./Pages/Instructors/course-sections-details/course-sections-details.component`
+          ).then((c) => c.CourseSectionsDetailsComponent),
+      },
+      {
+        path: 'update-section/:sectionId',
+        loadComponent: () =>
+          import(
+            `./Pages/Instructors/Management-Course/update-section/update-section.component`
+          ).then((c) => c.UpdateSectionComponent),
+      },
+      {
         path: 'update-section/:courseId/:sectionId',
         loadComponent: () =>
           import(

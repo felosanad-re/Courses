@@ -60,7 +60,7 @@ export class UpdateCourseComponent implements OnInit {
       next: (res) => {
         if (res.succeed && res.data) {
           this._router.navigate([
-            '/instructors/update-sections',
+            '/instructor/course-sections-details',
             this.courseId,
           ]);
         }
