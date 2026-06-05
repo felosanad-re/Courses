@@ -100,7 +100,10 @@ export class CreateSectionComponent implements OnInit {
               summary: 'Section Created',
               detail: `Section "${res.data.title}" has been created successfully!`,
             });
-            this._router.navigate(['/instructor/create-lecture', res.data.id]);
+            this._router.navigate([
+              '/instructor/course-sections-details',
+              res.data.id,
+            ]);
           } else {
             this._messageService.add({
               severity: 'error',

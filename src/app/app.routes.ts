@@ -121,21 +121,21 @@ export const routes: Routes = [
           ).then((c) => c.CreateSectionComponent),
       },
       {
-        path: 'update-section/:courseId/:sectionId',
+        path: 'course-sections-details/:courseId',
         loadComponent: () =>
           import(
-            `./Pages/Instructors/Management-Course/update-section/update-section.component`
-          ).then((c) => c.UpdateSectionComponent),
+            `./Pages/Instructors/course-sections-details/course-sections-details.component`
+          ).then((c) => c.CourseSectionsDetailsComponent),
       },
       {
-        path: 'create-lecture/:sectionId',
+        path: 'create-lecture/:courseId/:sectionId',
         loadComponent: () =>
           import(
             `./Pages/Instructors/Management-Course/create-lectures/create-lectures.component`
           ).then((c) => c.CreateLecturesComponent),
       },
       {
-        path: 'update-lecture/:sectionId/:lectureId',
+        path: 'update-lecture/:courseId/:sectionId/:lectureId',
         loadComponent: () =>
           import(
             `./Pages/Instructors/Management-Course/update-lecture/update-lecture.component`

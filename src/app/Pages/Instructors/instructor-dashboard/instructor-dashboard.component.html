@@ -103,7 +103,10 @@
                   <i class="pi pi-pencil"></i>
                   Edit
                 </button>
-                <button class="course-card__btn course-card__btn--view">
+                <button
+                  class="course-card__btn course-card__btn--view"
+                  (click)="viewCourse(course.id)"
+                >
                   <i class="pi pi-eye"></i>
                   View
                 </button>

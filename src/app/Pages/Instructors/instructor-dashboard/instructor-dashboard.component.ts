@@ -271,4 +271,9 @@ export class InstructorDashboardComponent implements OnInit, OnDestroy {
   updateCourse(courseId: number): void {
     this._router.navigate(['/instructor', 'update-course', courseId]);
   }
+
+  //view Course
+  viewCourse(courseId: number): void {
+    this._router.navigate(['/instructor', 'course-sections-details', courseId]);
+  }
 }

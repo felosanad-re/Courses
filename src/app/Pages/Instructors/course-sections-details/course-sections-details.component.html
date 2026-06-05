@@ -1,0 +1,368 @@
+<div class="page-container">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="page-header__info">
+      <h1 class="page-header__title">Management Course</h1>
+      <p class="page-header__subtitle">
+        Manage sections and lectures for your course
+      </p>
+    </div>
+    <div class="page-header__actions">
+      <p-button
+        label="Add Section"
+        icon="pi pi-plus"
+        severity="success"
+        (onClick)="openNew()"
+      />
+      <p-button
+        label="Delete Selected"
+        icon="pi pi-trash"
+        severity="danger"
+        [disabled]="!selectedSections || !selectedSections.length"
+        (onClick)="deleteSelectedSections()"
+      />
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <div class="empty-state" *ngIf="sections.length === 0 && !isLoading">
+    <div class="empty-state__content">
+      <i class="pi pi-folder-open empty-state__icon"></i>
+      <h3 class="empty-state__title">No Sections Found</h3>
+      <p class="empty-state__text">
+        This course doesn't have any sections yet. Create your first section to
+        start organizing your content.
+      </p>
+      <p-button
+        label="Create First Section"
+        icon="pi pi-plus"
+        severity="success"
+        (onClick)="openNew()"
+      />
+    </div>
+  </div>
+
+  <!-- Main Card (only shown when sections exist) -->
+  <div class="card" *ngIf="sections.length > 0">
+    <!-- Table -->
+    <p-table
+      [value]="sections"
+      dataKey="id"
+      [tableStyle]="{ 'min-width': '60rem' }"
+      [(selection)]="selectedSections"
+      [expandedRowKeys]="expandedRows"
+      (onRowExpand)="onRowExpand($event)"
+      (onRowCollapse)="onRowCollapse($event)"
+    >
+      <!-- Caption: Expand/Collapse -->
+      <ng-template pTemplate="caption">
+        <div class="table-caption">
+          <span class="table-caption__count">
+            {{ sections.length }} Section(s)
+          </span>
+          <div class="table-caption__actions">
+            <p-button
+              label="Expand All"
+              icon="pi pi-plus"
+              text
+              (onClick)="expandAll()"
+            />
+            <p-button
+              label="Collapse All"
+              icon="pi pi-minus"
+              text
+              (onClick)="collapseAll()"
+            />
+          </div>
+        </div>
+      </ng-template>
+
+      <!-- Header -->
+      <ng-template pTemplate="header">
+        <tr>
+          <th style="width: 3rem">
+            <p-tableHeaderCheckbox />
+          </th>
+          <th style="width: 3rem"></th>
+          <th pSortableColumn="title">Title <p-sortIcon field="title" /></th>
+          <th pSortableColumn="order">Order <p-sortIcon field="order" /></th>
+          <th>Lectures Count</th>
+          <th style="width: 8rem">Actions</th>
+        </tr>
+      </ng-template>
+
+      <!-- Body -->
+      <ng-template pTemplate="body" let-section let-expanded="expanded">
+        <tr>
+          <td>
+            <p-tableCheckbox [value]="section" />
+          </td>
+          <td>
+            <p-button
+              type="button"
+              pRipple
+              [pRowToggler]="section"
+              [text]="true"
+              [rounded]="true"
+              [plain]="true"
+              [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"
+            />
+          </td>
+          <td>{{ section.title }}</td>
+          <td>
+            <span class="order-badge">{{ section.order }}</span>
+          </td>
+          <td>
+            <span class="lectures-count">
+              {{ section.lectures?.length || 0 }}
+            </span>
+          </td>
+          <td>
+            <div class="action-buttons">
+              <p-button
+                icon="pi pi-pencil"
+                [rounded]="true"
+                [outlined]="true"
+                severity="success"
+                (onClick)="openEdit(section)"
+                pTooltip="Edit Section"
+                tooltipPosition="top"
+              />
+              <p-button
+                icon="pi pi-trash"
+                severity="danger"
+                [rounded]="true"
+                [outlined]="true"
+                (onClick)="deleteSection(section)"
+                pTooltip="Delete Section"
+                tooltipPosition="top"
+              />
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+
+      <!-- Row Expansion: Lectures -->
+      <ng-template pTemplate="rowexpansion" let-section>
+        <tr>
+          <td colspan="6">
+            <div class="expansion-container">
+              <div class="expansion-header">
+                <h3 class="expansion-header__title">
+                  Lectures in "{{ section.title }}"
+                </h3>
+                <p-button
+                  label="Add Lecture"
+                  icon="pi pi-plus"
+                  severity="info"
+                  size="small"
+                  (onClick)="navigateToCreateLecture(section.id)"
+                />
+              </div>
+              <p-table [value]="section.lectures" dataKey="id">
+                <ng-template pTemplate="header">
+                  <tr>
+                    <th>#</th>
+                    <th>Title</th>
+                    <th style="width: 8rem">Actions</th>
+                  </tr>
+                </ng-template>
+                <ng-template
+                  pTemplate="body"
+                  let-lecture
+                  let-rowIndex="rowIndex"
+                >
+                  <tr>
+                    <td>{{ rowIndex + 1 }}</td>
+                    <td>{{ lecture.title }}</td>
+                    <td>
+                      <div class="action-buttons">
+                        <p-button
+                          icon="pi pi-pencil"
+                          severity="success"
+                          [rounded]="true"
+                          [outlined]="true"
+                          size="small"
+                          (onClick)="
+                            navigateToUpdateLecture(section.id, lecture.id)
+                          "
+                          pTooltip="Edit Lecture"
+                          tooltipPosition="top"
+                        />
+                        <p-button
+                          icon="pi pi-trash"
+                          severity="danger"
+                          [rounded]="true"
+                          [outlined]="true"
+                          size="small"
+                          (onClick)="deleteLecture(lecture, section)"
+                          pTooltip="Delete Lecture"
+                          tooltipPosition="top"
+                        />
+                      </div>
+                    </td>
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                  <tr>
+                    <td colspan="3">
+                      <div class="lecture-empty">
+                        <i class="pi pi-video"></i>
+                        <span>No lectures in this section yet.</span>
+                        <p-button
+                          label="Add First Lecture"
+                          icon="pi pi-plus"
+                          severity="info"
+                          size="small"
+                          (onClick)="navigateToCreateLecture(section.id)"
+                        />
+                      </div>
+                    </td>
+                  </tr>
+                </ng-template>
+              </p-table>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+
+  <!-- Loading State -->
+  <div class="loading-state" *ngIf="isLoading">
+    <div class="loading-state__content">
+      <i class="pi pi-spin pi-spinner loading-state__icon"></i>
+      <p>Loading sections...</p>
+    </div>
+  </div>
+
+  <!-- Create Section Dialog -->
+  <p-dialog
+    [(visible)]="createDialogVisible"
+    [style]="{ width: '480px' }"
+    header="Create New Section"
+    [modal]="true"
+    styleClass="section-dialog"
+    [draggable]="false"
+    [resizable]="false"
+  >
+    <ng-template pTemplate="content">
+      <div class="dialog-form">
+        <div class="field">
+          <label for="create-title">Section Title</label>
+          <input
+            type="text"
+            pInputText
+            id="create-title"
+            [(ngModel)]="newSection.title"
+            placeholder="Enter section title"
+            autofocus
+          />
+          <small class="p-error" *ngIf="isSubmitted && !newSection.title">
+            Title is required.
+          </small>
+        </div>
+        <div class="field">
+          <label for="create-order">Section Order</label>
+          <p-inputNumber
+            id="create-order"
+            [(ngModel)]="newSection.order"
+            [min]="1"
+            placeholder="Enter section order number"
+            [showButtons]="true"
+            buttonLayout="horizontal"
+            incrementButtonIcon="pi pi-plus"
+            decrementButtonIcon="pi pi-minus"
+          />
+          <small class="p-error" *ngIf="isSubmitted && !newSection.order">
+            Order is required.
+          </small>
+        </div>
+      </div>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+      <div class="dialog-footer">
+        <p-button
+          label="Cancel"
+          icon="pi pi-times"
+          [outlined]="true"
+          (onClick)="hideCreateDialog()"
+        />
+        <p-button
+          label="Create"
+          icon="pi pi-check"
+          severity="success"
+          (onClick)="createSection()"
+          [loading]="isCreating"
+        />
+      </div>
+    </ng-template>
+  </p-dialog>
+
+  <!-- Edit Section Dialog -->
+  <p-dialog
+    [(visible)]="editDialogVisible"
+    [style]="{ width: '480px' }"
+    header="Edit Section"
+    [modal]="true"
+    styleClass="section-dialog"
+    [draggable]="false"
+    [resizable]="false"
+  >
+    <ng-template pTemplate="content">
+      <div class="dialog-form">
+        <div class="field">
+          <label for="edit-title">Section Title</label>
+          <input
+            type="text"
+            pInputText
+            id="edit-title"
+            [(ngModel)]="editSectionData.title"
+            placeholder="Enter section title"
+          />
+          <small class="p-error" *ngIf="isSubmitted && !editSectionData.title">
+            Title is required.
+          </small>
+        </div>
+        <div class="field">
+          <label for="edit-order">Section Order</label>
+          <p-inputNumber
+            id="edit-order"
+            [(ngModel)]="editSectionData.order"
+            [min]="1"
+            placeholder="Enter section order number"
+            [showButtons]="true"
+            buttonLayout="horizontal"
+            incrementButtonIcon="pi pi-plus"
+            decrementButtonIcon="pi pi-minus"
+          />
+          <small class="p-error" *ngIf="isSubmitted && !editSectionData.order">
+            Order is required.
+          </small>
+        </div>
+      </div>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+      <div class="dialog-footer">
+        <p-button
+          label="Cancel"
+          icon="pi pi-times"
+          [outlined]="true"
+          (onClick)="hideEditDialog()"
+        />
+        <p-button
+          label="Save"
+          icon="pi pi-check"
+          severity="success"
+          (onClick)="updateSection()"
+          [loading]="isUpdating"
+        />
+      </div>
+    </ng-template>
+  </p-dialog>
+
+  <!-- Confirm Dialog -->
+  <p-confirmDialog [style]="{ width: '450px' }" />
+</div>
