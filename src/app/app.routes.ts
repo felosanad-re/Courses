@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { roleGuard } from './Core/Guards/role.guard';
 
 export const routes: Routes = [
   // Auth
@@ -82,6 +83,8 @@ export const routes: Routes = [
   // Instructor
   {
     path: 'instructor',
+    canActivate: [roleGuard],
+    data: { roles: ['Instructor'] },
     loadComponent: () =>
       import(`./Layouts/instructor-layout/instructor-layout.component`).then(
         (c) => c.InstructorLayoutComponent,
@@ -146,6 +149,8 @@ export const routes: Routes = [
   // student
   {
     path: 'student',
+    canActivate: [roleGuard],
+    data: { roles: ['Student'] },
     loadComponent: () =>
       import(`./Layouts/student-layout/student-layout.component`).then(
         (c) => c.StudentLayoutComponent,

@@ -23,6 +23,17 @@ import { CheckEmailConfirmationResponse } from '../../Interfaces/Auth/check-emai
 export class AuthService {
   constructor(private readonly _http: HttpClient) {}
 
+  /** Get the current user's roles from localStorage (browser-only) */
+  getUserRoles(): string[] {
+    const rolesRaw = localStorage.getItem('roles');
+    if (!rolesRaw) return [];
+    try {
+      return JSON.parse(rolesRaw);
+    } catch {
+      return [];
+    }
+  }
+
   /** Login – POST /api/account/login */
   login(data: LoginRequest): Observable<ApplicationResult<LoginResponse>> {
     return this._http.post<ApplicationResult<LoginResponse>>(
