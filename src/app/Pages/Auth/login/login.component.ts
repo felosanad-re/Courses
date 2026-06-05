@@ -61,12 +61,22 @@ export class LoginComponent {
         if (isPlatformBrowser(this._platformId)) {
           localStorage.setItem('token', response.data.token);
           localStorage.setItem('username', response.data.userName);
+          localStorage.setItem('roles', JSON.stringify(response.data.roles));
         }
         this._notifications.showSuccess(
           response.message || 'Login successful',
           'Success',
         );
-        this._router.navigate(['/student/home']);
+
+        // Redirect based on user role
+        const roles = response.data.roles;
+        if (roles.includes('Instructor')) {
+          this._router.navigate(['/instructor/dashboard']);
+        } else if (roles.includes('Admin')) {
+          this._router.navigate(['/admin/dashboard']);
+        } else {
+          this._router.navigate(['/student/home']);
+        }
       },
       error: () => {
         this.isSubmitting = false;
