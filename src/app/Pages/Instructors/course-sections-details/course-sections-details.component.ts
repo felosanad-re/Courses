@@ -275,11 +275,20 @@ export class CourseSectionsDetailsComponent implements OnInit {
 
   // ─── Navigation ───
   navigateToCreateLecture(sectionId: number): void {
-    this._router.navigate(['/instructor/create-lecture', sectionId]);
+    this._router.navigate([
+      '/instructor/create-lecture',
+      this.courseId,
+      sectionId,
+    ]);
   }
 
   navigateToUpdateLecture(sectionId: number, lectureId: number): void {
-    this._router.navigate(['/instructor/update-lecture', sectionId, lectureId]);
+    this._router.navigate([
+      '/instructor/update-lecture',
+      this.courseId,
+      sectionId,
+      lectureId,
+    ]);
   }
 
   // ─── Expand / Collapse ───

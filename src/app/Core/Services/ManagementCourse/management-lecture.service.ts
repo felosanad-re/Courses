@@ -13,6 +13,15 @@ import { environment } from '../../../../environments/environment';
 export class ManagementLectureService {
   constructor(private readonly _http: HttpClient) {}
 
+  // Get Lecture by ID
+  getLecture(
+    lectureId: number,
+  ): Observable<ApplicationResult<LectureWithInstructorResponse>> {
+    return this._http.get<ApplicationResult<LectureWithInstructorResponse>>(
+      `${environment.apiUrl}/ManagementLecture/${lectureId}`,
+    );
+  }
+
   // Create new Lecture
   createLecture(
     data: CreatedLectureRequest,

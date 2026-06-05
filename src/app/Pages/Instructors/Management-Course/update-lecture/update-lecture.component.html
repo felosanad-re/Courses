@@ -1,1 +1,62 @@
-<p>update-lecture works!</p>
+<div class="update-lecture">
+  <!-- Header -->
+  <div class="update-lecture__header">
+    <div class="update-lecture__breadcrumb">
+      <a routerLink="/instructor/dashboard">Dashboard</a>
+      <i class="pi pi-angle-right"></i>
+      <a routerLink="/instructor/course-sections-details/{{ courseId }}"
+        >Course Sections</a
+      >
+      <i class="pi pi-angle-right"></i>
+      <span>Update Lecture</span>
+    </div>
+    <h1 class="update-lecture__title">Update Lecture</h1>
+    <p class="update-lecture__subtitle">
+      Edit lecture details, video URL, and duration information
+    </p>
+  </div>
+
+  <!-- Toast -->
+  <p-toast position="top-right"></p-toast>
+
+  <!-- Loading State -->
+  @if (isLoading) {
+    <div class="update-lecture__loading">
+      <i class="pi pi-spin pi-spinner"></i>
+      <span>Loading lecture data...</span>
+    </div>
+  }
+
+  <!-- No Data State -->
+  @if (!isLoading && !lectureData) {
+    <div class="update-lecture__no-data">
+      <i class="pi pi-exclamation-circle"></i>
+      <span
+        >No lecture data found. Please go back and select a lecture to
+        edit.</span
+      >
+      <button
+        type="button"
+        class="btn btn--secondary"
+        [routerLink]="['/instructor/course-sections-details', courseId]"
+      >
+        <i class="pi pi-arrow-left"></i>
+        Back to Course Sections
+      </button>
+    </div>
+  }
+
+  <!-- Shared Lecture Form -->
+  @if (!isLoading && lectureData) {
+    <app-lecture-form
+      submitButtonText="Update Lecture"
+      submitButtonIcon="pi pi-pencil"
+      [backLink]="'/instructor/course-sections-details/' + courseId"
+      backButtonText="Back to Course Sections"
+      backButtonIcon="pi pi-arrow-left"
+      [isSubmitting]="isSubmitting"
+      [initialData]="lectureData"
+      (formSubmit)="onSubmit($event)"
+    />
+  }
+</div>
