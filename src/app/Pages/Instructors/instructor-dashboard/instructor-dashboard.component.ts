@@ -15,12 +15,15 @@ import { CoursesParams } from '../../../Core/Interfaces/Courses/courses-params';
 import { Pagination } from '../../../Core/Interfaces/Courses/pagination';
 import { skip, Subscription } from 'rxjs';
 import { PaginatorModule } from 'primeng/paginator';
+import { InstructorDashboardStatsService } from '../../../Core/Services/DashboardStats/instructor-dashboard-stats.service';
+import { InstructorStats } from '../../../Core/Interfaces/DashboardStats/instructor-stats';
+import { NotificationsService } from '../../../Core/Services/notifications.service';
 
 interface StatsCard {
   icon: string;
   title: string;
   value: string | number;
-  change?: string;
+  change?: number | string;
   changeType?: 'positive' | 'negative';
 }
 
@@ -53,6 +56,14 @@ export class InstructorDashboardComponent implements OnInit, OnDestroy {
   instructorName = '';
   isLoading = true;
   courses: CourseResponseForInstructor[] = [];
+  stats: InstructorStats = {
+    totalCourses: 0,
+    totalNewCoursesInMonth: 0,
+    totalStudents: 0,
+    totalRevenues: 0,
+    newTotalStudentsInMonth: 0,
+    newTotalRevenuesInMonth: 0,
+  };
 
   // ─── Pagination Variables ───
   // PrimeNG Paginator uses "first" (offset) and "rows" (pageSize):
@@ -67,36 +78,7 @@ export class InstructorDashboardComponent implements OnInit, OnDestroy {
 
   private searchSubscription!: Subscription;
 
-  statsCards: StatsCard[] = [
-    {
-      icon: 'pi-book',
-      title: 'Total Courses',
-      value: this.courseCount,
-      change: '+0 this month',
-      changeType: 'positive',
-    },
-    {
-      icon: 'pi-users',
-      title: 'Total Students',
-      value: '0',
-      change: '+0 this month',
-      changeType: 'positive',
-    },
-    {
-      icon: 'pi-wallet',
-      title: 'Total Revenue',
-      value: '$0',
-      change: '+0% this month',
-      changeType: 'positive',
-    },
-    {
-      icon: 'pi-star',
-      title: 'Average Rating',
-      value: 0,
-      change: '+0 this month',
-      changeType: 'positive',
-    },
-  ];
+  statsCards: StatsCard[] = [];
 
   recentActivities: Activity[] = [
     {
@@ -171,6 +153,8 @@ export class InstructorDashboardComponent implements OnInit, OnDestroy {
     private readonly _instructorsService: InstructorsService,
     private readonly _searchService: SearchService,
     private readonly _router: Router,
+    private readonly _statsService: InstructorDashboardStatsService,
+    private readonly _notifications: NotificationsService,
     @Inject(PLATFORM_ID) private readonly _platformId: object,
   ) {}
 
@@ -187,6 +171,7 @@ export class InstructorDashboardComponent implements OnInit, OnDestroy {
         this.loadCourses();
       });
 
+    this.getStats();
     this.loadCourses();
   }
 
@@ -208,8 +193,6 @@ export class InstructorDashboardComponent implements OnInit, OnDestroy {
       ) => {
         if (response.succeed && response.data) {
           this.courses = response.data.data;
-          this.courseCount = response.data.count;
-          this.updateStats();
         }
         this.isLoading = false;
       },
@@ -219,16 +202,59 @@ export class InstructorDashboardComponent implements OnInit, OnDestroy {
     });
   }
 
+  getStats() {
+    this._statsService.getStats().subscribe({
+      next: (res: ApplicationResult<InstructorStats>) => {
+        if (res.succeed && res.data) {
+          this.stats = res.data;
+          this.buildStatsCards();
+        } else {
+          this._notifications.showError(
+            res.message || 'Failed to load stats.',
+            'Error',
+          );
+        }
+      },
+    });
+  }
+
+  private buildStatsCards(): void {
+    this.statsCards = [
+      {
+        icon: 'pi-book',
+        title: 'Total Courses',
+        value: this.stats.totalCourses,
+        change: `+${this.stats.totalNewCoursesInMonth} This month`,
+        changeType: 'positive',
+      },
+      {
+        icon: 'pi-users',
+        title: 'Total Students',
+        value: this.stats.totalStudents,
+        change: `+${this.stats.newTotalStudentsInMonth} This month`,
+        changeType: 'positive',
+      },
+      {
+        icon: 'pi-wallet',
+        title: 'Total Revenue',
+        value: `${this.stats.totalRevenues}$`,
+        change: `+${this.stats.newTotalRevenuesInMonth}$ This month`,
+        changeType: 'positive',
+      },
+      {
+        icon: 'pi-star',
+        title: 'Average Rating',
+        value: 0,
+        change: '+0 this month',
+        changeType: 'positive',
+      },
+    ];
+  }
+
   ngOnDestroy() {
     if (this.searchSubscription) {
       this.searchSubscription.unsubscribe();
     }
-  }
-
-  updateStats(): void {
-    this.statsCards[0].value = this.courseCount;
-    this.statsCards[1].value = '0';
-    this.statsCards[3].value = 0;
   }
 
   getStars(rating: number): number[] {
