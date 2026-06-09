@@ -144,6 +144,13 @@ export const routes: Routes = [
             `./Pages/Instructors/Management-Course/update-lecture/update-lecture.component`
           ).then((c) => c.UpdateLectureComponent),
       },
+      {
+        path: 'students',
+        loadComponent: () =>
+          import(
+            `./Pages/Instructors/instructor-students/instructor-students.component`
+          ).then((c) => c.InstructorStudentsComponent),
+      },
     ],
   },
   // student

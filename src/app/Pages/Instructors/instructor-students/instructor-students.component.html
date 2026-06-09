@@ -1,0 +1,227 @@
+<div class="students-page">
+  <!-- Header -->
+  <div class="students-page__header">
+    <div class="students-page__welcome">
+      <h1 class="students-page__title">
+        <i class="pi pi-users"></i> My Students
+      </h1>
+      <p class="students-page__subtitle">
+        Manage and view all students enrolled in your courses.
+      </p>
+    </div>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="students-page__stats">
+    <div class="stat-card stat-card--students">
+      <div class="stat-card__icon">
+        <i class="pi pi-users"></i>
+      </div>
+      <div class="stat-card__content">
+        <span class="stat-card__title">Total Students</span>
+        <span class="stat-card__value">{{ stats.totalStudents }}</span>
+        @if (stats.newTotalStudentsInMonth > 0) {
+          <span class="stat-card__change stat-card__change--positive">
+            +{{ stats.newTotalStudentsInMonth }} this month
+          </span>
+        }
+      </div>
+    </div>
+
+    <div class="stat-card stat-card--courses">
+      <div class="stat-card__icon">
+        <i class="pi pi-book"></i>
+      </div>
+      <div class="stat-card__content">
+        <span class="stat-card__title">Total Courses</span>
+        <span class="stat-card__value">{{ stats.totalCourses }}</span>
+        @if (stats.totalNewCoursesInMonth > 0) {
+          <span class="stat-card__change stat-card__change--positive">
+            +{{ stats.totalNewCoursesInMonth }} this month
+          </span>
+        }
+      </div>
+    </div>
+
+    <div class="stat-card stat-card--revenue">
+      <div class="stat-card__icon">
+        <i class="pi pi-dollar"></i>
+      </div>
+      <div class="stat-card__content">
+        <span class="stat-card__title">Total Revenue</span>
+        <span class="stat-card__value">{{
+          stats.totalRevenues | currency: "USD"
+        }}</span>
+        @if (stats.newTotalRevenuesInMonth > 0) {
+          <span class="stat-card__change stat-card__change--positive">
+            +{{ stats.newTotalRevenuesInMonth | currency: "USD" }} this month
+          </span>
+        }
+      </div>
+    </div>
+  </div>
+
+  <!-- Search & Filters Bar -->
+  <div class="students-page__toolbar">
+    <div class="students-page__search">
+      <i class="pi pi-search"></i>
+      <input
+        type="text"
+        placeholder="Search students by name..."
+        [(ngModel)]="studentParams.search"
+        (ngModelChange)="onSearch()"
+      />
+    </div>
+    <div class="students-page__actions">
+      <p-button
+        label="Expand All"
+        icon="pi pi-plus"
+        severity="secondary"
+        [outlined]="true"
+        (onClick)="expandAll()"
+      />
+      <p-button
+        label="Collapse All"
+        icon="pi pi-minus"
+        severity="secondary"
+        [outlined]="true"
+        (onClick)="collapseAll()"
+      />
+    </div>
+  </div>
+
+  <!-- Students Table -->
+  <div class="students-page__table-wrapper">
+    @if (isLoading && students.length === 0) {
+      <div class="students-page__loading">
+        <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
+        <span>Loading students...</span>
+      </div>
+    } @else if (students.length === 0) {
+      <div class="students-page__empty">
+        <i class="pi pi-users" style="font-size: 3rem"></i>
+        <h3>No Students Found</h3>
+        <p>No students are currently enrolled in your courses.</p>
+      </div>
+    } @else {
+      <p-table
+        [value]="students"
+        dataKey="id"
+        [tableStyle]="{ 'min-width': '60rem' }"
+        [expandedRowKeys]="expandedRows"
+        [lazy]="true"
+        [lazyLoadOnInit]="false"
+        (onLazyLoad)="onLazyLoad($event)"
+        (onRowExpand)="onRowExpand($event)"
+        (onRowCollapse)="onRowCollapse($event)"
+        styleClass="p-datatable-sm"
+      >
+        <ng-template pTemplate="header">
+          <tr>
+            <th style="width: 3rem"></th>
+            <th pSortableColumn="name">
+              Student Name <p-sortIcon field="name" />
+            </th>
+            <th>Enrolled Courses</th>
+            <th pSortableColumn="firstEnrollment">
+              First Enrollment <p-sortIcon field="firstEnrollment" />
+            </th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-student let-expanded="expanded">
+          <tr>
+            <td>
+              <p-button
+                type="button"
+                pRipple
+                [pRowToggler]="student"
+                [text]="true"
+                [rounded]="true"
+                [plain]="true"
+                [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"
+              />
+            </td>
+            <td>
+              <div class="student-name-cell">
+                <div class="student-avatar">
+                  <i class="pi pi-user"></i>
+                </div>
+                <span>{{ student.name }}</span>
+              </div>
+            </td>
+            <td>
+              <p-tag
+                [value]="student.courseCount + ' Courses'"
+                [severity]="
+                  student.courseCount > 2
+                    ? 'success'
+                    : student.courseCount > 0
+                      ? 'info'
+                      : 'danger'
+                "
+              />
+            </td>
+            <td>{{ student.firstEnrollment | date: "mediumDate" }}</td>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="rowexpansion" let-student>
+          <tr>
+            <td colspan="4">
+              <div class="expansion-content">
+                <h5 class="expansion-title">
+                  Courses enrolled by {{ student.name }}
+                </h5>
+                <p-table
+                  [value]="student.courses"
+                  dataKey="id"
+                  styleClass="p-datatable-sm p-datatable-gridlines expansion-table"
+                >
+                  <ng-template pTemplate="header">
+                    <tr>
+                      <th>Course Id</th>
+                      <th>Course Name</th>
+                      <th>Enrollment Date</th>
+                    </tr>
+                  </ng-template>
+                  <ng-template pTemplate="body" let-course>
+                    <tr>
+                      <td>{{ course.id }}</td>
+                      <td>
+                        <div class="course-name-cell">
+                          <i class="pi pi-book"></i>
+                          <span>{{ course.name }}</span>
+                        </div>
+                      </td>
+                      <td>{{ course.enrollmentAt | date: "mediumDate" }}</td>
+                    </tr>
+                  </ng-template>
+                  <ng-template pTemplate="emptymessage">
+                    <tr>
+                      <td colspan="3" class="empty-courses">
+                        <i class="pi pi-info-circle"></i>
+                        No courses found for this student.
+                      </td>
+                    </tr>
+                  </ng-template>
+                </p-table>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+
+      <!-- Pagination -->
+      <div class="students-page__pagination">
+        <p-paginator
+          [first]="first"
+          [rows]="studentParams.pageSize"
+          [totalRecords]="totalCount"
+          [rowsPerPageOptions]="[5, 10, 25]"
+          (onPageChange)="onPageChange($event)"
+        />
+      </div>
+    }
+  </div>
+</div>
