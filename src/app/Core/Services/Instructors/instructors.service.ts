@@ -8,6 +8,7 @@ import { CourseResponseForInstructor } from '../../Interfaces/Instructors/course
 import { environment } from '../../../../environments/environment';
 import { StudentParams } from '../../Interfaces/Instructors/student-params';
 import { StudentWithInstructorResponse } from '../../Interfaces/Instructors/student-with-instructor-response';
+import { InstructorWithCoursesResponse } from '../../Interfaces/Instructors/instructor-with-courses-response';
 
 @Injectable({
   providedIn: 'root',
@@ -55,5 +56,17 @@ export class InstructorsService {
     return this._http.get<ApplicationResult<StudentWithInstructorResponse>>(
       `${environment.apiUrl}/Instructor/Student/${id}`,
     );
+  }
+
+  // Get My Courses (with enrollment stats: student count, revenue, first/last purchase)
+  getMyCourses(
+    courseParams: CoursesParams,
+  ): Observable<
+    ApplicationResult<Pagination<InstructorWithCoursesResponse[]>>
+  > {
+    const params = this.buildCourseParams(courseParams);
+    return this._http.get<
+      ApplicationResult<Pagination<InstructorWithCoursesResponse[]>>
+    >(`${environment.apiUrl}/Instructor/MyCourses`, { params });
   }
 }

@@ -1,0 +1,152 @@
+<div class="my-courses-page">
+  <!-- Header -->
+  <div class="my-courses-page__header">
+    <div class="my-courses-page__welcome">
+      <h1 class="my-courses-page__title">
+        <i class="pi pi-book"></i> My Courses
+      </h1>
+      <p class="my-courses-page__subtitle">
+        View your courses and their enrollment statistics.
+      </p>
+    </div>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="my-courses-page__stats">
+    @for (stat of statsCards; track stat.title) {
+      <div class="stat-card" [class]="stat.colorClass">
+        <div class="stat-card__icon">
+          <i class="pi {{ stat.icon }}"></i>
+        </div>
+        <div class="stat-card__content">
+          <span class="stat-card__title">{{ stat.title }}</span>
+          <span class="stat-card__value">
+            @if (stat.title === "Total Revenue") {
+              {{ stat.value | currency: "USD" }}
+            } @else {
+              {{ stat.value }}
+            }
+          </span>
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- Courses Grid -->
+  @if (isLoading && courses.length === 0) {
+    <div class="my-courses-page__loading">
+      <i class="pi pi-spin pi-spinner" style="font-size: 2.5rem"></i>
+      <span>Loading your courses...</span>
+    </div>
+  } @else if (courses.length === 0) {
+    <div class="my-courses-page__empty">
+      <i class="pi pi-info-circle" style="font-size: 3rem"></i>
+      <h3>No Courses Found</h3>
+      <p>You haven't created any courses yet.</p>
+    </div>
+  } @else {
+    <div class="my-courses-page__grid">
+      @for (course of courses; track course.id) {
+        <div class="course-card">
+          <!-- Course Image -->
+          <div class="course-card__image">
+            @if (course.image) {
+              <img [src]="course.image" [alt]="course.name" />
+            } @else {
+              <i class="pi pi-book"></i>
+            }
+            <!-- Price Badge -->
+            <span
+              class="course-card__price-badge"
+              [class]="
+                course.isPaid
+                  ? 'course-card__price-badge--paid'
+                  : 'course-card__price-badge--free'
+              "
+            >
+              {{ course.isPaid ? "$" + course.price : "Free" }}
+            </span>
+          </div>
+
+          <!-- Course Info -->
+          <div class="course-card__body">
+            <h3 class="course-card__title">{{ course.name }}</h3>
+            <p class="course-card__description">{{ course.description }}</p>
+
+            <!-- Enrollment Stats -->
+            <div class="course-card__stats">
+              <div class="course-card__stat">
+                <i class="pi pi-users"></i>
+                <span>{{ course.totalEnrollment }} Students</span>
+              </div>
+              <div class="course-card__stat">
+                <i class="pi pi-dollar"></i>
+                <span>{{ course.totalRevenues | currency: "USD" }}</span>
+              </div>
+            </div>
+
+            <!-- Dates -->
+            @if (hasEnrollments(course)) {
+              <div class="course-card__dates">
+                <div class="course-card__date">
+                  <i class="pi pi-calendar-plus"></i>
+                  <span
+                    >First:
+                    {{ course.firstEnrollment | date: "mediumDate" }}</span
+                  >
+                </div>
+                <div class="course-card__date">
+                  <i class="pi pi-calendar"></i>
+                  <span
+                    >Last:
+                    {{ course.lastEnrollment | date: "mediumDate" }}</span
+                  >
+                </div>
+              </div>
+            } @else {
+              <p class="course-card__no-students">
+                <i class="pi pi-info-circle"></i>
+                No students enrolled yet
+              </p>
+            }
+          </div>
+
+          <!-- Actions -->
+          <div class="course-card__actions">
+            <button
+              class="course-card__btn course-card__btn--view"
+              [routerLink]="[
+                '/instructor',
+                'course-sections-details',
+                course.id,
+              ]"
+            >
+              <i class="pi pi-eye"></i>
+              View
+            </button>
+            <button
+              class="course-card__btn course-card__btn--edit"
+              [routerLink]="['/instructor', 'update-course', course.id]"
+            >
+              <i class="pi pi-pencil"></i>
+              Edit
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- Pagination -->
+    <div class="my-courses-page__pagination">
+      <p-paginator
+        [first]="first"
+        [rows]="pageSize"
+        [totalRecords]="totalCount"
+        [rowsPerPageOptions]="[5, 10, 20]"
+        [showCurrentPageReport]="true"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} courses"
+        (onPageChange)="onPageChange($event)"
+      />
+    </div>
+  }
+</div>
