@@ -38,6 +38,31 @@
     }
   </div>
 
+  <!-- Date Range Filter -->
+  <div class="analytics__filter">
+    <div class="analytics__filter-fields">
+      <div class="analytics__filter-field">
+        <label class="analytics__filter-label" for="rangeDates"
+          >Date Range</label
+        >
+        <p-calendar
+          id="rangeDates"
+          [(ngModel)]="rangeDates"
+          selectionMode="range"
+          [readonlyInput]="true"
+          placeholder="Select date range"
+        />
+      </div>
+    </div>
+    <p-button
+      label="Apply"
+      icon="pi pi-filter"
+      [loading]="isChartsLoading"
+      (onClick)="loadCharts()"
+      styleClass="analytics__filter-btn"
+    />
+  </div>
+
   <!-- Charts Grid -->
   <div class="analytics__charts">
     <!-- Bar Chart: Students per Month -->
