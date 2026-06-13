@@ -1,0 +1,199 @@
+<div class="analytics">
+  <!-- Header -->
+  <div class="analytics__header">
+    <div class="analytics__welcome">
+      <h1 class="analytics__title">Analytics</h1>
+      <p class="analytics__subtitle">
+        Track your course performance, student growth, and revenue.
+      </p>
+    </div>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="analytics__stats">
+    @if (isLoading) {
+      @for (_ of [1, 2, 3, 4, 5, 6, 7]; track $index) {
+        <div class="stat-card stat-card--skeleton">
+          <div class="stat-card__icon skeleton"></div>
+          <div class="stat-card__content">
+            <span class="skeleton skeleton--text-sm"></span>
+            <span class="skeleton skeleton--text-lg"></span>
+            <span class="skeleton skeleton--text-xs"></span>
+          </div>
+        </div>
+      }
+    } @else {
+      @for (stat of statsCards; track stat.title) {
+        <div class="stat-card">
+          <div class="stat-card__icon" [class]="getIconClass(stat.title)">
+            <i class="pi {{ stat.icon }}"></i>
+          </div>
+          <div class="stat-card__content">
+            <span class="stat-card__title">{{ stat.title }}</span>
+            <span class="stat-card__value">{{ stat.value }}</span>
+            <span class="stat-card__subtitle">{{ stat.subtitle }}</span>
+          </div>
+        </div>
+      }
+    }
+  </div>
+
+  <!-- Charts Grid -->
+  <div class="analytics__charts">
+    <!-- Bar Chart: Students per Month -->
+    <div class="chart-card">
+      <div class="chart-card__header">
+        <h2 class="chart-card__title">Students per Month</h2>
+        <span class="chart-card__badge">This Year</span>
+      </div>
+      <div class="chart-card__body">
+        @if (barChartData) {
+          <p-chart
+            type="bar"
+            [data]="barChartData"
+            [options]="barChartOptions"
+          />
+        } @else {
+          <div class="chart-card__loading">
+            <i class="pi pi-spin pi-spinner"></i>
+            <span>Loading chart...</span>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Line Chart: Revenue per Month -->
+    <div class="chart-card">
+      <div class="chart-card__header">
+        <h2 class="chart-card__title">Revenue per Month</h2>
+        <span class="chart-card__badge chart-card__badge--green"
+          >This Year</span
+        >
+      </div>
+      <div class="chart-card__body">
+        @if (lineChartData) {
+          <p-chart
+            type="line"
+            [data]="lineChartData"
+            [options]="lineChartOptions"
+          />
+        } @else {
+          <div class="chart-card__loading">
+            <i class="pi pi-spin pi-spinner"></i>
+            <span>Loading chart...</span>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+
+  <!-- Top Courses Grid -->
+  <div class="analytics__courses">
+    <!-- Top Course Selling -->
+    <div class="course-card">
+      <div class="course-card__header">
+        <h2 class="course-card__title">Top Selling Course</h2>
+        <span class="course-card__badge course-card__badge--gold">
+          <i class="pi pi-crown"></i>
+          Most Sold
+        </span>
+      </div>
+      @if (analyzeData.topCourseSelling) {
+        <div class="course-card__body">
+          <div class="course-card__thumbnail">
+            @if (analyzeData.topCourseSelling.image) {
+              <img
+                [src]="analyzeData.topCourseSelling.image"
+                [alt]="analyzeData.topCourseSelling.name"
+              />
+            } @else {
+              <div class="course-card__placeholder">
+                <i class="pi pi-book"></i>
+              </div>
+            }
+          </div>
+          <div class="course-card__info">
+            <h3 class="course-card__course-name">
+              {{ analyzeData.topCourseSelling.name }}
+            </h3>
+            <div class="course-card__stats">
+              <div class="course-card__stat">
+                <i class="pi pi-users"></i>
+                <span
+                  >{{
+                    analyzeData.topCourseSelling.enrollments
+                  }}
+                  Enrollments</span
+                >
+              </div>
+              <div class="course-card__stat">
+                <i class="pi pi-dollar"></i>
+                <span>${{ analyzeData.topCourseSelling.revenue }} Revenue</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      } @else {
+        <div class="course-card__empty">
+          <i class="pi pi-book"></i>
+          <span>No courses yet. Create your first course!</span>
+        </div>
+      }
+    </div>
+
+    <!-- Top Course Rating -->
+    <div class="course-card">
+      <div class="course-card__header">
+        <h2 class="course-card__title">Top Rated Course</h2>
+        <span class="course-card__badge course-card__badge--star">
+          <i class="pi pi-star-fill"></i>
+          Highest Rated
+        </span>
+      </div>
+      @if (analyzeData.topCourseRating) {
+        <div class="course-card__body">
+          <div class="course-card__thumbnail">
+            @if (analyzeData.topCourseRating.image) {
+              <img
+                [src]="analyzeData.topCourseRating.image"
+                [alt]="analyzeData.topCourseRating.name"
+              />
+            } @else {
+              <div class="course-card__placeholder">
+                <i class="pi pi-book"></i>
+              </div>
+            }
+          </div>
+          <div class="course-card__info">
+            <h3 class="course-card__course-name">
+              {{ analyzeData.topCourseRating.name }}
+            </h3>
+            <div class="course-card__stats">
+              <div class="course-card__stat">
+                <i class="pi pi-users"></i>
+                <span
+                  >{{
+                    analyzeData.topCourseRating.enrollments
+                  }}
+                  Enrollments</span
+                >
+              </div>
+              <div class="course-card__stat">
+                <i class="pi pi-dollar"></i>
+                <span>${{ analyzeData.topCourseRating.revenue }} Revenue</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      } @else {
+        <div class="course-card__empty">
+          <i class="pi pi-star"></i>
+          <span
+            >No rated courses yet. Ratings will appear once students submit
+            reviews.</span
+          >
+        </div>
+      }
+    </div>
+  </div>
+</div>
