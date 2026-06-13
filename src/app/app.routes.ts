@@ -158,6 +158,13 @@ export const routes: Routes = [
             (c) => c.MyCoursesComponent,
           ),
       },
+      {
+        path: 'analytics',
+        loadComponent: () =>
+          import(
+            `./Pages/Instructors/instructor-analyze/instructor-analyze.component`
+          ).then((c) => c.InstructorAnalyzeComponent),
+      },
     ],
   },
   // student
