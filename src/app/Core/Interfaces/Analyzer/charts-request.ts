@@ -1,4 +1,4 @@
 export class ChartsRequest {
-  fromDate?: Date;
-  toDate?: Date;
+  fromDate?: string;
+  toDate?: string;
 }

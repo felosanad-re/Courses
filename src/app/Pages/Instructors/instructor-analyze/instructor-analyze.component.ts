@@ -1,11 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { ChartModule } from 'primeng/chart';
+import { CalendarModule } from 'primeng/calendar';
+import { ButtonModule } from 'primeng/button';
 import { AnalyzeService } from '../../../Core/Services/Analyzer/analyze.service';
 import { InstructorAnalyticsDto } from '../../../Core/Interfaces/Analyzer/instructor-analytics-dto';
 import { MonthlyAnalyticsDto } from '../../../Core/Interfaces/Analyzer/monthly-analytics-dto';
 import { ChartsRequest } from '../../../Core/Interfaces/Analyzer/charts-request';
 import { ApplicationResult } from '../../../Core/Interfaces/application-result';
+import { NotificationsService } from '../../../Core/Services/notifications.service';
+import { finalize } from 'rxjs';
 
 interface StatCard {
   icon: string;
@@ -17,15 +22,29 @@ interface StatCard {
 @Component({
   selector: 'app-instructor-analyze',
   standalone: true,
-  imports: [CommonModule, ChartModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    ChartModule,
+    CalendarModule,
+    ButtonModule,
+  ],
   templateUrl: './instructor-analyze.component.html',
   styleUrl: './instructor-analyze.component.scss',
 })
 export class InstructorAnalyzeComponent implements OnInit {
   analyzeData: InstructorAnalyticsDto = {} as InstructorAnalyticsDto;
-  chartRequest: ChartsRequest = new ChartsRequest();
   isLoading = true;
   statsCards: StatCard[] = [];
+
+  rangeDates: Date[] = [];
+
+  private initDefaultDateRange(): void {
+    const now = new Date();
+    const from = new Date(now.getFullYear(), now.getMonth() - 11, 1);
+    this.rangeDates = [from, now];
+  }
+  isChartsLoading = false;
 
   // Bar chart: students per month
   barChartData: any;
@@ -35,9 +54,13 @@ export class InstructorAnalyzeComponent implements OnInit {
   lineChartData: any;
   lineChartOptions: any;
 
-  constructor(private readonly _analyzeService: AnalyzeService) {}
+  constructor(
+    private readonly _analyzeService: AnalyzeService,
+    private readonly _notification: NotificationsService,
+  ) {}
 
   ngOnInit(): void {
+    this.initDefaultDateRange();
     this.loadAnalytics();
     this.loadCharts();
   }
@@ -58,15 +81,43 @@ export class InstructorAnalyzeComponent implements OnInit {
   }
 
   loadCharts(): void {
-    // From Data and toDate Generated from API => Until i customize time period
-    this._analyzeService.getAnalyzeCharts(this.chartRequest).subscribe({
-      next: (res: ApplicationResult<MonthlyAnalyticsDto[]>) => {
-        if (res.succeed && res.data) {
-          this.buildBarChart(res.data);
-          this.buildLineChart(res.data);
-        }
-      },
-    });
+    if (
+      !this.rangeDates ||
+      this.rangeDates.length < 2 ||
+      !this.rangeDates[0] ||
+      !this.rangeDates[1]
+    ) {
+      this._notification.showError('Please select a date range', 'Error');
+      return;
+    }
+
+    this.isChartsLoading = true;
+    this.barChartData = null;
+    this.lineChartData = null;
+
+    const fromDate = this.rangeDates[0];
+    const toDate = this.rangeDates[1];
+
+    const chartRequest: ChartsRequest = {
+      fromDate: fromDate.toISOString(),
+      toDate: toDate.toISOString(),
+    };
+
+    this._analyzeService
+      .getAnalyzeCharts(chartRequest)
+      .pipe(
+        finalize(() => {
+          this.isChartsLoading = false;
+        }),
+      )
+      .subscribe({
+        next: (res: ApplicationResult<MonthlyAnalyticsDto[]>) => {
+          if (res.succeed && res.data) {
+            this.buildBarChart(res.data);
+            this.buildLineChart(res.data);
+          }
+        },
+      });
   }
 
   getIconClass(title: string): string {
