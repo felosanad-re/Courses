@@ -1,0 +1,188 @@
+<div class="earnings">
+  <!-- Header -->
+  <div class="earnings__header">
+    <div class="earnings__welcome">
+      <h1 class="earnings__title">Earnings</h1>
+      <p class="earnings__subtitle">
+        Track your revenue, enrollment income, and earnings trends.
+      </p>
+    </div>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="earnings__stats">
+    @if (isLoading) {
+      @for (_ of [1, 2, 3, 4]; track $index) {
+        <div class="stat-card stat-card--skeleton">
+          <div class="stat-card__icon skeleton"></div>
+          <div class="stat-card__content">
+            <span class="skeleton skeleton--text-sm"></span>
+            <span class="skeleton skeleton--text-lg"></span>
+            <span class="skeleton skeleton--text-xs"></span>
+          </div>
+        </div>
+      }
+    } @else {
+      @for (stat of statsCards; track stat.title) {
+        <div class="stat-card">
+          <div class="stat-card__icon" [class]="getIconClass(stat.title)">
+            <i class="pi {{ stat.icon }}"></i>
+          </div>
+          <div class="stat-card__content">
+            <span class="stat-card__title">{{ stat.title }}</span>
+            <span class="stat-card__value">{{ stat.value }}</span>
+            <span class="stat-card__subtitle">{{ stat.subtitle }}</span>
+          </div>
+        </div>
+      }
+    }
+  </div>
+
+  <!-- Time Period Filter -->
+  <div class="earnings__filter">
+    <div class="earnings__filter-buttons">
+      <button
+        class="earnings__filter-btn"
+        [class.earnings__filter-btn--active]="selectedPeriodKey === 'default'"
+        (click)="resetToDefault()"
+      >
+        Default
+      </button>
+      @for (period of timePeriods; track period.key) {
+        <button
+          class="earnings__filter-btn"
+          [class.earnings__filter-btn--active]="
+            selectedPeriodKey === period.key
+          "
+          (click)="selectPeriod(period.key)"
+        >
+          {{ period.label }}
+        </button>
+      }
+    </div>
+  </div>
+
+  <!-- Earnings Chart -->
+  <div class="earnings__chart">
+    <div class="chart-card">
+      <div class="chart-card__header">
+        <h2 class="chart-card__title">Earnings Over Time</h2>
+        <span class="chart-card__badge chart-card__badge--green">
+          {{ selectedPeriodLabel }}
+        </span>
+      </div>
+      <div class="chart-card__body">
+        @if (lineChartData) {
+          <p-chart
+            type="line"
+            [data]="lineChartData"
+            [options]="lineChartOptions"
+          />
+        } @else if (isChartsLoading) {
+          <div class="chart-card__loading">
+            <i class="pi pi-spin pi-spinner"></i>
+            <span>Loading chart...</span>
+          </div>
+        } @else {
+          <div class="chart-card__empty">
+            <i class="pi pi-chart-line"></i>
+            <span>No earnings data available for this period.</span>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+
+  <!-- Enrollments Table -->
+  <div class="earnings__enrollments">
+    <div class="enrollments-card">
+      <div class="enrollments-card__header">
+        <h2 class="enrollments-card__title">Enrollment Transactions</h2>
+        <span class="enrollments-card__count">
+          {{ totalEnrollmentsCount }} total
+        </span>
+      </div>
+
+      @if (isEnrollmentsLoading) {
+        <div class="enrollments-card__loading">
+          <i class="pi pi-spin pi-spinner"></i>
+          <span>Loading enrollments...</span>
+        </div>
+      } @else if (enrollments.length > 0) {
+        <div class="enrollments-card__table-wrapper">
+          <table class="enrollments-table">
+            <thead>
+              <tr>
+                <th>Student</th>
+                <th>Course</th>
+                <th>Amount</th>
+                <th>Date</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (enrollment of enrollments; track enrollment.enrollmentId) {
+                <tr>
+                  <td>
+                    <div class="enrollments-table__student">
+                      <div class="enrollments-table__avatar">
+                        <i class="pi pi-user"></i>
+                      </div>
+                      <span class="enrollments-table__name">{{
+                        enrollment.studentName
+                      }}</span>
+                    </div>
+                  </td>
+                  <td>
+                    <span class="enrollments-table__course">{{
+                      enrollment.courseTitle
+                    }}</span>
+                  </td>
+                  <td>
+                    <span class="enrollments-table__amount"
+                      >${{ enrollment.amount }}</span
+                    >
+                  </td>
+                  <td>
+                    <span class="enrollments-table__date">{{
+                      enrollment.createdAt | date: "mediumDate"
+                    }}</span>
+                  </td>
+                  <td>
+                    @if (enrollment.isPaid) {
+                      <span
+                        class="enrollments-table__status enrollments-table__status--paid"
+                      >
+                        <i class="pi pi-check-circle"></i> Paid
+                      </span>
+                    } @else {
+                      <span
+                        class="enrollments-table__status enrollments-table__status--pending"
+                      >
+                        <i class="pi pi-clock"></i> Pending
+                      </span>
+                    }
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <div class="enrollments-card__paginator">
+          <p-paginator
+            [rows]="enrollmentsParams.pageSize"
+            [totalRecords]="totalEnrollmentsCount"
+            [rowsPerPageOptions]="[5, 10, 20]"
+            (onPageChange)="onPageChange($event)"
+          />
+        </div>
+      } @else {
+        <div class="enrollments-card__empty">
+          <i class="pi pi-users"></i>
+          <span>No enrollment transactions found.</span>
+        </div>
+      }
+    </div>
+  </div>
+</div>
