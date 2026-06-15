@@ -165,6 +165,13 @@ export const routes: Routes = [
             `./Pages/Instructors/instructor-analyze/instructor-analyze.component`
           ).then((c) => c.InstructorAnalyzeComponent),
       },
+      {
+        path: 'earnings',
+        loadComponent: () =>
+          import(
+            `./Pages/Instructors/earning-instructor/earning-instructor.component`
+          ).then((c) => c.EarningInstructorComponent),
+      },
     ],
   },
   // student
