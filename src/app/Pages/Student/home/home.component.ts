@@ -12,7 +12,6 @@ import { CourseTypeToReturnDTO } from '../../../Core/Interfaces/courseTypes/cour
 import { EnrollmentService } from '../../../Core/Services/Enrollments/enrollment.service';
 import { EnrollmentWithCourseResponse } from '../../../Core/Interfaces/Enrollments/enrollment-with-course-response';
 import { PaginatorModule } from 'primeng/paginator';
-import { runInThisContext } from 'vm';
 
 @Component({
   selector: 'app-home',
@@ -164,5 +163,20 @@ export class HomeComponent {
         }
       },
     });
+  }
+
+  isOnlineCourse(status: string): boolean {
+    const normalizedStatus = this.normalizeCourseStatus(status);
+    return normalizedStatus === 'onlinecourse' || normalizedStatus === '0';
+  }
+
+  getCourseStatusLabel(status: string): string {
+    return this.isOnlineCourse(status) ? 'Online' : 'Recorded';
+  }
+
+  private normalizeCourseStatus(status: string): string {
+    return String(status ?? '')
+      .replace(/\s+/g, '')
+      .toLowerCase();
   }
 }

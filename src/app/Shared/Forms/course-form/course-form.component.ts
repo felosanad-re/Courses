@@ -19,6 +19,7 @@ import { DropdownModule } from 'primeng/dropdown';
 import { CourseTypeToReturnDTO } from '../../../Core/Interfaces/courseTypes/course-type-to-return-dto';
 import { CourseResponseForInstructor } from '../../../Core/Interfaces/Instructors/course-response-for-instructor';
 import { CourseFormRequest } from '../../../Core/Interfaces/Instructors/CourseFormRequest';
+import { CourseStatus } from '../../../Core/Interfaces/Courses/course-status';
 
 @Component({
   selector: 'app-course-form',
@@ -57,6 +58,9 @@ export class CourseFormComponent implements OnInit, OnChanges {
   selectedFile: File | null = null;
   isUploading = false;
 
+  /** Values sent to the API for CourseStatus enum binding */
+  readonly courseStatuses = CourseStatus;
+
   /** Stores the original image URL from `initialData` (Update mode) */
   initialImageUrl: string | null = null;
 
@@ -86,6 +90,7 @@ export class CourseFormComponent implements OnInit, OnChanges {
       name: ['', [Validators.required, Validators.minLength(3)]],
       description: ['', [Validators.required, Validators.minLength(10)]],
       courseTypeId: [0, [Validators.required]],
+      status: [CourseStatus.RecorderCourse, [Validators.required]],
       isPaid: [false],
       price: [0, [Validators.min(0)]],
     });
@@ -97,6 +102,7 @@ export class CourseFormComponent implements OnInit, OnChanges {
       name: data.name,
       description: data.description,
       courseTypeId: data.courseTypeId,
+      status: data.status || CourseStatus.RecorderCourse,
       isPaid: data.isPaid,
       price: data.price,
     });
@@ -194,6 +200,8 @@ export class CourseFormComponent implements OnInit, OnChanges {
       name: this.courseForm.get('name')?.value,
       description: this.courseForm.get('description')?.value,
       courseTypeId: this.courseForm.get('courseTypeId')?.value || 0,
+      status:
+        this.courseForm.get('status')?.value || CourseStatus.RecorderCourse,
       isPaid: this.courseForm.get('isPaid')?.value || false,
       price: this.courseForm.get('price')?.value || 0,
       image: this.selectedFile || null,

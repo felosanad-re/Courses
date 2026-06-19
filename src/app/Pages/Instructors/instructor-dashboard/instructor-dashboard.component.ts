@@ -293,6 +293,21 @@ export class InstructorDashboardComponent implements OnInit, OnDestroy {
     this.first = 0;
   }
 
+  isOnlineCourse(status: string): boolean {
+    const normalizedStatus = this.normalizeCourseStatus(status);
+    return normalizedStatus === 'onlinecourse' || normalizedStatus === '0';
+  }
+
+  getCourseStatusLabel(status: string): string {
+    return this.isOnlineCourse(status) ? 'Online' : 'Recorded';
+  }
+
+  private normalizeCourseStatus(status: string): string {
+    return String(status ?? '')
+      .replace(/\s+/g, '')
+      .toLowerCase();
+  }
+
   // edit course
   updateCourse(courseId: number): void {
     this._router.navigate(['/instructor', 'update-course', courseId]);

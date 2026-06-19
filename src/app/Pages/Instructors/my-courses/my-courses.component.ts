@@ -146,6 +146,21 @@ export class MyCoursesComponent implements OnInit, OnDestroy {
     ];
   }
 
+  isOnlineCourse(status: string): boolean {
+    const normalizedStatus = this.normalizeCourseStatus(status);
+    return normalizedStatus === 'onlinecourse' || normalizedStatus === '0';
+  }
+
+  getCourseStatusLabel(status: string): string {
+    return this.isOnlineCourse(status) ? 'Online' : 'Recorded';
+  }
+
+  private normalizeCourseStatus(status: string): string {
+    return String(status ?? '')
+      .replace(/\s+/g, '')
+      .toLowerCase();
+  }
+
   onPageChange(event: any): void {
     const rows = event.rows ?? this.pageSize;
     const page = event.page ?? 0;

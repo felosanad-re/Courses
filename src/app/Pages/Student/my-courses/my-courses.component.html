@@ -81,6 +81,23 @@
       <div class="course-card__media">
         <img [src]="course.image" [alt]="course.name" loading="lazy" />
         <span class="course-card__badge">{{ course.courseType }}</span>
+        <span
+          class="course-card__status-badge"
+          [ngClass]="{
+            'course-card__status-badge--online': isOnlineCourse(course.status),
+            'course-card__status-badge--recorded': !isOnlineCourse(
+              course.status
+            ),
+          }"
+        >
+          <i
+            class="pi"
+            [ngClass]="
+              isOnlineCourse(course.status) ? 'pi-video' : 'pi-play-circle'
+            "
+          ></i>
+          {{ getCourseStatusLabel(course.status) }}
+        </span>
       </div>
 
       <div class="course-card__body">

@@ -6,6 +6,7 @@ export interface CourseDetailsToReturnDTO {
   description: string;
   image: string;
   isPaid: boolean;
+  status: string;
   price: number;
   courseType: string;
   courseTypeId: number;
