@@ -14,7 +14,7 @@ export class ManagementCourseService {
   constructor(private readonly _http: HttpClient) {}
 
   // build Form Data
-  buildFormData(obj: any): FormData {
+  buildFormData(obj: CourseFormRequest): FormData {
     const formData = new FormData();
     formData.append('name', obj.name);
     formData.append('description', obj.description);
@@ -24,6 +24,7 @@ export class ManagementCourseService {
     formData.append('courseTypeId', obj.courseTypeId.toString());
     formData.append('price', obj.price.toString());
     formData.append('isPaid', obj.isPaid.toString());
+    formData.append('status', obj.status);
     return formData;
   }
 

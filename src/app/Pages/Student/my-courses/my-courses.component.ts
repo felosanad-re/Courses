@@ -1,15 +1,10 @@
-import { RefundRequest } from './../../../Core/Interfaces/Refunds/refund-request';
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ApplicationResult } from '../../../Core/Interfaces/application-result';
 import { CourseProgressResponse } from '../../../Core/Interfaces/Progresses/course-progress-response';
-import { CoursesToReturnDTO } from '../../../Core/Interfaces/Courses/courses-to-return-dto';
 import { StudentService } from '../../../Core/Services/Student/student.service';
 import { ProgressService } from '../../../Core/Services/Progress/progress.service';
-import { RefundsService } from '../../../Core/Services/Refunds/refunds.service';
-import { RefundResponse } from '../../../Core/Interfaces/Refunds/refund-response';
-import { NotificationsService } from '../../../Core/Services/notifications.service';
 import { EnrollmentWithCoursesResponse } from '../../../Core/Interfaces/Enrollments/enrollment-with-courses-response';
 
 @Component({
@@ -71,9 +66,24 @@ export class MyCoursesComponent implements OnInit {
     }
 
     this.filteredCourses = this.courses.filter((course) => {
-      const searchableText = `${course.name} ${course.description} ${course.courseType}`;
+      const searchableText = `${course.name} ${course.description} ${course.courseType} ${course.status}`;
       return searchableText.toLowerCase().includes(this.searchTerm);
     });
+  }
+
+  isOnlineCourse(status: string): boolean {
+    const normalizedStatus = this.normalizeCourseStatus(status);
+    return normalizedStatus === 'onlinecourse' || normalizedStatus === '0';
+  }
+
+  getCourseStatusLabel(status: string): string {
+    return this.isOnlineCourse(status) ? 'Online' : 'Recorded';
+  }
+
+  private normalizeCourseStatus(status: string): string {
+    return String(status ?? '')
+      .replace(/\s+/g, '')
+      .toLowerCase();
   }
 
   viewCourse(courseId: number): void {

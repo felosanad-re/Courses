@@ -3,6 +3,7 @@ export interface CourseResponseForInstructor {
   name: string;
   description: string;
   image: string;
+  status: string;
   isPaid: boolean;
   price: number;
   instructorId: number;

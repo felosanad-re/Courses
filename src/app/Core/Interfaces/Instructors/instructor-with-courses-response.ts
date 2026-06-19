@@ -6,6 +6,7 @@ export interface InstructorWithCoursesResponse {
   isPaid: boolean;
   price: number;
   courseTypeId: number;
+  status: string;
   totalEnrollment: number;
   totalRevenues: number;
   firstEnrollment: Date | null;

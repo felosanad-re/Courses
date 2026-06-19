@@ -101,6 +101,55 @@
           }
         </div>
 
+        <div class="form-group">
+          <label>Course Status *</label>
+          <div class="status-options">
+            <label
+              class="status-option"
+              [class.status-option--active]="
+                courseForm.get('status')?.value === courseStatuses.OnlineCourse
+              "
+            >
+              <input
+                type="radio"
+                formControlName="status"
+                [value]="courseStatuses.OnlineCourse"
+              />
+              <span class="status-option__icon">
+                <i class="pi pi-video"></i>
+              </span>
+              <span class="status-option__content">
+                <strong>Online Course</strong>
+                <small>Live sessions with students</small>
+              </span>
+            </label>
+
+            <label
+              class="status-option"
+              [class.status-option--active]="
+                courseForm.get('status')?.value ===
+                courseStatuses.RecorderCourse
+              "
+            >
+              <input
+                type="radio"
+                formControlName="status"
+                [value]="courseStatuses.RecorderCourse"
+              />
+              <span class="status-option__icon">
+                <i class="pi pi-play-circle"></i>
+              </span>
+              <span class="status-option__content">
+                <strong>Recorded Course</strong>
+                <small>Pre-recorded lectures</small>
+              </span>
+            </label>
+          </div>
+          @if (isFieldInvalid("status")) {
+            <span class="error-msg">You have to select course status</span>
+          }
+        </div>
+
         <!-- Image Upload -->
         <div class="form-group">
           <label>Course Image</label>
@@ -203,6 +252,23 @@
                 <span>
                   <i class="pi pi-dollar"></i>
                   {{ courseForm.get("price")?.value || 0 }}
+                </span>
+                <span>
+                  <i
+                    class="pi"
+                    [ngClass]="
+                      courseForm.get('status')?.value ===
+                      courseStatuses.OnlineCourse
+                        ? 'pi-video'
+                        : 'pi-play-circle'
+                    "
+                  ></i>
+                  {{
+                    courseForm.get("status")?.value ===
+                    courseStatuses.OnlineCourse
+                      ? "Online"
+                      : "Recorded"
+                  }}
                 </span>
               </div>
             </div>

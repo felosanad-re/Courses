@@ -48,6 +48,7 @@ export class CreateCourseComponent implements OnInit {
       description: data.description,
       image: data.image!,
       imageUrl: data.imageUrl,
+      status: data.status,
       courseTypeId: data.courseTypeId,
       isPaid: data.isPaid,
       price: data.price,

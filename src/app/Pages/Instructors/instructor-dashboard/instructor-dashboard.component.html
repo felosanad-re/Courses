@@ -96,6 +96,27 @@
                     <i class="pi pi-tag"></i>
                     {{ course.isPaid ? "$" + course.price : "Free" }}
                   </span>
+                  <span
+                    class="course-card__status-badge"
+                    [ngClass]="{
+                      'course-card__status-badge--online': isOnlineCourse(
+                        course.status
+                      ),
+                      'course-card__status-badge--recorded': !isOnlineCourse(
+                        course.status
+                      ),
+                    }"
+                  >
+                    <i
+                      class="pi"
+                      [ngClass]="
+                        isOnlineCourse(course.status)
+                          ? 'pi-video'
+                          : 'pi-play-circle'
+                      "
+                    ></i>
+                    {{ getCourseStatusLabel(course.status) }}
+                  </span>
                 </div>
               </div>
               <div class="course-card__actions">
