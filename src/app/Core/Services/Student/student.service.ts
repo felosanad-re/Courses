@@ -2,11 +2,11 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApplicationResult } from '../../Interfaces/application-result';
-import { CoursesToReturnDTO } from '../../Interfaces/Courses/courses-to-return-dto';
 import { environment } from '../../../../environments/environment';
 import { SectionWithCourseResponse } from '../../Interfaces/Courses/section-with-course-response';
 import { CourseWithLectureVideoResponse } from '../../Interfaces/Courses/course-with-lecture-video-response';
 import { EnrollmentWithCoursesResponse } from '../../Interfaces/Enrollments/enrollment-with-courses-response';
+import { SectionWithSessionsResponse } from '../../Interfaces/LiveSessions/section-with-sessions-response';
 
 @Injectable({
   providedIn: 'root',
@@ -38,6 +38,15 @@ export class StudentService {
   ): Observable<ApplicationResult<CourseWithLectureVideoResponse>> {
     return this._http.get<ApplicationResult<CourseWithLectureVideoResponse>>(
       `${environment.apiUrl}/Courses/Lecture/${lectureId}/Video`,
+    );
+  }
+
+  // Get Sections With Sessions
+  getSectionsWithSessions(
+    courseId: number,
+  ): Observable<ApplicationResult<SectionWithSessionsResponse[]>> {
+    return this._http.get<ApplicationResult<SectionWithSessionsResponse[]>>(
+      `${environment.apiUrl}/LiveSession/Sections/Sessions/${courseId}`,
     );
   }
 }

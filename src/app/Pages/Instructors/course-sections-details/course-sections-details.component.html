@@ -4,7 +4,7 @@
     <div class="page-header__info">
       <h1 class="page-header__title">Management Course</h1>
       <p class="page-header__subtitle">
-        Manage sections and lectures for your course
+        Manage sections and {{ contentLabel.toLowerCase() }} for your course
       </p>
     </div>
     <div class="page-header__actions">
@@ -86,7 +86,7 @@
           <th style="width: 3rem"></th>
           <th pSortableColumn="title">Title <p-sortIcon field="title" /></th>
           <th pSortableColumn="order">Order <p-sortIcon field="order" /></th>
-          <th>Lectures Count</th>
+          <th>{{ contentLabel }} Count</th>
           <th style="width: 8rem">Actions</th>
         </tr>
       </ng-template>
@@ -113,8 +113,8 @@
             <span class="order-badge">{{ section.order }}</span>
           </td>
           <td>
-            <span class="lectures-count">
-              {{ section.lectures?.length || 0 }}
+            <span class="content-count">
+              {{ getContentCount(section) }}
             </span>
           </td>
           <td>
@@ -142,24 +142,29 @@
         </tr>
       </ng-template>
 
-      <!-- Row Expansion: Lectures -->
+      <!-- Row Expansion: Lectures / Live Sessions -->
       <ng-template pTemplate="rowexpansion" let-section>
         <tr>
           <td colspan="6">
             <div class="expansion-container">
               <div class="expansion-header">
                 <h3 class="expansion-header__title">
-                  Lectures in "{{ section.title }}"
+                  {{ contentLabel }} in "{{ section.title }}"
                 </h3>
                 <p-button
-                  label="Add Lecture"
+                  [label]="'Add ' + contentItemLabel"
                   icon="pi pi-plus"
                   severity="info"
                   size="small"
-                  (onClick)="navigateToCreateLecture(section.id)"
+                  (onClick)="navigateToCreateContent(getSectionId(section))"
                 />
               </div>
-              <p-table [value]="section.lectures" dataKey="id">
+
+              <p-table
+                *ngIf="!isOnlineMode"
+                [value]="getLectures(section)"
+                dataKey="id"
+              >
                 <ng-template pTemplate="header">
                   <tr>
                     <th>#</th>
@@ -184,7 +189,10 @@
                           [outlined]="true"
                           size="small"
                           (onClick)="
-                            navigateToUpdateLecture(section.id, lecture.id)
+                            navigateToUpdateLecture(
+                              getSectionId(section),
+                              lecture.id
+                            )
                           "
                           pTooltip="Edit Lecture"
                           tooltipPosition="top"
@@ -195,7 +203,7 @@
                           [rounded]="true"
                           [outlined]="true"
                           size="small"
-                          (onClick)="deleteLecture(lecture, section)"
+                          (onClick)="deleteLecture(lecture)"
                           pTooltip="Delete Lecture"
                           tooltipPosition="top"
                         />
@@ -206,15 +214,92 @@
                 <ng-template pTemplate="emptymessage">
                   <tr>
                     <td colspan="3">
-                      <div class="lecture-empty">
-                        <i class="pi pi-video"></i>
+                      <div class="content-empty">
+                        <i [class]="contentIcon"></i>
                         <span>No lectures in this section yet.</span>
                         <p-button
                           label="Add First Lecture"
                           icon="pi pi-plus"
                           severity="info"
                           size="small"
-                          (onClick)="navigateToCreateLecture(section.id)"
+                          (onClick)="
+                            navigateToCreateContent(getSectionId(section))
+                          "
+                        />
+                      </div>
+                    </td>
+                  </tr>
+                </ng-template>
+              </p-table>
+
+              <p-table
+                *ngIf="isOnlineMode"
+                [value]="getSessions(section)"
+                dataKey="id"
+              >
+                <ng-template pTemplate="header">
+                  <tr>
+                    <th>#</th>
+                    <th>Topic</th>
+                    <th>Scheduled At</th>
+                    <th>Duration</th>
+                    <th>Status</th>
+                    <th style="width: 8rem">Actions</th>
+                  </tr>
+                </ng-template>
+                <ng-template
+                  pTemplate="body"
+                  let-session
+                  let-rowIndex="rowIndex"
+                >
+                  <tr>
+                    <td>{{ rowIndex + 1 }}</td>
+                    <td>{{ session.topic }}</td>
+                    <td>{{ formatDate(session.scheduledAt) }}</td>
+                    <td>{{ session.durationMinutes }} min</td>
+                    <td>
+                      <span class="status-badge">{{ session.status }}</span>
+                    </td>
+                    <td>
+                      <div class="action-buttons">
+                        <p-button
+                          icon="pi pi-pencil"
+                          severity="success"
+                          [rounded]="true"
+                          [outlined]="true"
+                          size="small"
+                          [disabled]="true"
+                          pTooltip="Update session will be added later"
+                          tooltipPosition="top"
+                        />
+                        <p-button
+                          icon="pi pi-trash"
+                          severity="danger"
+                          [rounded]="true"
+                          [outlined]="true"
+                          size="small"
+                          [disabled]="true"
+                          pTooltip="Delete session will be added later"
+                          tooltipPosition="top"
+                        />
+                      </div>
+                    </td>
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                  <tr>
+                    <td colspan="6">
+                      <div class="content-empty">
+                        <i [class]="contentIcon"></i>
+                        <span>No live sessions in this section yet.</span>
+                        <p-button
+                          label="Add First Live Session"
+                          icon="pi pi-plus"
+                          severity="info"
+                          size="small"
+                          (onClick)="
+                            navigateToCreateContent(getSectionId(section))
+                          "
                         />
                       </div>
                     </td>

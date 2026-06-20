@@ -145,6 +145,13 @@ export const routes: Routes = [
           ).then((c) => c.UpdateLectureComponent),
       },
       {
+        path: 'online-sessions/create/:courseId/:sectionId',
+        loadComponent: () =>
+          import(
+            `./Pages/Instructors/Online-Sessions/create-online-session/create-online-session.component`
+          ).then((c) => c.CreateOnlineSessionComponent),
+      },
+      {
         path: 'students',
         loadComponent: () =>
           import(

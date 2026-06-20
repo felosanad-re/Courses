@@ -145,7 +145,8 @@
   border-radius: var(--radius-sm);
 }
 
-// ─── Lectures Count ───
+// ─── Content Count ───
+.content-count,
 .lectures-count {
   display: inline-flex;
   align-items: center;
@@ -255,7 +256,8 @@
   }
 }
 
-// ─── Lecture Empty (inside expansion) ───
+// ─── Content Empty (inside expansion) ───
+.content-empty,
 .lecture-empty {
   display: flex;
   flex-direction: column;
@@ -274,6 +276,19 @@
     color: var(--gray-500);
     font-size: 0.85rem;
   }
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 72px;
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+  background: rgba(108, 99, 255, 0.1);
+  color: var(--primary);
+  font-size: 0.78rem;
+  font-weight: 700;
 }
 
 // ─── Dialog Form ───
