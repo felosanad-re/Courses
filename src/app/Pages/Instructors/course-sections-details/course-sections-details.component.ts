@@ -14,12 +14,25 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { DialogModule } from 'primeng/dialog';
 import { FormsModule } from '@angular/forms';
 import { InputNumberModule } from 'primeng/inputnumber';
+import { InputTextModule } from 'primeng/inputtext';
 import { TooltipModule } from 'primeng/tooltip';
 import { NotificationsService } from '../../../Core/Services/notifications.service';
 import { CreateSectionRequest } from '../../../Core/Interfaces/Sections/create-section-request';
 import { UpdateSectionRequest } from '../../../Core/Interfaces/Sections/update-section-request';
 import { LectureWithSectionResponse } from '../../../Core/Interfaces/Lectures/lecture-with-section-response';
-import { finalize } from 'rxjs';
+import { Observable, finalize } from 'rxjs';
+import { CourseStatus } from '../../../Core/Interfaces/Courses/course-status';
+import { ManagementCourseService } from '../../../Core/Services/ManagementCourse/management-course.service';
+import { ManagementOnlineService } from '../../../Core/Services/ManagementOnlineCourses/management-online.service';
+import { SectionWithSessionsResponse } from '../../../Core/Interfaces/LiveSessions/section-with-sessions-response';
+import { SessionsWithSectionResponse } from '../../../Core/Interfaces/LiveSessions/sessions-with-section-response';
+import { ApplicationResult } from '../../../Core/Interfaces/application-result';
+
+type CourseContentMode = 'recorded' | 'online';
+
+// Course type to show if is recorder -> SectionWithCourseResponse
+// Course type to show if is online -> SectionWithSessionsResponse
+type CourseSection = SectionWithCourseResponse | SectionWithSessionsResponse;
 
 @Component({
   selector: 'app-course-sections-details',
@@ -33,6 +46,7 @@ import { finalize } from 'rxjs';
     DialogModule,
     FormsModule,
     InputNumberModule,
+    InputTextModule,
     TooltipModule,
   ],
   templateUrl: './course-sections-details.component.html',
@@ -40,8 +54,8 @@ import { finalize } from 'rxjs';
   providers: [ConfirmationService, MessageService],
 })
 export class CourseSectionsDetailsComponent implements OnInit {
-  sections: SectionWithCourseResponse[] = [];
-  selectedSections: SectionWithCourseResponse[] = [];
+  sections: CourseSection[] = [];
+  selectedSections: CourseSection[] = [];
   expandedRows: Record<number, boolean> = {};
 
   // Create dialog
@@ -58,6 +72,8 @@ export class CourseSectionsDetailsComponent implements OnInit {
   isSubmitted: boolean = false;
   isLoading: boolean = false;
   courseId: number = 0;
+  contentMode: CourseContentMode = 'recorded';
+  courseStatus: string = CourseStatus.RecorderCourse;
 
   constructor(
     private readonly _route: ActivatedRoute,
@@ -65,6 +81,8 @@ export class CourseSectionsDetailsComponent implements OnInit {
     private readonly _studentService: StudentService,
     private readonly _managementSectionService: ManagementSectionService,
     private readonly _managementLectureService: ManagementLectureService,
+    private readonly _managementCourseService: ManagementCourseService,
+    private readonly _managementOnlineService: ManagementOnlineService,
     private readonly _confirmationService: ConfirmationService,
     private readonly _notificationsService: NotificationsService,
   ) {}
@@ -73,22 +91,115 @@ export class CourseSectionsDetailsComponent implements OnInit {
     this._route.params.subscribe((params) => {
       this.courseId = +params['courseId'];
       this.newSection.courseId = this.courseId;
+      this.loadCourseMode();
     });
+  }
 
-    this.getAllSections();
+  // ─── Course Mode ───
+  loadCourseMode(): void {
+    this.isLoading = true;
+    this._managementCourseService.getCourseDetails(this.courseId).subscribe({
+      next: (res) => {
+        if (res.succeed && res.data) {
+          this.courseStatus = res.data.status;
+          this.contentMode = this.isOnlineCourse(res.data.status)
+            ? 'online'
+            : 'recorded';
+        }
+        this.getAllSections();
+      },
+      error: () => {
+        this.contentMode = 'recorded';
+        this.getAllSections();
+      },
+    });
+  }
+
+  isOnlineCourse(status: string): boolean {
+    const normalizedStatus = String(status ?? '')
+      .replace(/\s+/g, '')
+      .toLowerCase();
+    return (
+      normalizedStatus === CourseStatus.OnlineCourse.toLowerCase() ||
+      normalizedStatus === '0'
+    );
+  }
+
+  get isOnlineMode(): boolean {
+    return this.contentMode === 'online';
+  }
+
+  get contentLabel(): string {
+    return this.isOnlineMode ? 'Live Sessions' : 'Lectures';
+  }
+
+  get contentItemLabel(): string {
+    return this.isOnlineMode ? 'Live Session' : 'Lecture';
+  }
+
+  get contentIcon(): string {
+    return this.isOnlineMode ? 'pi pi-video' : 'pi pi-play-circle';
   }
 
   // ─── Fetch Sections ───
   getAllSections(): void {
     this.isLoading = true;
-    this._studentService.getSections(this.courseId).subscribe({
+    const request$: Observable<ApplicationResult<CourseSection[]>> = this
+      .isOnlineMode
+      ? (this._managementOnlineService.getSectionsWithSessions(
+          this.courseId,
+        ) as Observable<ApplicationResult<CourseSection[]>>)
+      : (this._studentService.getSections(this.courseId) as Observable<
+          ApplicationResult<CourseSection[]>
+        >);
+
+    request$.subscribe({
       next: (res) => {
         if (res.succeed && res.data) {
-          this.sections = res.data;
+          this.sections = this.normalizeSections(res.data as CourseSection[]);
         }
         this.isLoading = false;
       },
+      error: () => {
+        this.isLoading = false;
+      },
     });
+  }
+
+  private normalizeSections(sections: CourseSection[]): CourseSection[] {
+    return sections.map((section) => ({
+      ...section,
+      id: this.getSectionId(section),
+      lectures: this.isOnlineMode
+        ? []
+        : (section as SectionWithCourseResponse).lectures,
+      sessions: this.isOnlineMode
+        ? (section as SectionWithSessionsResponse).sessions || []
+        : [],
+    }));
+  }
+
+  getSectionId(section: CourseSection): number {
+    return section.id;
+  }
+
+  getContentCount(section: CourseSection): number {
+    return this.isOnlineMode
+      ? ((section as SectionWithSessionsResponse).sessions?.length ?? 0)
+      : ((section as SectionWithCourseResponse).lectures?.length ?? 0);
+  }
+
+  getLectures(section: CourseSection): LectureWithSectionResponse[] {
+    return (section as SectionWithCourseResponse).lectures || [];
+  }
+
+  getSessions(section: CourseSection): SessionsWithSectionResponse[] {
+    return (section as SectionWithSessionsResponse).sessions || [];
+  }
+
+  formatDate(value: Date | string): string {
+    if (!value) return '-';
+    return new Date(value).toLocaleString();
   }
 
   // ─── Create Section ───
@@ -135,9 +246,9 @@ export class CourseSectionsDetailsComponent implements OnInit {
   }
 
   // ─── Edit Section ───
-  openEdit(section: SectionWithCourseResponse): void {
+  openEdit(section: CourseSection): void {
     this.editSectionData = {
-      id: section.id,
+      id: this.getSectionId(section),
       title: section.title,
       order: section.order,
     };
@@ -182,7 +293,7 @@ export class CourseSectionsDetailsComponent implements OnInit {
   }
 
   // ─── Delete Section ───
-  deleteSection(section: SectionWithCourseResponse): void {
+  deleteSection(section: CourseSection): void {
     this._confirmationService.confirm({
       message: `Are you sure you want to delete "${section.title}"?`,
       header: 'Delete Section',
@@ -190,22 +301,24 @@ export class CourseSectionsDetailsComponent implements OnInit {
       acceptButtonStyleClass: 'p-button-danger p-button-text',
       rejectButtonStyleClass: 'p-button-text',
       accept: () => {
-        this._managementSectionService.deleteSection(section.id).subscribe({
-          next: (res) => {
-            if (res.succeed) {
-              this._notificationsService.showSuccess(
-                'Section deleted successfully',
-                'Success',
-              );
-              this.getAllSections();
-            } else {
-              this._notificationsService.showError(
-                res.message || 'Failed to delete section',
-                'Error',
-              );
-            }
-          },
-        });
+        this._managementSectionService
+          .deleteSection(this.getSectionId(section))
+          .subscribe({
+            next: (res) => {
+              if (res.succeed) {
+                this._notificationsService.showSuccess(
+                  'Section deleted successfully',
+                  'Success',
+                );
+                this.getAllSections();
+              } else {
+                this._notificationsService.showError(
+                  res.message || 'Failed to delete section',
+                  'Error',
+                );
+              }
+            },
+          });
       },
     });
   }
@@ -219,7 +332,7 @@ export class CourseSectionsDetailsComponent implements OnInit {
       acceptButtonStyleClass: 'p-button-danger p-button-text',
       rejectButtonStyleClass: 'p-button-text',
       accept: () => {
-        const ids = this.selectedSections.map((s) => s.id);
+        const ids = this.selectedSections.map((s) => this.getSectionId(s));
         this._managementSectionService.deleteSections(ids).subscribe({
           next: (res) => {
             if (res.succeed) {
@@ -242,10 +355,7 @@ export class CourseSectionsDetailsComponent implements OnInit {
   }
 
   // ─── Delete Lecture ───
-  deleteLecture(
-    lecture: LectureWithSectionResponse,
-    section: SectionWithCourseResponse,
-  ): void {
+  deleteLecture(lecture: LectureWithSectionResponse): void {
     this._confirmationService.confirm({
       message: `Are you sure you want to delete "${lecture.title}"?`,
       header: 'Delete Lecture',
@@ -274,7 +384,16 @@ export class CourseSectionsDetailsComponent implements OnInit {
   }
 
   // ─── Navigation ───
-  navigateToCreateLecture(sectionId: number): void {
+  navigateToCreateContent(sectionId: number): void {
+    if (this.isOnlineMode) {
+      this._router.navigate([
+        '/instructor/online-sessions/create',
+        this.courseId,
+        sectionId,
+      ]);
+      return;
+    }
+
     this._router.navigate([
       '/instructor/create-lecture',
       this.courseId,
@@ -291,11 +410,49 @@ export class CourseSectionsDetailsComponent implements OnInit {
     ]);
   }
 
+  navigateToUpdateSession(sectionId: number, sessionId: number): void {
+    this._router.navigate([
+      '/instructor/online-sessions/update',
+      this.courseId,
+      sectionId,
+      sessionId,
+    ]);
+  }
+
+  deleteSession(session: SessionsWithSectionResponse): void {
+    this._confirmationService.confirm({
+      message: `Are you sure you want to delete "${session.topic}"?`,
+      header: 'Delete Live Session',
+      icon: 'pi pi-exclamation-triangle',
+      acceptButtonStyleClass: 'p-button-danger p-button-text',
+      rejectButtonStyleClass: 'p-button-text',
+      accept: () => {
+        this._managementOnlineService.deleteSession(session.id).subscribe({
+          next: (res) => {
+            if (res.succeed) {
+              this._notificationsService.showSuccess(
+                res.message || 'Live session deleted successfully',
+                'Success',
+              );
+              this.getAllSections();
+              return;
+            }
+
+            this._notificationsService.showError(
+              res.message || 'Failed to delete live session',
+              'Error',
+            );
+          },
+        });
+      },
+    });
+  }
+
   // ─── Expand / Collapse ───
   expandAll(): void {
     this.expandedRows = this.sections.reduce<Record<number, boolean>>(
       (acc, s) => {
-        acc[s.id] = true;
+        acc[this.getSectionId(s)] = true;
         return acc;
       },
       {},
