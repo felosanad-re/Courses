@@ -1,1 +1,85 @@
-<p>update-online-session works!</p>
+<div class="create-session">
+  <div class="create-session__header">
+    <div class="create-session__breadcrumb">
+      <a routerLink="/instructor/dashboard">Dashboard</a>
+      <i class="pi pi-angle-right"></i>
+      <a [routerLink]="backLink">Course Sections</a>
+      <i class="pi pi-angle-right"></i>
+      <span>Update Live Session</span>
+    </div>
+    <h1 class="create-session__title">Update Live Session</h1>
+    <p class="create-session__subtitle">
+      Update the Zoom live session schedule and details
+    </p>
+  </div>
+
+  <div class="loading-state" *ngIf="isLoading">
+    <i class="pi pi-spin pi-spinner"></i>
+    <span>Loading session details...</span>
+  </div>
+
+  <form
+    class="session-form"
+    [formGroup]="sessionForm"
+    (ngSubmit)="onSubmit()"
+    *ngIf="!isLoading"
+  >
+    <div class="session-form__card">
+      <div class="form-field">
+        <label for="topic">Session Topic</label>
+        <input
+          id="topic"
+          type="text"
+          pInputText
+          formControlName="topic"
+          placeholder="Enter session topic"
+        />
+        <small class="error" *ngIf="isFieldInvalid('topic')">
+          Topic is required and must be at least 3 characters.
+        </small>
+      </div>
+
+      <div class="form-field">
+        <label for="scheduledAt">Scheduled At</label>
+        <input
+          id="scheduledAt"
+          type="datetime-local"
+          formControlName="scheduledAt"
+        />
+        <small class="error" *ngIf="isFieldInvalid('scheduledAt')">
+          Scheduled date is required.
+        </small>
+      </div>
+
+      <div class="form-field">
+        <label for="duration">Duration In Minutes</label>
+        <p-inputNumber
+          inputId="duration"
+          formControlName="duration"
+          [min]="1"
+          [showButtons]="true"
+          buttonLayout="horizontal"
+          incrementButtonIcon="pi pi-plus"
+          decrementButtonIcon="pi pi-minus"
+        />
+        <small class="error" *ngIf="isFieldInvalid('duration')">
+          Duration must be greater than 0.
+        </small>
+      </div>
+    </div>
+
+    <div class="session-form__actions">
+      <a class="btn btn--secondary" [routerLink]="backLink">
+        <i class="pi pi-arrow-left"></i>
+        Back to Course Sections
+      </a>
+      <button class="btn btn--primary" type="submit" [disabled]="isSubmitting">
+        <i
+          class="pi"
+          [ngClass]="isSubmitting ? 'pi-spin pi-spinner' : 'pi-check'"
+        ></i>
+        {{ isSubmitting ? "Updating..." : "Update Session" }}
+      </button>
+    </div>
+  </form>
+</div>

@@ -410,6 +410,44 @@ export class CourseSectionsDetailsComponent implements OnInit {
     ]);
   }
 
+  navigateToUpdateSession(sectionId: number, sessionId: number): void {
+    this._router.navigate([
+      '/instructor/online-sessions/update',
+      this.courseId,
+      sectionId,
+      sessionId,
+    ]);
+  }
+
+  deleteSession(session: SessionsWithSectionResponse): void {
+    this._confirmationService.confirm({
+      message: `Are you sure you want to delete "${session.topic}"?`,
+      header: 'Delete Live Session',
+      icon: 'pi pi-exclamation-triangle',
+      acceptButtonStyleClass: 'p-button-danger p-button-text',
+      rejectButtonStyleClass: 'p-button-text',
+      accept: () => {
+        this._managementOnlineService.deleteSession(session.id).subscribe({
+          next: (res) => {
+            if (res.succeed) {
+              this._notificationsService.showSuccess(
+                res.message || 'Live session deleted successfully',
+                'Success',
+              );
+              this.getAllSections();
+              return;
+            }
+
+            this._notificationsService.showError(
+              res.message || 'Failed to delete live session',
+              'Error',
+            );
+          },
+        });
+      },
+    });
+  }
+
   // ─── Expand / Collapse ───
   expandAll(): void {
     this.expandedRows = this.sections.reduce<Record<number, boolean>>(

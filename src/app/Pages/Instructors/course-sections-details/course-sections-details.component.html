@@ -268,8 +268,13 @@
                           [rounded]="true"
                           [outlined]="true"
                           size="small"
-                          [disabled]="true"
-                          pTooltip="Update session will be added later"
+                          (onClick)="
+                            navigateToUpdateSession(
+                              getSectionId(section),
+                              session.id
+                            )
+                          "
+                          pTooltip="Edit Live Session"
                           tooltipPosition="top"
                         />
                         <p-button
@@ -278,8 +283,8 @@
                           [rounded]="true"
                           [outlined]="true"
                           size="small"
-                          [disabled]="true"
-                          pTooltip="Delete session will be added later"
+                          (onClick)="deleteSession(session)"
+                          pTooltip="Delete Live Session"
                           tooltipPosition="top"
                         />
                       </div>

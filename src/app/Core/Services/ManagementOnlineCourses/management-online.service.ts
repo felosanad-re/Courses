@@ -46,4 +46,20 @@ export class ManagementOnlineService {
       liveSessionReq,
     );
   }
+
+  updateSession(
+    liveSessionRequest: LiveSessionRequest,
+    id: number,
+  ): Observable<ApplicationResult<LiveSessionResponse>> {
+    return this._http.put<ApplicationResult<LiveSessionResponse>>(
+      `${environment.apiUrl}/LiveSession/UpdateLiveSession/${id}`,
+      liveSessionRequest,
+    );
+  }
+
+  deleteSession(id: number): Observable<ApplicationResult<boolean>> {
+    return this._http.delete<ApplicationResult<boolean>>(
+      `${environment.apiUrl}/LiveSession/DeleteSession/${id}`,
+    );
+  }
 }
