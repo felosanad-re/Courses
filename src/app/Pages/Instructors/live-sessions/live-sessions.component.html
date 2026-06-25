@@ -1,0 +1,218 @@
+<section class="live-sessions-page">
+  <div class="page-hero">
+    <div class="hero-copy">
+      <span class="eyebrow">Instructor workspace</span>
+      <h1>Manage Live Sessions</h1>
+      <p>
+        Monitor, schedule, start, and follow up on every live lecture from one
+        focused LMS dashboard.
+      </p>
+    </div>
+
+    <div class="hero-actions">
+      <button class="btn btn-primary" type="button">
+        <i class="pi pi-plus"></i>
+        Create Live Session
+      </button>
+      <button class="btn btn-secondary" type="button">
+        <i class="pi pi-calendar"></i>
+        View Calendar
+      </button>
+    </div>
+  </div>
+
+  <div class="stats-grid">
+    <article
+      class="stat-card"
+      *ngFor="let stat of stats"
+      [class]="'stat-card ' + stat.tone"
+    >
+      <div class="stat-icon">
+        <i [class]="stat.icon"></i>
+      </div>
+      <div class="stat-content">
+        <strong>{{ stat.value }}</strong>
+        <span>{{ stat.label }}</span>
+      </div>
+    </article>
+  </div>
+
+  <section class="filter-card" aria-label="Live sessions filters">
+    <div class="search-field">
+      <i class="pi pi-search"></i>
+      <input
+        #searchInput
+        type="search"
+        placeholder="Search by session topic"
+        aria-label="Search by session topic"
+        [value]="sessionParams.search || ''"
+        (input)="onSearch(searchInput.value)"
+      />
+    </div>
+
+    <label class="filter-field">
+      <span>Status</span>
+      <select
+        aria-label="Filter by status"
+        [value]="sessionParams.sort || 'All'"
+        (change)="onStatusChange(statusSelect.value)"
+        #statusSelect
+      >
+        <option *ngFor="let status of statuses" [value]="status">
+          {{ status }}
+        </option>
+      </select>
+    </label>
+  </section>
+
+  <section class="sessions-card">
+    <div class="table-header">
+      <div>
+        <span class="eyebrow">Live session management</span>
+        <h2>Sessions Overview</h2>
+      </div>
+      <span class="result-count">
+        Showing {{ sessions.length }} of {{ sessionCount }} sessions
+      </span>
+    </div>
+
+    <div class="table-scroll" *ngIf="sessions.length; else emptyState">
+      <table class="sessions-table">
+        <thead>
+          <tr>
+            <th>Session Topic</th>
+            <th>Course Name</th>
+            <th>Section Name</th>
+            <th>Scheduled Date</th>
+            <th>Duration</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let session of sessions">
+            <td>
+              <div class="topic-cell">
+                <span class="topic-icon"><i class="pi pi-video"></i></span>
+                <div>
+                  <strong>{{ session.topic }}</strong>
+                  <small>ID: LS-{{ session.id }}</small>
+                </div>
+              </div>
+            </td>
+            <td>{{ session.courseName }}</td>
+            <td>{{ session.sectionName }}</td>
+            <td>{{ session.scheduledAt }}</td>
+            <td>{{ session.durationMinutes }}</td>
+            <td>
+              <span
+                class="status-badge"
+                [class]="'status-badge ' + session.status"
+              >
+                {{ session.status }}
+              </span>
+            </td>
+            <td>
+              <div class="action-group" [ngSwitch]="session.status">
+                <ng-container *ngSwitchCase="'Scheduled'">
+                  <button
+                    *ngIf="canStartSession(session)"
+                    class="table-action primary"
+                    type="button"
+                    [disabled]="isMutatingSessionId === session.id"
+                    (click)="startSession(session)"
+                  >
+                    Start Session
+                  </button>
+                  <button
+                    class="table-action neutral"
+                    type="button"
+                    [disabled]="isMutatingSessionId === session.id"
+                    (click)="updateSession(session)"
+                  >
+                    Edit Session
+                  </button>
+                  <button
+                    class="table-action danger"
+                    type="button"
+                    [disabled]="isMutatingSessionId === session.id"
+                    (click)="deleteSession(session)"
+                  >
+                    Delete Session
+                  </button>
+                </ng-container>
+
+                <ng-container *ngSwitchCase="'Live'">
+                  <a
+                    class="table-action primary"
+                    [href]="session.hostJoinUrl"
+                    target="_blank"
+                    rel="noopener"
+                  >
+                    Join Session
+                  </a>
+                  <button
+                    class="table-action danger"
+                    type="button"
+                    [disabled]="isMutatingSessionId === session.id"
+                    (click)="deleteSession(session)"
+                  >
+                    Delete Session
+                  </button>
+                </ng-container>
+
+                <ng-container *ngSwitchCase="'Completed'">
+                  <button
+                    class="table-action danger"
+                    type="button"
+                    [disabled]="isMutatingSessionId === session.id"
+                    (click)="deleteSession(session)"
+                  >
+                    Delete Session
+                  </button>
+                </ng-container>
+
+                <ng-container *ngSwitchCase="'Cancelled'">
+                  <button
+                    class="table-action neutral"
+                    type="button"
+                    [disabled]="isMutatingSessionId === session.id"
+                    (click)="updateSession(session)"
+                  >
+                    Edit Schedule
+                  </button>
+                  <button
+                    class="table-action danger"
+                    type="button"
+                    [disabled]="isMutatingSessionId === session.id"
+                    (click)="deleteSession(session)"
+                  >
+                    Delete Session
+                  </button>
+                </ng-container>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <ng-template #emptyState>
+      <div class="empty-state">
+        <div class="empty-icon"><i class="pi pi-calendar-times"></i></div>
+        <h3>{{ emptyStateTitle }}</h3>
+        <p>{{ emptyStateMessage }}</p>
+      </div>
+    </ng-template>
+
+    <p-paginator
+      (onPageChange)="onPageChange($event)"
+      [first]="first"
+      [rows]="sessionParams.pageSize"
+      [totalRecords]="sessionCount"
+      [showCurrentPageReport]="true"
+      currentPageReportTemplate="there is {totalRecords} showing {first} to {last}"
+      [rowsPerPageOptions]="[5, 10, 20]"
+    />
+  </section>
+</section>
