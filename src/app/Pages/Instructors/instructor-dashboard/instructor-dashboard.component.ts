@@ -193,6 +193,10 @@ export class InstructorDashboardComponent implements OnInit, OnDestroy {
       ) => {
         if (response.succeed && response.data) {
           this.courses = response.data.data;
+          this.courseCount = response.data.count;
+          this.pageIndex = response.data.pageIndex || this.pageIndex;
+          this.pageSize = response.data.pageSize || this.pageSize;
+          this.first = (this.pageIndex - 1) * this.pageSize;
         }
         this.isLoading = false;
       },

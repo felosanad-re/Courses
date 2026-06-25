@@ -1,11 +1,12 @@
 export interface LiveSessionListResponse {
-  courseId: number;
+  id: number; // Session Id
+  sectionId: number;
+  sectionName: string;
   courseName: string;
+  topic: string;
   zoomMeetingId: string;
-  hostJoinUrl: string; // Instructor Only
-  studentJoinUrl: string; // For Students
+  hostJoinUrl: string;
   scheduledAt: Date;
-  durationMinutes: number; // Session Time
+  durationMinutes: number;
   status: string;
-  recordingUrl?: string | null;
 }

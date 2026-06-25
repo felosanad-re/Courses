@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApplicationResult } from '../../Interfaces/application-result';
@@ -8,6 +8,9 @@ import { LiveSessionDetailsResponse } from '../../Interfaces/LiveSessions/live-s
 import { LiveSessionListResponse } from '../../Interfaces/LiveSessions/live-session-list-response';
 import { LiveSessionResponse } from '../../Interfaces/LiveSessions/live-session-response';
 import { SectionWithSessionsResponse } from '../../Interfaces/LiveSessions/section-with-sessions-response';
+import { LiveSessionStatisticsResponse } from '../../Interfaces/LiveSessions/live-session-statistics-response';
+import { SessionParams } from '../../Interfaces/LiveSessions/session-params';
+import { Pagination } from '../../Interfaces/Courses/pagination';
 
 @Injectable({
   providedIn: 'root',
@@ -15,11 +18,25 @@ import { SectionWithSessionsResponse } from '../../Interfaces/LiveSessions/secti
 export class ManagementOnlineService {
   constructor(private readonly _http: HttpClient) {}
 
+  buildSessionsParams(params: SessionParams): HttpParams {
+    var httpParams = new HttpParams();
+    (Object.keys(params) as (keyof SessionParams)[]).forEach((key) => {
+      const value = params[key];
+      if (value !== null && value !== undefined) {
+        httpParams = httpParams.append(key, value as string);
+      }
+    });
+    return httpParams;
+  }
+
   // Get Live Sessions
-  getSessions(): Observable<ApplicationResult<LiveSessionListResponse[]>> {
-    return this._http.get<ApplicationResult<LiveSessionListResponse[]>>(
-      `${environment.apiUrl}/LiveSession/LiveSessions`,
-    );
+  getSessions(
+    sessionParams: SessionParams,
+  ): Observable<ApplicationResult<Pagination<LiveSessionListResponse[]>>> {
+    const params = this.buildSessionsParams(sessionParams);
+    return this._http.get<
+      ApplicationResult<Pagination<LiveSessionListResponse[]>>
+    >(`${environment.apiUrl}/LiveSession/LiveSessions`, { params });
   }
 
   getSessionDetails(
@@ -27,6 +44,14 @@ export class ManagementOnlineService {
   ): Observable<ApplicationResult<LiveSessionDetailsResponse>> {
     return this._http.get<ApplicationResult<LiveSessionDetailsResponse>>(
       `${environment.apiUrl}/LiveSession/${id}`,
+    );
+  }
+
+  getSessionStatus(): Observable<
+    ApplicationResult<LiveSessionStatisticsResponse>
+  > {
+    return this._http.get<ApplicationResult<LiveSessionStatisticsResponse>>(
+      `${environment.apiUrl}/LiveSession/LiveSessionStats`,
     );
   }
 

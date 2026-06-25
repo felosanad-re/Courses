@@ -186,6 +186,13 @@ export const routes: Routes = [
             `./Pages/Instructors/earning-instructor/earning-instructor.component`
           ).then((c) => c.EarningInstructorComponent),
       },
+      {
+        path: 'live',
+        loadComponent: () =>
+          import(
+            `./Pages/Instructors/live-sessions/live-sessions.component`
+          ).then((c) => c.LiveSessionsComponent),
+      },
     ],
   },
   // student
