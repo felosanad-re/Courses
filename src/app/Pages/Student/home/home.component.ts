@@ -7,8 +7,8 @@ import { CoursesService } from '../../../Core/Services/Courses/courses.service';
 import { NotificationsService } from '../../../Core/Services/notifications.service';
 import { ApplicationResult } from '../../../Core/Interfaces/application-result';
 import { Pagination } from '../../../Core/Interfaces/Courses/pagination';
-import { CourseTypeService } from '../../../Core/Services/CourseType/course-type.service';
-import { CourseTypeToReturnDTO } from '../../../Core/Interfaces/courseTypes/course-type-to-return-dto';
+import { CourseCategoriesService } from '../../../Core/Services/CourseCategory/course-Categories.service';
+import { CourseCategoryToReturnDTO } from '../../../Core/Interfaces/CourseCategories/course-Category-to-return-dto';
 import { EnrollmentService } from '../../../Core/Services/Enrollments/enrollment.service';
 import { EnrollmentWithCourseResponse } from '../../../Core/Interfaces/Enrollments/enrollment-with-course-response';
 import { PaginatorModule } from 'primeng/paginator';
@@ -22,7 +22,7 @@ import { PaginatorModule } from 'primeng/paginator';
 })
 export class HomeComponent {
   courses: CoursesToReturnDTO[] = [];
-  types: CourseTypeToReturnDTO[] = [];
+  types: CourseCategoryToReturnDTO[] = [];
   courseParams = new CoursesParams();
   isLoading = false;
   error: string | null = null;
@@ -35,7 +35,7 @@ export class HomeComponent {
 
   constructor(
     private readonly _courseService: CoursesService,
-    private readonly _courseTypesService: CourseTypeService,
+    private readonly _courseCategoriesService: CourseCategoriesService,
     private readonly _enrollmentServices: EnrollmentService,
     private readonly _notifications: NotificationsService,
     private readonly _router: Router,
@@ -156,8 +156,8 @@ export class HomeComponent {
 
   // Fetch course types for filter chips
   getAllCoursesTypes() {
-    this._courseTypesService.getAllCourseTypes().subscribe({
-      next: (res: ApplicationResult<CourseTypeToReturnDTO[]>) => {
+    this._courseCategoriesService.getAllCourseCategories().subscribe({
+      next: (res: ApplicationResult<CourseCategoryToReturnDTO[]>) => {
         if (res.succeed && res.data) {
           this.types = res.data;
         }

@@ -20,17 +20,14 @@
         <div class="payment-page__summary-icon">
           <i class="pi pi-shield"></i>
         </div>
-        <div
-          class="payment-page__course-image"
-          *ngIf="courseDetails?.image"
-        >
+        <div class="payment-page__course-image" *ngIf="courseDetails?.image">
           <img
             [src]="courseDetails?.image"
             [alt]="getCourseName()"
             loading="lazy"
           />
         </div>
-        <span class="payment-page__course-type">{{ getCourseType() }}</span>
+        <span class="payment-page__course-type">{{ getCourseCategory() }}</span>
         <h2 class="payment-page__summary-title">{{ getCourseName() }}</h2>
         <p class="payment-page__summary-text">Enrollment #{{ enrollmentId }}</p>
 

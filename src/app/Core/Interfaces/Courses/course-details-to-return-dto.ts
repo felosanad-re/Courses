@@ -6,10 +6,11 @@ export interface CourseDetailsToReturnDTO {
   description: string;
   image: string;
   isPaid: boolean;
+  type: string;
   status: string;
   price: number;
-  courseType: string;
-  courseTypeId: number;
+  courseCategory: string;
+  courseCategoryId: number;
   instructorName: string;
   instructorId: number;
   sections: SectionToReturnDTO[];

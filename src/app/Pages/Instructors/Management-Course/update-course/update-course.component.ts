@@ -4,8 +4,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ManagementCourseService } from '../../../../Core/Services/ManagementCourse/management-course.service';
 import { CourseFormComponent } from '../../../../Shared/Forms/course-form/course-form.component';
 import { CourseFormRequest } from '../../../../Core/Interfaces/Instructors/CourseFormRequest';
-import { CourseTypeService } from '../../../../Core/Services/CourseType/course-type.service';
-import { CourseTypeToReturnDTO } from '../../../../Core/Interfaces/courseTypes/course-type-to-return-dto';
+import { CourseCategoriesService } from '../../../../Core/Services/CourseCategory/course-Categories.service';
+import { CourseCategoryToReturnDTO } from '../../../../Core/Interfaces/CourseCategories/course-Category-to-return-dto';
 import { ApplicationResult } from '../../../../Core/Interfaces/application-result';
 
 @Component({
@@ -19,17 +19,17 @@ export class UpdateCourseComponent implements OnInit {
   isSubmitting: boolean = false;
   course!: CourseResponseForInstructor;
   courseId: number = 0;
-  coursesTypes: CourseTypeToReturnDTO[] = [];
+  coursesCategory: CourseCategoryToReturnDTO[] = [];
 
   constructor(
     private readonly _route: ActivatedRoute,
     private readonly _managementCourseServices: ManagementCourseService,
-    private readonly _courseTypeServices: CourseTypeService,
+    private readonly _courseCategoriesServices: CourseCategoriesService,
     private readonly _router: Router,
   ) {}
 
   ngOnInit(): void {
-    this.getCourseTypes();
+    this.getCourseCategories();
 
     this._route.params.subscribe((params) => {
       this.courseId = +params['courseId'];
@@ -46,12 +46,12 @@ export class UpdateCourseComponent implements OnInit {
     }
   }
 
-  getCourseTypes(): void {
-    this._courseTypeServices
-      .getAllCourseTypes()
+  getCourseCategories(): void {
+    this._courseCategoriesServices
+      .getAllCourseCategories()
       .subscribe(
-        (res: ApplicationResult<CourseTypeToReturnDTO[]>) =>
-          (this.coursesTypes = res.data),
+        (res: ApplicationResult<CourseCategoryToReturnDTO[]>) =>
+          (this.coursesCategory = res.data),
       );
   }
 

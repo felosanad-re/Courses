@@ -70,20 +70,20 @@
               class="course-card__status-badge"
               [ngClass]="{
                 'course-card__status-badge--online': isOnlineCourse(
-                  course.status
+                  course.type
                 ),
                 'course-card__status-badge--recorded': !isOnlineCourse(
-                  course.status
+                  course.type
                 ),
               }"
             >
               <i
                 class="pi"
                 [ngClass]="
-                  isOnlineCourse(course.status) ? 'pi-video' : 'pi-play-circle'
+                  isOnlineCourse(course.type) ? 'pi-video' : 'pi-play-circle'
                 "
               ></i>
-              {{ getCourseStatusLabel(course.status) }}
+              {{ getCourseTypesLabel(course.type) }}
             </span>
           </div>
 

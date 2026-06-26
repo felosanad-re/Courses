@@ -168,7 +168,8 @@ $border-color: #e5e7eb;
       background: linear-gradient(135deg, #6366f1, #818cf8);
     }
 
-    &--avg-revenue {
+    &--avg-revenue,
+    &--average-per-paid-enrollment {
       background: linear-gradient(135deg, #ec4899, #f472b6);
     }
   }

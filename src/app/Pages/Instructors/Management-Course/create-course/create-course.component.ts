@@ -4,8 +4,8 @@ import { Router } from '@angular/router';
 import { ApplicationResult } from '../../../../Core/Interfaces/application-result';
 import { CourseResponseForInstructor } from '../../../../Core/Interfaces/Instructors/course-response-for-instructor';
 import { ManagementCourseService } from '../../../../Core/Services/ManagementCourse/management-course.service';
-import { CourseTypeService } from '../../../../Core/Services/CourseType/course-type.service';
-import { CourseTypeToReturnDTO } from '../../../../Core/Interfaces/courseTypes/course-type-to-return-dto';
+import { CourseCategoriesService } from '../../../../Core/Services/CourseCategory/course-Categories.service';
+import { CourseCategoryToReturnDTO } from '../../../../Core/Interfaces/CourseCategories/course-Category-to-return-dto';
 import { CourseFormComponent } from '../../../../Shared/Forms/course-form/course-form.component';
 import { CourseFormRequest } from '../../../../Core/Interfaces/Instructors/CourseFormRequest';
 import { finalize } from 'rxjs';
@@ -18,25 +18,25 @@ import { finalize } from 'rxjs';
   styleUrl: './create-course.component.scss',
 })
 export class CreateCourseComponent implements OnInit {
-  coursesTypes: CourseTypeToReturnDTO[] = [];
+  coursesCategory: CourseCategoryToReturnDTO[] = [];
   isSubmitting = false;
 
   constructor(
     private readonly _managementCourseServices: ManagementCourseService,
-    private readonly _courseTypeServices: CourseTypeService,
+    private readonly _courseCategoryServices: CourseCategoriesService,
     private router: Router,
   ) {}
 
   ngOnInit(): void {
-    this.getCourseTypes();
+    this.getCourseCategories();
   }
 
-  getCourseTypes(): void {
-    this._courseTypeServices
-      .getAllCourseTypes()
+  getCourseCategories(): void {
+    this._courseCategoryServices
+      .getAllCourseCategories()
       .subscribe(
-        (res: ApplicationResult<CourseTypeToReturnDTO[]>) =>
-          (this.coursesTypes = res.data),
+        (res: ApplicationResult<CourseCategoryToReturnDTO[]>) =>
+          (this.coursesCategory = res.data),
       );
   }
 
@@ -48,8 +48,8 @@ export class CreateCourseComponent implements OnInit {
       description: data.description,
       image: data.image!,
       imageUrl: data.imageUrl,
-      status: data.status,
-      courseTypeId: data.courseTypeId,
+      type: data.type,
+      courseCategoryId: data.courseCategoryId,
       isPaid: data.isPaid,
       price: data.price,
     };

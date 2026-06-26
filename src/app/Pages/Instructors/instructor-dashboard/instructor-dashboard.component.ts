@@ -297,17 +297,17 @@ export class InstructorDashboardComponent implements OnInit, OnDestroy {
     this.first = 0;
   }
 
-  isOnlineCourse(status: string): boolean {
-    const normalizedStatus = this.normalizeCourseStatus(status);
-    return normalizedStatus === 'onlinecourse' || normalizedStatus === '0';
+  isOnlineCourse(type: string): boolean {
+    const normalizedType = this.normalizeCourseType(type);
+    return normalizedType === 'onlinecourse' || normalizedType === '0';
   }
 
-  getCourseStatusLabel(status: string): string {
-    return this.isOnlineCourse(status) ? 'Online' : 'Recorded';
+  getCourseTypeLabel(type: string): string {
+    return this.isOnlineCourse(type) ? 'Online' : 'Recorded';
   }
 
-  private normalizeCourseStatus(status: string): string {
-    return String(status ?? '')
+  private normalizeCourseType(type: string): string {
+    return String(type ?? '')
       .replace(/\s+/g, '')
       .toLowerCase();
   }

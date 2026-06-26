@@ -4,8 +4,8 @@ export interface EnrollmentWithCoursesResponse {
   instructorId: number;
   courseId: number;
   price: number;
-  courseType: string;
-  status: string;
+  courseCategory: string;
+  type: string;
   name: string;
   description: string;
   image: string;
