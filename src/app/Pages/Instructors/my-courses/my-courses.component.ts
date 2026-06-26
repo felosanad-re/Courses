@@ -146,17 +146,17 @@ export class MyCoursesComponent implements OnInit, OnDestroy {
     ];
   }
 
-  isOnlineCourse(status: string): boolean {
-    const normalizedStatus = this.normalizeCourseStatus(status);
+  isOnlineCourse(type: string): boolean {
+    const normalizedStatus = this.normalizeCourseTypes(type);
     return normalizedStatus === 'onlinecourse' || normalizedStatus === '0';
   }
 
-  getCourseStatusLabel(status: string): string {
-    return this.isOnlineCourse(status) ? 'Online' : 'Recorded';
+  getCourseTypesLabel(type: string): string {
+    return this.isOnlineCourse(type) ? 'Online' : 'Recorded';
   }
 
-  private normalizeCourseStatus(status: string): string {
-    return String(status ?? '')
+  private normalizeCourseTypes(type: string): string {
+    return String(type ?? '')
       .replace(/\s+/g, '')
       .toLowerCase();
   }

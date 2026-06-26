@@ -135,8 +135,8 @@ export class PaymentComponent implements OnInit, OnDestroy {
     return this.courseDetails?.name || 'Selected course';
   }
 
-  getCourseType(): string {
-    return this.courseDetails?.courseType || 'Paid course';
+  getCourseCategory(): string {
+    return this.courseDetails?.courseCategory || 'Paid course';
   }
 
   getFormattedAmount(): string {

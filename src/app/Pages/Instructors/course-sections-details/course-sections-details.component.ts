@@ -21,7 +21,7 @@ import { CreateSectionRequest } from '../../../Core/Interfaces/Sections/create-s
 import { UpdateSectionRequest } from '../../../Core/Interfaces/Sections/update-section-request';
 import { LectureWithSectionResponse } from '../../../Core/Interfaces/Lectures/lecture-with-section-response';
 import { Observable, finalize } from 'rxjs';
-import { CourseStatus } from '../../../Core/Interfaces/Courses/course-status';
+import { CourseType } from '../../../Core/Interfaces/Courses/course-type';
 import { ManagementCourseService } from '../../../Core/Services/ManagementCourse/management-course.service';
 import { ManagementOnlineService } from '../../../Core/Services/ManagementOnlineCourses/management-online.service';
 import { SectionWithSessionsResponse } from '../../../Core/Interfaces/LiveSessions/section-with-sessions-response';
@@ -73,7 +73,7 @@ export class CourseSectionsDetailsComponent implements OnInit {
   isLoading: boolean = false;
   courseId: number = 0;
   contentMode: CourseContentMode = 'recorded';
-  courseStatus: string = CourseStatus.RecorderCourse;
+  courseTypes: string = CourseType.RecorderCourse;
 
   constructor(
     private readonly _route: ActivatedRoute,
@@ -101,8 +101,8 @@ export class CourseSectionsDetailsComponent implements OnInit {
     this._managementCourseService.getCourseDetails(this.courseId).subscribe({
       next: (res) => {
         if (res.succeed && res.data) {
-          this.courseStatus = res.data.status;
-          this.contentMode = this.isOnlineCourse(res.data.status)
+          this.courseTypes = res.data.type;
+          this.contentMode = this.isOnlineCourse(res.data.type)
             ? 'online'
             : 'recorded';
         }
@@ -120,7 +120,7 @@ export class CourseSectionsDetailsComponent implements OnInit {
       .replace(/\s+/g, '')
       .toLowerCase();
     return (
-      normalizedStatus === CourseStatus.OnlineCourse.toLowerCase() ||
+      normalizedStatus === CourseType.OnlineCourse.toLowerCase() ||
       normalizedStatus === '0'
     );
   }

@@ -3,9 +3,10 @@ export interface CoursesToReturnDTO {
   name: string;
   description: string;
   image: string;
+  type: string;
   status: string;
   isPaid: boolean;
   price: number;
-  courseType: string;
-  courseTypeId: number;
+  courseCategory: string;
+  CourseCategoryId: number;
 }

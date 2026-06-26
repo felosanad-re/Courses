@@ -66,22 +66,22 @@ export class MyCoursesComponent implements OnInit {
     }
 
     this.filteredCourses = this.courses.filter((course) => {
-      const searchableText = `${course.name} ${course.description} ${course.courseType} ${course.status}`;
+      const searchableText = `${course.name} ${course.description} ${course.courseCategory} ${course.type}`;
       return searchableText.toLowerCase().includes(this.searchTerm);
     });
   }
 
-  isOnlineCourse(status: string): boolean {
-    const normalizedStatus = this.normalizeCourseStatus(status);
-    return normalizedStatus === 'onlinecourse' || normalizedStatus === '0';
+  isOnlineCourse(type: string): boolean {
+    const normalizedType = this.normalizeCourseTypes(type);
+    return normalizedType === 'onlinecourse' || normalizedType === '0';
   }
 
-  getCourseStatusLabel(status: string): string {
-    return this.isOnlineCourse(status) ? 'Online' : 'Recorded';
+  getCourseTypeLabel(types: string): string {
+    return this.isOnlineCourse(types) ? 'Online' : 'Recorded';
   }
 
-  private normalizeCourseStatus(status: string): string {
-    return String(status ?? '')
+  private normalizeCourseTypes(types: string): string {
+    return String(types ?? '')
       .replace(/\s+/g, '')
       .toLowerCase();
   }

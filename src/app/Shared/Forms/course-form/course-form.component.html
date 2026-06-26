@@ -82,10 +82,10 @@
         </div>
 
         <div class="form-group p-fluid">
-          <label for="courseTypeId">Course Type *</label>
+          <label for="courseCategoryId">Course Type *</label>
           <p-dropdown
-            formControlName="courseTypeId"
-            [options]="courseTypes"
+            formControlName="courseCategoryId"
+            [options]="courseCategories"
             optionLabel="name"
             optionValue="id"
             placeholder="Select a Course Type"
@@ -96,57 +96,56 @@
             styleClass="course-type-dropdown"
             panelStyleClass="course-type-dropdown-panel"
           />
-          @if (isFieldInvalid("courseTypeId")) {
+          @if (isFieldInvalid("courseCategoryId")) {
             <span class="error-msg">You have to select your course type</span>
           }
         </div>
 
         <div class="form-group">
-          <label>Course Status *</label>
-          <div class="status-options">
+          <label>Course Types *</label>
+          <div class="types-options">
             <label
-              class="status-option"
-              [class.status-option--active]="
-                courseForm.get('status')?.value === courseStatuses.OnlineCourse
+              class="types-option"
+              [class.types-option--active]="
+                courseForm.get('types')?.value === courseTypes.OnlineCourse
               "
             >
               <input
                 type="radio"
-                formControlName="status"
-                [value]="courseStatuses.OnlineCourse"
+                formControlName="types"
+                [value]="courseTypes.OnlineCourse"
               />
-              <span class="status-option__icon">
+              <span class="types-option__icon">
                 <i class="pi pi-video"></i>
               </span>
-              <span class="status-option__content">
+              <span class="types-option__content">
                 <strong>Online Course</strong>
                 <small>Live sessions with students</small>
               </span>
             </label>
 
             <label
-              class="status-option"
-              [class.status-option--active]="
-                courseForm.get('status')?.value ===
-                courseStatuses.RecorderCourse
+              class="types-option"
+              [class.types-option--active]="
+                courseForm.get('types')?.value === courseTypes.RecorderCourse
               "
             >
               <input
                 type="radio"
-                formControlName="status"
-                [value]="courseStatuses.RecorderCourse"
+                formControlName="types"
+                [value]="courseTypes.RecorderCourse"
               />
-              <span class="status-option__icon">
+              <span class="types-option__icon">
                 <i class="pi pi-play-circle"></i>
               </span>
-              <span class="status-option__content">
+              <span class="types-option__content">
                 <strong>Recorded Course</strong>
                 <small>Pre-recorded lectures</small>
               </span>
             </label>
           </div>
-          @if (isFieldInvalid("status")) {
-            <span class="error-msg">You have to select course status</span>
+          @if (isFieldInvalid("types")) {
+            <span class="error-msg">You have to select course types</span>
           }
         </div>
 
@@ -257,15 +256,14 @@
                   <i
                     class="pi"
                     [ngClass]="
-                      courseForm.get('status')?.value ===
-                      courseStatuses.OnlineCourse
+                      courseForm.get('types')?.value ===
+                      courseTypes.OnlineCourse
                         ? 'pi-video'
                         : 'pi-play-circle'
                     "
                   ></i>
                   {{
-                    courseForm.get("status")?.value ===
-                    courseStatuses.OnlineCourse
+                    courseForm.get("types")?.value === courseTypes.OnlineCourse
                       ? "Online"
                       : "Recorded"
                   }}

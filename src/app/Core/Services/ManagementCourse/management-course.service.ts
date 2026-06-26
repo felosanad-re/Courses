@@ -21,10 +21,10 @@ export class ManagementCourseService {
     if (obj.image) {
       formData.append('image', obj.image, obj.image.name);
     }
-    formData.append('courseTypeId', obj.courseTypeId.toString());
+    formData.append('courseCategoryId', obj.courseCategoryId.toString());
     formData.append('price', obj.price.toString());
     formData.append('isPaid', obj.isPaid.toString());
-    formData.append('status', obj.status);
+    formData.append('type', obj.type.toString());
     return formData;
   }
 
