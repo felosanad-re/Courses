@@ -10,10 +10,12 @@
     </div>
 
     <div class="hero-actions">
-      <button class="btn btn-primary" type="button">
-        <i class="pi pi-plus"></i>
-        Create Live Session
-      </button>
+      <p-button
+        (onClick)="showDialog()"
+        label="Create New Session"
+        icon="pi pi-plus"
+        styleClass="live-session-create-button"
+      />
       <button class="btn btn-secondary" type="button">
         <i class="pi pi-calendar"></i>
         View Calendar
@@ -215,4 +217,64 @@
       [rowsPerPageOptions]="[5, 10, 20]"
     />
   </section>
+
+  <!-- Dialog For Create New Session -->
+  <p-dialog
+    header="Create new Live Session"
+    [(visible)]="visible"
+    [modal]="true"
+    [draggable]="false"
+    [resizable]="false"
+    appendTo="body"
+    styleClass="live-session-dialog"
+    [style]="{ width: '50rem', height: '25rem' }"
+    [breakpoints]="{ '575px': 'calc(100vw - 2rem)' }"
+  >
+    <span class="p-text-secondary block mb-5"
+      >select your course then the section.</span
+    >
+    <div class="flex align-items-center gap-3 mb-3">
+      <p-dropdown
+        [options]="coursesList"
+        [(ngModel)]="selectedCourse"
+        optionLabel="name"
+        [filter]="true"
+        filterBy="name"
+        appendTo="body"
+        placeholder="Select a Course"
+        panelStyleClass="live-session-dropdown-panel"
+        (onChange)="onCourseChange($event.value)"
+      >
+        <ng-template let-course pTemplate="item">
+          <div>{{ course.name }}</div>
+        </ng-template>
+      </p-dropdown>
+    </div>
+    <div class="flex align-items-center gap-3">
+      <p-dropdown
+        [options]="sectionsList"
+        [(ngModel)]="selectedSection"
+        optionLabel="title"
+        [disabled]="!selectedCourse"
+        [loading]="isLoadingSections"
+        appendTo="body"
+        placeholder="Select a Section"
+        panelStyleClass="live-session-dropdown-panel"
+      >
+        <ng-template let-section pTemplate="item">
+          <div>{{ section.title }}</div>
+        </ng-template>
+      </p-dropdown>
+    </div>
+
+    <ng-template pTemplate="footer">
+      <p-button
+        label="Cancel"
+        severity="secondary"
+        styleClass="p-button-text"
+        (onClick)="visible = false"
+      />
+      <p-button label="Create" (onClick)="onSubmit()" />
+    </ng-template>
+  </p-dialog>
 </section>

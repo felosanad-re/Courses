@@ -21,6 +21,13 @@
         [disabled]="!selectedSections || !selectedSections.length"
         (onClick)="deleteSelectedSections()"
       />
+      <p-button
+        label="Send For Review"
+        icon="pi pi-send"
+        severity="info"
+        [loading]="isSubmittingReview"
+        (onClick)="submitCourseForReview()"
+      />
     </div>
   </div>
 

@@ -27,6 +27,7 @@ import { ManagementOnlineService } from '../../../Core/Services/ManagementOnline
 import { SectionWithSessionsResponse } from '../../../Core/Interfaces/LiveSessions/section-with-sessions-response';
 import { SessionsWithSectionResponse } from '../../../Core/Interfaces/LiveSessions/sessions-with-section-response';
 import { ApplicationResult } from '../../../Core/Interfaces/application-result';
+import { CourseResponseForSubmit } from '../../../Core/Interfaces/Courses/course-response-for-submit';
 
 type CourseContentMode = 'recorded' | 'online';
 
@@ -71,6 +72,7 @@ export class CourseSectionsDetailsComponent implements OnInit {
   // General
   isSubmitted: boolean = false;
   isLoading: boolean = false;
+  isSubmittingReview: boolean = false;
   courseId: number = 0;
   contentMode: CourseContentMode = 'recorded';
   courseTypes: string = CourseType.RecorderCourse;
@@ -446,6 +448,28 @@ export class CourseSectionsDetailsComponent implements OnInit {
         });
       },
     });
+  }
+
+  submitCourseForReview(): void {
+    this.isSubmittingReview = true;
+    this._managementCourseService
+      .submitCourseForReview(this.courseId)
+      .pipe(finalize(() => (this.isSubmittingReview = false)))
+      .subscribe({
+        next: (res: ApplicationResult<CourseResponseForSubmit>) => {
+          if (res.succeed && res.data) {
+            this._notificationsService.showSuccess(
+              'Course submitted for review successfully',
+              'Success',
+            );
+          } else {
+            this._notificationsService.showError(
+              res.message || 'Failed to submit course for review',
+              'Error',
+            );
+          }
+        },
+      });
   }
 
   // ─── Expand / Collapse ───

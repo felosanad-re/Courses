@@ -9,6 +9,8 @@ import { environment } from '../../../../environments/environment';
 import { StudentParams } from '../../Interfaces/Instructors/student-params';
 import { StudentWithInstructorResponse } from '../../Interfaces/Instructors/student-with-instructor-response';
 import { InstructorWithCoursesResponse } from '../../Interfaces/Instructors/instructor-with-courses-response';
+import { CourseTypesResponse } from '../../Interfaces/Courses/course-types-response';
+import { SectionListResponse } from '../../Interfaces/Sections/section-list-response';
 
 @Injectable({
   providedIn: 'root',
@@ -26,6 +28,12 @@ export class InstructorsService {
       }
     });
     return params;
+  }
+
+  buildSearchParam(search: string): HttpParams {
+    let params = new HttpParams();
+
+    return params.append('search', search);
   }
 
   // Get All Courses
@@ -68,5 +76,33 @@ export class InstructorsService {
     return this._http.get<
       ApplicationResult<Pagination<InstructorWithCoursesResponse[]>>
     >(`${environment.apiUrl}/Instructor/MyCourses`, { params });
+  }
+
+  getOnlineCourses(
+    search: string,
+  ): Observable<ApplicationResult<CourseTypesResponse[]>> {
+    const params = this.buildSearchParam(search);
+    return this._http.get<ApplicationResult<CourseTypesResponse[]>>(
+      `${environment.apiUrl}/Instructor/Online-Courses`,
+      { params },
+    );
+  }
+
+  getRecordedCourses(
+    search: string,
+  ): Observable<ApplicationResult<CourseTypesResponse[]>> {
+    const params = this.buildSearchParam(search);
+    return this._http.get<ApplicationResult<CourseTypesResponse[]>>(
+      `${environment.apiUrl}/Instructor/Recorded-Courses`,
+      { params },
+    );
+  }
+
+  getSectionList(
+    courseId: number,
+  ): Observable<ApplicationResult<SectionListResponse[]>> {
+    return this._http.get<ApplicationResult<SectionListResponse[]>>(
+      `${environment.apiUrl}/Instructor/Sections/${courseId}`,
+    );
   }
 }
