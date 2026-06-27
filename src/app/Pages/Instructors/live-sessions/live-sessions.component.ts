@@ -13,6 +13,13 @@ import { LiveSessionStatisticsResponse } from '../../../Core/Interfaces/LiveSess
 import { LiveSessionDetailsResponse } from '../../../Core/Interfaces/LiveSessions/live-session-details-response';
 import { NotificationsService } from '../../../Core/Services/notifications.service';
 import { SearchService } from '../../../Core/Services/search.service';
+import { DialogModule } from 'primeng/dialog';
+import { ButtonModule } from 'primeng/button';
+import { InputTextModule } from 'primeng/inputtext';
+import { InstructorsService } from '../../../Core/Services/Instructors/instructors.service';
+import { CourseTypesResponse } from '../../../Core/Interfaces/Courses/course-types-response';
+import { SectionListResponse } from '../../../Core/Interfaces/Sections/section-list-response';
+import { DropdownModule } from 'primeng/dropdown';
 
 interface SessionStat {
   label: string;
@@ -24,7 +31,15 @@ interface SessionStat {
 @Component({
   selector: 'app-live-sessions',
   standalone: true,
-  imports: [CommonModule, FormsModule, PaginatorModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    PaginatorModule,
+    DialogModule,
+    ButtonModule,
+    InputTextModule,
+    DropdownModule,
+  ],
   templateUrl: './live-sessions.component.html',
   styleUrl: './live-sessions.component.scss',
 })
@@ -42,10 +57,18 @@ export class LiveSessionsComponent implements OnInit {
   isMutatingSessionId?: number;
   stats: SessionStat[] = [];
 
+  visible: boolean = false;
+  selectedCourse?: CourseTypesResponse;
+  selectedSection?: SectionListResponse;
+  coursesList: CourseTypesResponse[] = [];
+  sectionsList: SectionListResponse[] = [];
+  isLoadingSections = false;
+
   constructor(
     private readonly _sessionsService: ManagementOnlineService,
     private readonly _notifications: NotificationsService,
     private readonly _searchService: SearchService,
+    private readonly _instructorService: InstructorsService,
     private readonly _router: Router,
   ) {}
 
@@ -237,6 +260,61 @@ export class LiveSessionsComponent implements OnInit {
       this.sessionParams.pageIndex = 1;
       this.getSessions();
     });
+  }
+
+  showDialog() {
+    this.visible = true;
+    this.getOnlineCoursesList();
+  }
+
+  getOnlineCoursesList(search?: string | null): void {
+    this._instructorService
+      .getOnlineCourses(search || '')
+      .pipe(finalize(() => (this.isLoading = false)))
+      .subscribe((res: ApplicationResult<CourseTypesResponse[]>) => {
+        if (res.succeed && res.data) {
+          this.coursesList = res.data;
+          console.log(this.coursesList);
+        }
+      });
+  }
+
+  onCourseChange(course: CourseTypesResponse): void {
+    this.selectedSection = undefined;
+    this.sectionsList = [];
+
+    if (!course?.id) {
+      return;
+    }
+
+    this.getSections(course.id);
+  }
+
+  getSections(courseId: number): void {
+    this.isLoadingSections = true;
+    this._instructorService
+      .getSectionList(courseId)
+      .pipe(finalize(() => (this.isLoadingSections = false)))
+      .subscribe({
+        next: (res: ApplicationResult<SectionListResponse[]>) => {
+          if (res.succeed && res.data) {
+            this.sectionsList = res.data;
+          } else {
+            this.sectionsList = [];
+          }
+        },
+      });
+  }
+
+  onSubmit(): void {
+    this.visible = false;
+    this._router.navigate([
+      '/instructor',
+      'online-sessions',
+      'create',
+      this.selectedCourse?.id,
+      this.selectedSection?.id,
+    ]);
   }
 
   readonly statuses = ['All', 'Scheduled', 'Live', 'Completed', 'Cancelled'];

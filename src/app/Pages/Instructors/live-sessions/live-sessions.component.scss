@@ -90,6 +90,201 @@
   gap: 12px;
 }
 
+::ng-deep .live-session-create-button.p-button {
+  min-height: 46px !important;
+  padding: 0.75rem 1.25rem !important;
+  border: 1px solid #3b82f6 !important;
+  border-radius: 6px !important;
+  background: #3b82f6 !important;
+  color: #fff !important;
+  font-family: "Inter", sans-serif !important;
+  font-size: 1rem !important;
+  font-weight: 700 !important;
+  line-height: 1 !important;
+  box-shadow: none !important;
+}
+
+::ng-deep .live-session-create-button.p-button:not(:disabled):hover {
+  border-color: #2563eb !important;
+  background: #2563eb !important;
+  color: #fff !important;
+}
+
+::ng-deep .live-session-create-button.p-button .p-button-icon {
+  font-size: 1rem !important;
+}
+
+::ng-deep .live-session-dialog.p-dialog {
+  overflow: hidden !important;
+  border: 0 none !important;
+  border-radius: 6px !important;
+  background: #fff !important;
+  color: #4b5563 !important;
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.3),
+    0 4px 8px rgba(0, 0, 0, 0.2) !important;
+}
+
+::ng-deep .live-session-dialog.p-dialog .p-dialog-header {
+  padding: 1.5rem !important;
+  border-bottom: 0 none !important;
+  border-top-right-radius: 6px !important;
+  border-top-left-radius: 6px !important;
+  background: #fff !important;
+  color: #374151 !important;
+}
+
+::ng-deep .live-session-dialog.p-dialog .p-dialog-title {
+  font-size: 1.25rem !important;
+  font-weight: 700 !important;
+}
+
+::ng-deep .live-session-dialog.p-dialog .p-dialog-header-icon {
+  width: 2rem !important;
+  height: 2rem !important;
+  border: 0 none !important;
+  border-radius: 50% !important;
+  background: transparent !important;
+  color: #6b7280 !important;
+}
+
+::ng-deep .live-session-dialog.p-dialog .p-dialog-header-icon:hover {
+  background: #f3f4f6 !important;
+  color: #374151 !important;
+}
+
+::ng-deep .live-session-dialog.p-dialog .p-dialog-content {
+  padding: 0 1.5rem 2rem !important;
+  background: #fff !important;
+  color: #4b5563 !important;
+}
+
+::ng-deep .live-session-dialog.p-dialog .p-dialog-footer {
+  display: flex !important;
+  justify-content: flex-end !important;
+  gap: 0.5rem !important;
+  padding: 0 1.5rem 1.5rem !important;
+  border-top: 0 none !important;
+  border-bottom-right-radius: 6px !important;
+  border-bottom-left-radius: 6px !important;
+  background: #fff !important;
+}
+
+::ng-deep .live-session-dialog.p-dialog .p-dialog-footer .p-button {
+  width: auto !important;
+  min-width: 0 !important;
+  padding: 0.75rem 1.25rem !important;
+  border-radius: 6px !important;
+  font-weight: 700 !important;
+}
+
+::ng-deep .live-session-dialog.p-dialog .p-inputtext {
+  width: 100% !important;
+}
+
+/* ===== Dropdown styling (scoped to the live-session dialog) ===== */
+::ng-deep .live-session-dialog .p-dropdown,
+::ng-deep .live-session-dialog .p-dropdown .p-dropdown-label {
+  width: 100% !important;
+}
+
+::ng-deep .live-session-dialog .p-dropdown {
+  min-height: 46px !important;
+  border: 1px solid #dbe4f0 !important;
+  border-radius: 6px !important;
+  background: #fff !important;
+  transition:
+    border-color 0.18s ease,
+    box-shadow 0.18s ease !important;
+}
+
+::ng-deep .live-session-dialog .p-dropdown:not(.p-disabled):hover {
+  border-color: #3b82f6 !important;
+}
+
+::ng-deep .live-session-dialog .p-dropdown:not(.p-disabled).p-focus,
+::ng-deep
+  .live-session-dialog
+  .p-dropdown:not(.p-disabled).p-inputwrapper-focus {
+  border-color: #3b82f6 !important;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15) !important;
+}
+
+::ng-deep .live-session-dialog .p-dropdown .p-dropdown-label {
+  display: flex;
+  align-items: center;
+  padding: 0 14px !important;
+  color: #0f172a !important;
+  font-size: 0.95rem !important;
+  font-family: "Inter", sans-serif !important;
+  background: transparent !important;
+}
+
+::ng-deep .live-session-dialog .p-dropdown .p-dropdown-label.p-placeholder {
+  color: #94a3b8 !important;
+  font-weight: 400 !important;
+}
+
+::ng-deep .live-session-dialog .p-dropdown .p-dropdown-trigger {
+  width: 2.5rem !important;
+  color: #64748b !important;
+}
+
+::ng-deep .live-session-dialog .p-dropdown.p-disabled,
+::ng-deep .live-session-dialog .p-dropdown.p-disabled .p-dropdown-label {
+  background: #f1f5f9 !important;
+  color: #94a3b8 !important;
+  cursor: not-allowed !important;
+  opacity: 0.8 !important;
+}
+
+/* Dropdown panel (rendered on body, scoped via panelStyleClass) */
+::ng-deep .live-session-dropdown-panel {
+  z-index: 10000 !important;
+}
+
+::ng-deep .live-session-dropdown-panel .p-dropdown-items .p-dropdown-item {
+  padding: 10px 14px !important;
+  color: #0f172a !important;
+  font-size: 0.95rem !important;
+  font-family: "Inter", sans-serif !important;
+  transition: background 0.15s ease !important;
+}
+
+::ng-deep
+  .live-session-dropdown-panel
+  .p-dropdown-items
+  .p-dropdown-item.p-highlight {
+  background: #eff6ff !important;
+  color: #2563eb !important;
+  font-weight: 700 !important;
+}
+
+::ng-deep
+  .live-session-dropdown-panel
+  .p-dropdown-items
+  .p-dropdown-item:not(.p-highlight):hover {
+  background: #f8fafc !important;
+  color: #2563eb !important;
+}
+
+::ng-deep .live-session-dropdown-panel .p-dropdown-header {
+  padding: 10px 12px !important;
+  border-bottom: 1px solid #edf1f7 !important;
+}
+
+::ng-deep .live-session-dropdown-panel .p-dropdown-filter {
+  border: 1px solid #dbe4f0 !important;
+  border-radius: 6px !important;
+  padding: 8px 12px !important;
+  font-size: 0.9rem !important;
+}
+
+::ng-deep .live-session-dropdown-panel .p-dropdown-filter:focus {
+  border-color: #3b82f6 !important;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15) !important;
+}
+
 .btn,
 .table-action,
 .page-btn {

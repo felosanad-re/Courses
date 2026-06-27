@@ -6,6 +6,7 @@ import { CourseResponseForInstructor } from '../../Interfaces/Instructors/course
 import { environment } from '../../../../environments/environment';
 import { CourseFormRequest } from '../../Interfaces/Instructors/CourseFormRequest';
 import { DeleteCoursesResult } from '../../Interfaces/Instructors/delete-courses-result';
+import { CourseResponseForSubmit } from '../../Interfaces/Courses/course-response-for-submit';
 
 @Injectable({
   providedIn: 'root',
@@ -74,6 +75,15 @@ export class ManagementCourseService {
     return this._http.post<ApplicationResult<DeleteCoursesResult>>(
       `${environment.apiUrl}/ManagementCourse/Delete-Courses`,
       ids,
+    );
+  }
+
+  submitCourseForReview(
+    courseId: number,
+  ): Observable<ApplicationResult<CourseResponseForSubmit>> {
+    return this._http.post<ApplicationResult<CourseResponseForSubmit>>(
+      `${environment.apiUrl}/managementCourse/review-course/${courseId}`,
+      {},
     );
   }
 }
