@@ -8,6 +8,7 @@ import { Pagination } from '../../Interfaces/Courses/pagination';
 import { env } from 'process';
 import { environment } from '../../../../environments/environment';
 import { CourseDetailsToReturnDTO } from '../../Interfaces/Courses/course-details-to-return-dto';
+import { CourseType } from '../../Interfaces/Courses/course-type';
 
 @Injectable({
   providedIn: 'root',
@@ -41,9 +42,11 @@ export class CoursesService {
 
   getCourseDetails(
     courseId: number,
+    type: CourseType,
   ): Observable<ApplicationResult<CourseDetailsToReturnDTO>> {
     return this._http.get<ApplicationResult<CourseDetailsToReturnDTO>>(
       `${environment.apiUrl}/courses/Course/${courseId}`,
+      { params: { type } },
     );
   }
 }

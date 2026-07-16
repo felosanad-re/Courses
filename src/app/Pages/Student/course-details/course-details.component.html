@@ -173,7 +173,7 @@
                 }}</span>
               </div>
               <span class="course-details__accordion-count">
-                {{ section.lectures.length }} lectures
+                {{ section.content.length }} lectures
               </span>
             </button>
 
@@ -184,7 +184,7 @@
               }"
             >
               <div
-                *ngFor="let lecture of section.lectures"
+                *ngFor="let lecture of section.content"
                 class="course-details__lecture"
               >
                 <div class="course-details__lecture-icon">

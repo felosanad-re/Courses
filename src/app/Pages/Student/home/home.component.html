@@ -87,19 +87,17 @@
         <span
           class="course-card__status-badge"
           [ngClass]="{
-            'course-card__status-badge--online': isOnlineCourse(course.status),
-            'course-card__status-badge--recorded': !isOnlineCourse(
-              course.status
-            ),
+            'course-card__status-badge--online': isOnlineCourse(course.type),
+            'course-card__status-badge--recorded': !isOnlineCourse(course.type),
           }"
         >
           <i
             class="pi"
             [ngClass]="
-              isOnlineCourse(course.status) ? 'pi-video' : 'pi-play-circle'
+              isOnlineCourse(course.type) ? 'pi-video' : 'pi-play-circle'
             "
           ></i>
-          {{ getCourseStatusLabel(course.status) }}
+          {{ getCourseTypeLabel(course.type) }}
         </span>
         <span
           class="course-card__price-badge"
@@ -117,7 +115,7 @@
       <div class="course-card__footer">
         <button
           class="course-card__btn course-card__btn--details"
-          (click)="viewCourseDetails(course.id)"
+          (click)="viewCourseDetails(course)"
         >
           <i class="pi pi-eye"></i>
           Details

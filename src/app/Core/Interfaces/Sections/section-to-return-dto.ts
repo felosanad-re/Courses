@@ -1,9 +1,9 @@
-import { LectureToReturnDTO } from '../Lectures/lecture-to-return-dto';
+import { CourseContentItemDTO } from '../../../Core/Interfaces/Lectures/CourseContentItemDTO';
 
 export interface SectionToReturnDTO {
   id: number;
   title: string;
   courseName: string;
   courseId: number;
-  lectures: LectureToReturnDTO[];
+  content: CourseContentItemDTO[];
 }

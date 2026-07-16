@@ -1,12 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
-import { CourseDetailsToReturnDTO } from '../../../Core/Interfaces/Courses/course-details-to-return-dto';
+
 import { CoursesService } from '../../../Core/Services/Courses/courses.service';
 import { NotificationsService } from '../../../Core/Services/notifications.service';
 import { ApplicationResult } from '../../../Core/Interfaces/application-result';
 import { EnrollmentService } from '../../../Core/Services/Enrollments/enrollment.service';
 import { EnrollmentWithCourseResponse } from '../../../Core/Interfaces/Enrollments/enrollment-with-course-response';
+import { CourseDetailsToReturnDTO } from '../../../Core/Interfaces/Courses/course-details-to-return-dto';
+import { CourseType } from '../../../Core/Interfaces/Courses/course-type';
 
 @Component({
   selector: 'app-course-details',
@@ -17,6 +19,7 @@ import { EnrollmentWithCourseResponse } from '../../../Core/Interfaces/Enrollmen
 })
 export class CourseDetailsComponent implements OnInit {
   courseId!: number;
+  courseType!: CourseType;
   courseDetails!: CourseDetailsToReturnDTO;
   isLoading = false;
   error: string | null = null;
@@ -32,6 +35,11 @@ export class CourseDetailsComponent implements OnInit {
 
   ngOnInit(): void {
     this.courseId = Number(this._route.snapshot.paramMap.get('courseId'));
+    this.courseType =
+      this.normalizeCourseType(
+        this._route.snapshot.queryParamMap.get('type'),
+      ) ?? CourseType.RecorderCourse;
+
     this.getCourseDetails();
   }
 
@@ -39,26 +47,28 @@ export class CourseDetailsComponent implements OnInit {
     this.isLoading = true;
     this.error = null;
 
-    this._courseService.getCourseDetails(this.courseId).subscribe({
-      next: (res: ApplicationResult<CourseDetailsToReturnDTO>) => {
-        if (res.succeed && res.data) {
-          this.courseDetails = res.data;
-          // Expand the first section by default
-          this.expandedSections = {};
-          if (this.courseDetails.sections.length > 0) {
-            this.expandedSections[0] = true;
+    this._courseService
+      .getCourseDetails(this.courseId, this.courseType)
+      .subscribe({
+        next: (res: ApplicationResult<CourseDetailsToReturnDTO>) => {
+          if (res.succeed && res.data) {
+            this.courseDetails = res.data;
+            // Expand the first section by default
+            this.expandedSections = {};
+            if (this.courseDetails.sections.length > 0) {
+              this.expandedSections[0] = true;
+            }
+          } else {
+            this.error = res.message || 'Failed to load course details';
           }
-        } else {
-          this.error = res.message || 'Failed to load course details';
-        }
-      },
-      error: () => {
-        this.error = 'Something went wrong. Please try again.';
-      },
-      complete: () => {
-        this.isLoading = false;
-      },
-    });
+        },
+        error: () => {
+          this.error = 'Something went wrong. Please try again.';
+        },
+        complete: () => {
+          this.isLoading = false;
+        },
+      });
   }
 
   toggleSection(index: number): void {
@@ -106,8 +116,30 @@ export class CourseDetailsComponent implements OnInit {
 
   getTotalLectures(): number {
     return this.courseDetails.sections.reduce(
-      (total, section) => total + section.lectures.length,
+      (total, section) => total + section.content.length,
       0,
     );
+  }
+
+  private normalizeCourseType(
+    type: string | null | undefined,
+  ): CourseType | null {
+    const normalizedType = String(type ?? '')
+      .replace(/\s+/g, '')
+      .toLowerCase();
+
+    if (normalizedType === 'onlinecourse' || normalizedType === '0') {
+      return CourseType.OnlineCourse;
+    }
+
+    if (
+      normalizedType === 'recordercourse' ||
+      normalizedType === 'recordedcourse' ||
+      normalizedType === '1'
+    ) {
+      return CourseType.RecorderCourse;
+    }
+
+    return null;
   }
 }
