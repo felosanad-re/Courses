@@ -9,6 +9,7 @@ import { CourseDetailsToReturnDTO } from '../../../Core/Interfaces/Courses/cours
 import { RefundResponse } from '../../../Core/Interfaces/Refunds/refund-response';
 import { RefundsService } from '../../../Core/Services/Refunds/refunds.service';
 import { NotificationsService } from '../../../Core/Services/notifications.service';
+import { CourseType } from '../../../Core/Interfaces/Courses/course-type';
 
 @Component({
   selector: 'app-refunded',
@@ -24,6 +25,7 @@ export class RefundedComponent {
   cancellationReason: string | null = null;
   request!: RefundRequest;
   isSubmitting = false;
+  type!: CourseType;
 
   constructor(
     private readonly _route: ActivatedRoute,
@@ -41,7 +43,7 @@ export class RefundedComponent {
   }
 
   getCourseDetails() {
-    this._courseService.getCourseDetails(this.courseId).subscribe({
+    this._courseService.getCourseDetails(this.courseId, this.type).subscribe({
       next: (res: ApplicationResult<CourseDetailsToReturnDTO>) => {
         if (res.succeed && res.data) {
           this.course = res.data;

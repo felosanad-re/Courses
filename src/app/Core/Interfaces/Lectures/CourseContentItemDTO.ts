@@ -1,7 +1,7 @@
-export interface LectureToReturnDTO {
+export interface CourseContentItemDTO {
   id: number;
   title: string;
-  videoUrl: string;
+  url: string;
   sectionName: string;
   sectionId: number;
 }

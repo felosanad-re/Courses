@@ -76,7 +76,7 @@ export class ManagementOnlineService {
     liveSessionRequest: LiveSessionRequest,
     id: number,
   ): Observable<ApplicationResult<LiveSessionResponse>> {
-    return this._http.put<ApplicationResult<LiveSessionResponse>>(
+    return this._http.post<ApplicationResult<LiveSessionResponse>>(
       `${environment.apiUrl}/LiveSession/UpdateLiveSession/${id}`,
       liveSessionRequest,
     );

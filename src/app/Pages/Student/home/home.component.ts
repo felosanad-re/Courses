@@ -12,6 +12,7 @@ import { CourseCategoryToReturnDTO } from '../../../Core/Interfaces/CourseCatego
 import { EnrollmentService } from '../../../Core/Services/Enrollments/enrollment.service';
 import { EnrollmentWithCourseResponse } from '../../../Core/Interfaces/Enrollments/enrollment-with-course-response';
 import { PaginatorModule } from 'primeng/paginator';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-home',
@@ -96,28 +97,30 @@ export class HomeComponent {
     this.courseParams.pageIndex = this.pageIndex;
     this.courseParams.pageSize = this.pageSize;
 
-    this._courseService.getAllCourses(this.courseParams).subscribe({
-      next: (res: ApplicationResult<Pagination<CoursesToReturnDTO[]>>) => {
-        if (res.succeed && res.data) {
-          this.courses = res.data.data;
-          this.courseCount = res.data.count;
-          this.noCoursesMessage =
-            res.message || 'No courses available at the moment.';
-        } else {
-          this.courses = [];
-          this.noCoursesMessage =
-            res.message || 'No courses available at the moment.';
-        }
-      },
-      complete: () => {
-        this.isLoading = false;
-      },
-    });
+    this._courseService
+      .getAllCourses(this.courseParams)
+      .pipe(finalize(() => (this.isLoading = false)))
+      .subscribe({
+        next: (res: ApplicationResult<Pagination<CoursesToReturnDTO[]>>) => {
+          if (res.succeed && res.data) {
+            this.courses = res.data.data;
+            this.courseCount = res.data.count;
+            this.noCoursesMessage =
+              res.message || 'No courses available at the moment.';
+          } else {
+            this.courses = [];
+            this.noCoursesMessage =
+              res.message || 'No courses available at the moment.';
+          }
+        },
+      });
   }
 
   // Navigate to course details
-  viewCourseDetails(courseId: number) {
-    this._router.navigate(['/student', 'course-details', courseId]);
+  viewCourseDetails(course: CoursesToReturnDTO) {
+    this._router.navigate(['/student', 'course-details', course.id], {
+      queryParams: { type: this.getCourseTypeParam(course) },
+    });
   }
 
   // Enroll in a course
@@ -128,15 +131,17 @@ export class HomeComponent {
         next: (res: ApplicationResult<EnrollmentWithCourseResponse>) => {
           if (res.succeed && res.data) {
             if (course.isPaid) {
+              const type = course.type.toLowerCase();
               this._notifications.showSuccess(
                 res.message || 'Enrollment created. Complete your payment.',
                 'Enrollment',
               );
-              this._router.navigate([
-                '/student',
-                'payment',
-                res.data.enrollmentId,
-              ]);
+              this._router.navigate(
+                ['/student', 'payment', res.data.enrollmentId],
+                {
+                  queryParams: { type: this.getCourseTypeParam(course) },
+                },
+              );
               return;
             }
 
@@ -165,17 +170,35 @@ export class HomeComponent {
     });
   }
 
-  isOnlineCourse(status: string): boolean {
-    const normalizedStatus = this.normalizeCourseStatus(status);
+  isOnlineCourse(type: string): boolean {
+    const normalizedStatus = this.normalizeCourseType(type);
     return normalizedStatus === 'onlinecourse' || normalizedStatus === '0';
   }
 
-  getCourseStatusLabel(status: string): string {
-    return this.isOnlineCourse(status) ? 'Online' : 'Recorded';
+  getCourseTypeLabel(type: string): string {
+    return this.isOnlineCourse(type) ? 'Online' : 'Recorded';
   }
 
-  private normalizeCourseStatus(status: string): string {
-    return String(status ?? '')
+  private getCourseTypeParam(course: CoursesToReturnDTO): string {
+    const normalizedType = this.normalizeCourseType(course.type);
+
+    if (normalizedType === 'onlinecourse' || normalizedType === '0') {
+      return 'OnlineCourse';
+    }
+
+    if (
+      normalizedType === 'recordercourse' ||
+      normalizedType === 'recordedcourse' ||
+      normalizedType === '1'
+    ) {
+      return 'RecorderCourse';
+    }
+
+    return this.isOnlineCourse(course.type) ? 'OnlineCourse' : 'RecorderCourse';
+  }
+
+  private normalizeCourseType(type: string): string {
+    return String(type ?? '')
       .replace(/\s+/g, '')
       .toLowerCase();
   }

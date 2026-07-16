@@ -17,6 +17,7 @@ import { PaymentService } from '../../../Core/Services/Payments/payment.service'
 import { StripeService } from '../../../Core/Services/Stripe/stripe.service';
 import { NotificationsService } from '../../../Core/Services/notifications.service';
 import { FormsModule } from '@angular/forms';
+import { CourseType } from '../../../Core/Interfaces/Courses/course-type';
 
 @Component({
   selector: 'app-payment',
@@ -29,7 +30,7 @@ export class PaymentComponent implements OnInit, OnDestroy {
   @ViewChild('paymentElement') paymentElementRef?: ElementRef<HTMLElement>;
   isLoading = false;
   isSubmitting = false;
-
+  type!: CourseType;
   // Stripe Properties
   enrollmentId!: number;
   clientSecret: string | null = null;
@@ -54,6 +55,8 @@ export class PaymentComponent implements OnInit, OnDestroy {
       this._route.snapshot.paramMap.get('enrollmentId'),
     );
 
+    this.type = this._route.snapshot.queryParamMap.get('type') as CourseType;
+
     if (!this.enrollmentId) {
       this.paymentError = 'Invalid enrollment.';
       this._notifications.showError(this.paymentError, 'Payment');
@@ -61,6 +64,12 @@ export class PaymentComponent implements OnInit, OnDestroy {
       return;
     }
 
+    if (!this.type) {
+      this.paymentError = 'Invalid enrollment.';
+      this._notifications.showError(this.paymentError, 'Payment');
+      this._router.navigate(['/student', 'home']);
+      return;
+    }
     this.createPaymentIntent();
   }
 
@@ -153,7 +162,7 @@ export class PaymentComponent implements OnInit, OnDestroy {
   }
 
   getCourseDetails(courseId: number): void {
-    this._courseService.getCourseDetails(courseId).subscribe({
+    this._courseService.getCourseDetails(courseId, this.type).subscribe({
       next: (res: ApplicationResult<CourseDetailsToReturnDTO>) => {
         if (res.succeed && res.data) {
           this.courseDetails = res.data;
