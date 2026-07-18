@@ -13,11 +13,12 @@ import { EnrollmentService } from '../../../Core/Services/Enrollments/enrollment
 import { EnrollmentWithCourseResponse } from '../../../Core/Interfaces/Enrollments/enrollment-with-course-response';
 import { PaginatorModule } from 'primeng/paginator';
 import { finalize } from 'rxjs';
+import { RatingModule } from 'primeng/rating';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, PaginatorModule],
+  imports: [CommonModule, PaginatorModule, RatingModule],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
 })
@@ -97,6 +98,7 @@ export class HomeComponent {
     this.courseParams.pageIndex = this.pageIndex;
     this.courseParams.pageSize = this.pageSize;
 
+    this.courseParams.sort = 'Rating';
     this._courseService
       .getAllCourses(this.courseParams)
       .pipe(finalize(() => (this.isLoading = false)))

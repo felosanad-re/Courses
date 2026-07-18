@@ -9,4 +9,6 @@ export interface EnrollmentWithCoursesResponse {
   name: string;
   description: string;
   image: string;
+  averageRating: number;
+  ratingCount: number;
 }

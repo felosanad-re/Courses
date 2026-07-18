@@ -117,7 +117,17 @@
 
         <h3 class="course-card__title">{{ course.name }}</h3>
         <p class="course-card__description">{{ course.description }}</p>
-
+        <div class="course-card__rating">
+          <p-rating
+            [(ngModel)]="course.averageRating"
+            [readonly]="true"
+            [cancel]="false"
+            value="course.averageRating"
+          />
+          <span class="course-card__rating-count">{{
+            course.ratingCount
+          }}</span>
+        </div>
         <div class="course-card__progress">
           <div class="course-card__progress-top">
             <span>{{ getCourseProgressLabel(course.id) }}</span>

@@ -6,21 +6,27 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { RatingModule } from 'primeng/rating';
 import { ApplicationResult } from '../../../Core/Interfaces/application-result';
+import { CourseRatingRequest } from '../../../Core/Interfaces/Courses/course-rating-request';
+import { CourseRatingResponse } from '../../../Core/Interfaces/Courses/course-rating-response';
 import { CourseWithLectureVideoResponse } from '../../../Core/Interfaces/Courses/course-with-lecture-video-response';
 import { SectionWithCourseResponse } from '../../../Core/Interfaces/Courses/section-with-course-response';
 import { LectureWithSectionResponse } from '../../../Core/Interfaces/Lectures/lecture-with-section-response';
 import { ProgressWithLectureResponse } from '../../../Core/Interfaces/Progresses/progress-with-lecture-response';
+import { NotificationsService } from '../../../Core/Services/notifications.service';
+import { RatingCoursesService } from '../../../Core/Services/Courses/rating-courses.service';
 import { StudentService } from '../../../Core/Services/Student/student.service';
 import { ProgressService } from '../../../Core/Services/Progress/progress.service';
 
 @Component({
   selector: 'app-view-lecture',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule, RatingModule],
   templateUrl: './view-lecture.component.html',
   styleUrl: './view-lecture.component.scss',
 })
@@ -53,11 +59,20 @@ export class ViewLectureComponent implements OnInit, OnDestroy {
   private seekRetryCount = 0;
   private readonly MAX_SEEK_RETRIES = 10;
 
+  // Rating
+  ratingValue: number | null = null;
+  initialRatingValue: number | null = null;
+  currentRatingCount = 0;
+  ratingComment = '';
+  isSubmittingRating = false;
+
   constructor(
     private readonly _route: ActivatedRoute,
     private readonly _studentService: StudentService,
     private readonly _sanitizer: DomSanitizer,
     private readonly _progressService: ProgressService,
+    private readonly _ratingService: RatingCoursesService,
+    private readonly _notifications: NotificationsService,
   ) {}
 
   ngOnInit(): void {
@@ -91,6 +106,14 @@ export class ViewLectureComponent implements OnInit, OnDestroy {
 
           const firstSection = this.sections[0];
           this.activeSectionId = firstSection?.id ?? null;
+
+          // Initialize rating with the existing course rating
+          this.initialRatingValue =
+            firstSection?.averageRating > 0
+              ? Math.round(firstSection.averageRating)
+              : null;
+          this.currentRatingCount = firstSection?.ratingCount ?? 0;
+          this.ratingValue = this.initialRatingValue;
 
           if (firstSection?.lectures?.length) {
             this.playLecture(firstSection.lectures[0]);
@@ -440,6 +463,64 @@ export class ViewLectureComponent implements OnInit, OnDestroy {
           console.error('[Progress] Save error:', err);
         },
       });
+  }
+
+  // ─── Rating methods ───
+
+  submitRating(): void {
+    if (!this.courseId) {
+      this._notifications.showError('Course id is missing.', 'Rating');
+      return;
+    }
+
+    if (this.ratingValue === null || this.ratingValue < 1) {
+      this._notifications.showWarning(
+        'Please select a rating before submitting.',
+        'Rating',
+      );
+      return;
+    }
+
+    // Only submit if the rating value changed from the initial value
+    if (this.ratingValue === this.initialRatingValue) {
+      this._notifications.showWarning(
+        'Please change the rating before submitting.',
+        'Rating',
+      );
+      return;
+    }
+
+    this.isSubmittingRating = true;
+
+    const request: CourseRatingRequest = {
+      ratingValue: this.ratingValue,
+      comment: this.ratingComment?.trim()
+        ? this.ratingComment.trim()
+        : undefined,
+    };
+
+    this._ratingService.createRating(this.courseId, request).subscribe({
+      next: (res: ApplicationResult<CourseRatingResponse>) => {
+        if (res.succeed) {
+          this._notifications.showSuccess(
+            res.message || 'Thank you for your rating!',
+            'Rating',
+          );
+          // Update the initial value so it reflects the new saved rating
+          this.initialRatingValue = this.ratingValue;
+          this.currentRatingCount += 1;
+          this.ratingComment = '';
+        } else {
+          this._notifications.showError(
+            res.message || 'Failed to submit rating.',
+            'Rating',
+          );
+        }
+      },
+      complete: () => {
+        this.isSubmittingRating = false;
+      },
+    });
   }
 
   ngOnDestroy(): void {

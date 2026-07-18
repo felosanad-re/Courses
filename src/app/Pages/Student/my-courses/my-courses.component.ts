@@ -6,11 +6,13 @@ import { CourseProgressResponse } from '../../../Core/Interfaces/Progresses/cour
 import { StudentService } from '../../../Core/Services/Student/student.service';
 import { ProgressService } from '../../../Core/Services/Progress/progress.service';
 import { EnrollmentWithCoursesResponse } from '../../../Core/Interfaces/Enrollments/enrollment-with-courses-response';
+import { RatingModule } from 'primeng/rating';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-my-courses',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RatingModule, FormsModule],
   templateUrl: './my-courses.component.html',
   styleUrl: './my-courses.component.scss',
 })
@@ -41,6 +43,7 @@ export class MyCoursesComponent implements OnInit {
       next: (res: ApplicationResult<EnrollmentWithCoursesResponse[]>) => {
         if (res.succeed && res.data) {
           this.courses = res.data;
+          console.log(this.courses);
           this.filteredCourses = res.data;
           this.loadCoursesProgress();
           return;
