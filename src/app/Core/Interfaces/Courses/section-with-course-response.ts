@@ -7,4 +7,7 @@ export interface SectionWithCourseResponse {
 
   courseId: number;
   lectures: LectureWithSectionResponse[];
+
+  averageRating: number;
+  ratingCount: number;
 }

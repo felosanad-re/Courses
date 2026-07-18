@@ -8,5 +8,7 @@ export interface CoursesToReturnDTO {
   isPaid: boolean;
   price: number;
   courseCategory: string;
-  CourseCategoryId: number;
+  courseCategoryId: number;
+  averageRating: number;
+  ratingCount: number;
 }

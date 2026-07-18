@@ -154,5 +154,53 @@
         <p>Select a lecture from the sidebar to start watching.</p>
       </div>
     </div>
+
+    <!-- ===== Course Rating ===== -->
+    <div class="lecture-rating" *ngIf="courseId">
+      <div class="lecture-rating__header">
+        <span class="lecture-rating__eyebrow">
+          <i class="pi pi-star"></i>
+          Rate this course
+        </span>
+        <h3>How would you rate this course?</h3>
+        <p class="lecture-rating__hint">
+          Your feedback helps other students and improves the course.
+        </p>
+      </div>
+
+      <div class="lecture-rating__form">
+        <div class="lecture-rating__stars">
+          <p-rating [(ngModel)]="ratingValue" [cancel]="false" />
+          <span class="lecture-rating__count">
+            ({{ currentRatingCount }}
+            {{ currentRatingCount === 1 ? "rating" : "ratings" }})
+          </span>
+        </div>
+
+        <textarea
+          class="lecture-rating__comment"
+          [(ngModel)]="ratingComment"
+          placeholder="Share your thoughts about the course (optional)..."
+          rows="3"
+        ></textarea>
+
+        <button
+          type="button"
+          class="lecture-rating__submit"
+          [disabled]="
+            isSubmittingRating ||
+            ratingValue === null ||
+            ratingValue === initialRatingValue
+          "
+          (click)="submitRating()"
+        >
+          <i
+            class="pi"
+            [ngClass]="isSubmittingRating ? 'pi-spin pi-spinner' : 'pi-send'"
+          ></i>
+          {{ isSubmittingRating ? "Submitting..." : "Submit Rating" }}
+        </button>
+      </div>
+    </div>
   </section>
 </main>
