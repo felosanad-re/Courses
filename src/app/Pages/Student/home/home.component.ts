@@ -160,6 +160,12 @@ export class HomeComponent {
     return this.isOnlineCourse(type) ? 'Online' : 'Recorded';
   }
 
+  viewAll(sort: string) {
+    this._router.navigate(['/student', 'courses'], {
+      queryParams: { sort },
+    });
+  }
+
   private getCourseTypeParam(course: CoursesToReturnDTO): string {
     const normalizedType = this.normalizeCourseType(course.type);
 

@@ -43,7 +43,6 @@ export class MyCoursesComponent implements OnInit {
       next: (res: ApplicationResult<EnrollmentWithCoursesResponse[]>) => {
         if (res.succeed && res.data) {
           this.courses = res.data;
-          console.log(this.courses);
           this.filteredCourses = res.data;
           this.loadCoursesProgress();
           return;

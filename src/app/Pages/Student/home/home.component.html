@@ -23,9 +23,10 @@
       <i class="pi pi-star"></i>
       Top Rated Courses
     </h2>
-    <span class="courses-section__subtitle">
-      Highest rated by our learners
-    </span>
+    <button type="button" class="view-all-btn" (click)="viewAll('rating')">
+      View All
+      <i class="pi pi-arrow-right"></i>
+    </button>
   </div>
 
   <!-- Loading skeleton -->
@@ -138,9 +139,10 @@
       <i class="pi pi-bolt"></i>
       Popular Courses
     </h2>
-    <span class="courses-section__subtitle">
-      Most enrolled by our learners
-    </span>
+    <button type="button" class="view-all-btn" (click)="viewAll('popular')">
+      View All
+      <i class="pi pi-arrow-right"></i>
+    </button>
   </div>
 
   <!-- Loading skeleton -->
@@ -253,9 +255,10 @@
       <i class="pi pi-clock"></i>
       Newest Courses
     </h2>
-    <span class="courses-section__subtitle">
-      Freshly added to our platform
-    </span>
+    <button type="button" class="view-all-btn" (click)="viewAll('newest')">
+      View All
+      <i class="pi pi-arrow-right"></i>
+    </button>
   </div>
 
   <!-- Loading skeleton -->

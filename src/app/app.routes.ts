@@ -218,6 +218,13 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'courses',
+        loadComponent: () =>
+          import(`./Pages/Student/all-courses/all-courses.component`).then(
+            (c) => c.AllCoursesComponent,
+          ),
+      },
+      {
         path: 'course-details/:courseId',
         loadComponent: () =>
           import(
