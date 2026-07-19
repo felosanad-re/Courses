@@ -16,32 +16,21 @@
   </div>
 </section>
 
-<!-- ===== Category Filter Chips ===== -->
-<section class="categories" *ngIf="types.length > 0">
-  <div class="categories__wrapper">
-    <button
-      class="categories__chip"
-      [ngClass]="{ 'categories__chip--active': !courseParams.type }"
-      (click)="clearFilter()"
-    >
-      <i class="pi pi-th-large"></i>
-      All
-    </button>
-    <button
-      *ngFor="let type of types"
-      class="categories__chip"
-      [ngClass]="{ 'categories__chip--active': isActiveType(type.id) }"
-      (click)="filterByType(type.id)"
-    >
-      {{ type.name }}
-    </button>
+<!-- ===== Section 1: Top Rated Courses ===== -->
+<section class="courses-section">
+  <div class="courses-section__header">
+    <h2 class="courses-section__title">
+      <i class="pi pi-star"></i>
+      Top Rated Courses
+    </h2>
+    <span class="courses-section__subtitle">
+      Highest rated by our learners
+    </span>
   </div>
-</section>
 
-<!-- ===== Loading Skeleton ===== -->
-<section class="courses-section" *ngIf="isLoading">
-  <div class="courses-grid">
-    <div *ngFor="let i of [1, 2, 3, 4, 5, 6]" class="skeleton-card">
+  <!-- Loading skeleton -->
+  <div class="courses-grid" *ngIf="isLoadingTopRated">
+    <div *ngFor="let i of [1, 2, 3, 4]" class="skeleton-card">
       <div class="skeleton-card__image skeleton-pulse"></div>
       <div class="skeleton-card__body">
         <div class="skeleton-card__badge skeleton-pulse"></div>
@@ -52,22 +41,13 @@
       </div>
     </div>
   </div>
-</section>
 
-<!-- ===== Courses Grid ===== -->
-<section class="courses-section" *ngIf="!isLoading && courses.length > 0">
-  <div class="courses-section__header">
-    <h2 class="courses-section__title">
-      <i class="pi pi-book"></i>
-      Available Courses
-    </h2>
-    <span class="courses-section__count">
-      {{ courseCount }} course(s) found
-    </span>
-  </div>
-
-  <div class="courses-grid">
-    <article *ngFor="let course of courses" class="course-card">
+  <!-- Courses grid -->
+  <div
+    class="courses-grid"
+    *ngIf="!isLoadingTopRated && topRatedCourses.length > 0"
+  >
+    <article *ngFor="let course of topRatedCourses" class="course-card">
       <div class="course-card__image-wrapper">
         <img
           [src]="course.image"
@@ -142,28 +122,267 @@
     </article>
   </div>
 
-  <!-- ===== Pagination ===== -->
-  <p-paginator
-    (onPageChange)="onPageChange($event)"
-    [first]="first"
-    [rows]="pageSize"
-    [totalRecords]="courseCount"
-    [showCurrentPageReport]="true"
-    currentPageReportTemplate="there is {totalRecords} showing {first} to {last}"
-    [rowsPerPageOptions]="[5, 10, 20]"
-  />
+  <!-- Empty state for section -->
+  <p
+    class="courses-section__empty"
+    *ngIf="!isLoadingTopRated && topRatedCourses.length === 0"
+  >
+    No top rated courses available at the moment.
+  </p>
 </section>
 
-<!-- ===== Empty State ===== -->
-<section class="empty-state" *ngIf="!isLoading && courses.length === 0">
+<!-- ===== Section 2: Popular Courses ===== -->
+<section class="courses-section">
+  <div class="courses-section__header">
+    <h2 class="courses-section__title">
+      <i class="pi pi-bolt"></i>
+      Popular Courses
+    </h2>
+    <span class="courses-section__subtitle">
+      Most enrolled by our learners
+    </span>
+  </div>
+
+  <!-- Loading skeleton -->
+  <div class="courses-grid" *ngIf="isLoadingPopular">
+    <div *ngFor="let i of [1, 2, 3, 4]" class="skeleton-card">
+      <div class="skeleton-card__image skeleton-pulse"></div>
+      <div class="skeleton-card__body">
+        <div class="skeleton-card__badge skeleton-pulse"></div>
+        <div class="skeleton-card__title skeleton-pulse"></div>
+        <div class="skeleton-card__text skeleton-pulse"></div>
+        <div class="skeleton-card__text skeleton-pulse"></div>
+        <div class="skeleton-card__footer skeleton-pulse"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Courses grid -->
+  <div
+    class="courses-grid"
+    *ngIf="!isLoadingPopular && popularCourses.length > 0"
+  >
+    <article *ngFor="let course of popularCourses" class="course-card">
+      <div class="course-card__image-wrapper">
+        <img
+          [src]="course.image"
+          [alt]="course.name"
+          class="course-card__image"
+          loading="lazy"
+        />
+        <span
+          class="course-card__type-badge"
+          [ngClass]="{
+            'course-card__type-badge--paid': course.isPaid,
+            'course-card__type-badge--free': !course.isPaid,
+          }"
+        >
+          {{ course.courseCategory }}
+        </span>
+        <span
+          class="course-card__status-badge"
+          [ngClass]="{
+            'course-card__status-badge--online': isOnlineCourse(course.type),
+            'course-card__status-badge--recorded': !isOnlineCourse(course.type),
+          }"
+        >
+          <i
+            class="pi"
+            [ngClass]="
+              isOnlineCourse(course.type) ? 'pi-video' : 'pi-play-circle'
+            "
+          ></i>
+          {{ getCourseTypeLabel(course.type) }}
+        </span>
+        <span
+          class="course-card__price-badge"
+          [ngClass]="{ 'course-card__price-badge--free': !course.isPaid }"
+        >
+          {{ course.isPaid ? "$" + course.price : "FREE" }}
+        </span>
+      </div>
+
+      <div class="course-card__body">
+        <h3 class="course-card__title">{{ course.name }}</h3>
+        <p class="course-card__description">{{ course.description }}</p>
+        <div class="course-card__rating">
+          <p-rating
+            [(ngModel)]="course.averageRating"
+            [readonly]="true"
+            [cancel]="false"
+          />
+          <span class="course-card__rating-count">{{
+            course.ratingCount
+          }}</span>
+        </div>
+      </div>
+
+      <div class="course-card__footer">
+        <button
+          class="course-card__btn course-card__btn--details"
+          (click)="viewCourseDetails(course)"
+        >
+          <i class="pi pi-eye"></i>
+          Details
+        </button>
+        <button
+          class="course-card__btn course-card__btn--enroll"
+          [ngClass]="{ 'course-card__btn--enroll-free': !course.isPaid }"
+          (click)="enrollInCourse(course)"
+        >
+          <i class="pi pi-sign-in"></i>
+          {{ course.isPaid ? "Enroll Now" : "Start Free" }}
+        </button>
+      </div>
+    </article>
+  </div>
+
+  <!-- Empty state for section -->
+  <p
+    class="courses-section__empty"
+    *ngIf="!isLoadingPopular && popularCourses.length === 0"
+  >
+    No popular courses available at the moment.
+  </p>
+</section>
+
+<!-- ===== Section 3: Newest Courses ===== -->
+<section class="courses-section">
+  <div class="courses-section__header">
+    <h2 class="courses-section__title">
+      <i class="pi pi-clock"></i>
+      Newest Courses
+    </h2>
+    <span class="courses-section__subtitle">
+      Freshly added to our platform
+    </span>
+  </div>
+
+  <!-- Loading skeleton -->
+  <div class="courses-grid" *ngIf="isLoadingNewest">
+    <div *ngFor="let i of [1, 2, 3, 4]" class="skeleton-card">
+      <div class="skeleton-card__image skeleton-pulse"></div>
+      <div class="skeleton-card__body">
+        <div class="skeleton-card__badge skeleton-pulse"></div>
+        <div class="skeleton-card__title skeleton-pulse"></div>
+        <div class="skeleton-card__text skeleton-pulse"></div>
+        <div class="skeleton-card__text skeleton-pulse"></div>
+        <div class="skeleton-card__footer skeleton-pulse"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Courses grid -->
+  <div
+    class="courses-grid"
+    *ngIf="!isLoadingNewest && newestCourses.length > 0"
+  >
+    <article *ngFor="let course of newestCourses" class="course-card">
+      <div class="course-card__image-wrapper">
+        <img
+          [src]="course.image"
+          [alt]="course.name"
+          class="course-card__image"
+          loading="lazy"
+        />
+        <span
+          class="course-card__type-badge"
+          [ngClass]="{
+            'course-card__type-badge--paid': course.isPaid,
+            'course-card__type-badge--free': !course.isPaid,
+          }"
+        >
+          {{ course.courseCategory }}
+        </span>
+        <span
+          class="course-card__status-badge"
+          [ngClass]="{
+            'course-card__status-badge--online': isOnlineCourse(course.type),
+            'course-card__status-badge--recorded': !isOnlineCourse(course.type),
+          }"
+        >
+          <i
+            class="pi"
+            [ngClass]="
+              isOnlineCourse(course.type) ? 'pi-video' : 'pi-play-circle'
+            "
+          ></i>
+          {{ getCourseTypeLabel(course.type) }}
+        </span>
+        <span
+          class="course-card__price-badge"
+          [ngClass]="{ 'course-card__price-badge--free': !course.isPaid }"
+        >
+          {{ course.isPaid ? "$" + course.price : "FREE" }}
+        </span>
+      </div>
+
+      <div class="course-card__body">
+        <h3 class="course-card__title">{{ course.name }}</h3>
+        <p class="course-card__description">{{ course.description }}</p>
+        <div class="course-card__rating">
+          <p-rating
+            [(ngModel)]="course.averageRating"
+            [readonly]="true"
+            [cancel]="false"
+          />
+          <span class="course-card__rating-count">{{
+            course.ratingCount
+          }}</span>
+        </div>
+      </div>
+
+      <div class="course-card__footer">
+        <button
+          class="course-card__btn course-card__btn--details"
+          (click)="viewCourseDetails(course)"
+        >
+          <i class="pi pi-eye"></i>
+          Details
+        </button>
+        <button
+          class="course-card__btn course-card__btn--enroll"
+          [ngClass]="{ 'course-card__btn--enroll-free': !course.isPaid }"
+          (click)="enrollInCourse(course)"
+        >
+          <i class="pi pi-sign-in"></i>
+          {{ course.isPaid ? "Enroll Now" : "Start Free" }}
+        </button>
+      </div>
+    </article>
+  </div>
+
+  <!-- Empty state for section -->
+  <p
+    class="courses-section__empty"
+    *ngIf="!isLoadingNewest && newestCourses.length === 0"
+  >
+    No newest courses available at the moment.
+  </p>
+</section>
+
+<!-- ===== Global Empty State ===== -->
+<section
+  class="empty-state"
+  *ngIf="
+    !isLoadingTopRated &&
+    !isLoadingPopular &&
+    !isLoadingNewest &&
+    topRatedCourses.length === 0 &&
+    popularCourses.length === 0 &&
+    newestCourses.length === 0
+  "
+>
   <div class="empty-state__icon">
     <i class="pi pi-folder-open"></i>
   </div>
   <h3 class="empty-state__title">No Courses Found</h3>
-  <p class="empty-state__text">{{ noCoursesMessage }}</p>
+  <p class="empty-state__text">
+    Try adjusting your search to find what you're looking for.
+  </p>
   <button
     class="empty-state__btn"
-    (click)="clearFilter(); courseParams.search = ''; getAllCourses(true)"
+    (click)="courseParams.search = ''; loadAllSections()"
   >
     <i class="pi pi-refresh"></i>
     Browse All Courses
