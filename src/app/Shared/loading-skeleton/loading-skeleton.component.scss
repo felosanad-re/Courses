@@ -1,11 +1,33 @@
 /* ===== Skeleton Loading ===== */
-/* Self-contained: grid + keyframes live here so the component
-   renders correctly regardless of the host page's encapsulated styles. */
+/* Self-contained: grids + keyframes live here so the component renders
+   correctly regardless of the host page's encapsulated styles. */
 
 :host {
   display: block;
 }
 
+/* ─── Shared shimmer animation ─── */
+.skeleton-pulse {
+  background: linear-gradient(
+    90deg,
+    var(--gray-100) 25%,
+    var(--gray-300) 50%,
+    var(--gray-100) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes skeleton-pulse {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* ─── Course skeleton (default type="course") ─── */
 .courses-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -63,27 +85,71 @@
   }
 }
 
-.skeleton-pulse {
-  background: linear-gradient(
-    90deg,
-    var(--gray-100) 25%,
-    var(--gray-300) 50%,
-    var(--gray-100) 75%
-  );
-  background-size: 200% 100%;
-  animation: skeleton-pulse 1.5s ease-in-out infinite;
+/* ─── Stat skeleton (type="stat") ─── */
+/* The host element itself becomes the grid and spans every column of the
+   parent grid (grid-column: 1 / -1). This avoids relying on
+   display:contents, which can be unreliable, and guarantees the
+   placeholders lay out in columns instead of stacking. Dimensions mirror
+   the real .stat-card (56x56 icon, 28px value, etc.). */
+:host(.skeleton--stat) {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+
+  @media (max-width: 992px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: 576px) {
+    grid-template-columns: 1fr;
+  }
 }
 
-@keyframes skeleton-pulse {
-  0% {
-    background-position: 200% 0;
+.stat-skeleton {
+  background: var(--white);
+  border-radius: 16px;
+  padding: 24px;
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+
+  &__icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 14px;
+    flex-shrink: 0;
   }
-  100% {
-    background-position: -200% 0;
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__title {
+    width: 80px;
+    height: 13px;
+    border-radius: 4px;
+  }
+
+  &__value {
+    width: 100px;
+    height: 28px;
+    border-radius: 6px;
+  }
+
+  &__subtitle {
+    width: 70px;
+    height: 12px;
+    border-radius: 4px;
   }
 }
 
-/* ===== Responsive ===== */
+/* ===== Responsive (course grid) ===== */
 @media (max-width: 768px) {
   .courses-grid {
     grid-template-columns: 1fr;

@@ -12,7 +12,7 @@
   <!-- Stats Cards -->
   <div class="earnings__stats">
     @if (isLoading) {
-      <app-loading-skeleton [count]="6" />
+      <app-loading-skeleton [count]="6" [type]="'stat'" />
     } @else {
       @for (stat of statsCards; track stat.title) {
         <div class="stat-card">

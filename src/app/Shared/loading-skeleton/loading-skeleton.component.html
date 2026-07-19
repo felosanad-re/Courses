@@ -1,14 +1,27 @@
-<div class="courses-grid">
+@if (type === "stat") {
   @for (i of skeletons; track $index) {
-    <div class="skeleton-card">
-      <div class="skeleton-card__image skeleton-pulse"></div>
-      <div class="skeleton-card__body">
-        <div class="skeleton-card__badge skeleton-pulse"></div>
-        <div class="skeleton-card__title skeleton-pulse"></div>
-        <div class="skeleton-card__text skeleton-pulse"></div>
-        <div class="skeleton-card__text skeleton-pulse"></div>
+    <div class="stat-skeleton">
+      <div class="stat-skeleton__icon skeleton-pulse"></div>
+      <div class="stat-skeleton__content">
+        <div class="stat-skeleton__title skeleton-pulse"></div>
+        <div class="stat-skeleton__value skeleton-pulse"></div>
+        <div class="stat-skeleton__subtitle skeleton-pulse"></div>
       </div>
-      <div class="skeleton-card__footer skeleton-pulse"></div>
     </div>
   }
-</div>
+} @else {
+  <div class="courses-grid">
+    @for (i of skeletons; track $index) {
+      <div class="skeleton-card">
+        <div class="skeleton-card__image skeleton-pulse"></div>
+        <div class="skeleton-card__body">
+          <div class="skeleton-card__badge skeleton-pulse"></div>
+          <div class="skeleton-card__title skeleton-pulse"></div>
+          <div class="skeleton-card__text skeleton-pulse"></div>
+          <div class="skeleton-card__text skeleton-pulse"></div>
+        </div>
+        <div class="skeleton-card__footer skeleton-pulse"></div>
+      </div>
+    }
+  </div>
+}
