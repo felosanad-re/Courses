@@ -1,12 +1,6 @@
 <!-- ===== Loading Skeleton ===== -->
 <div *ngIf="isLoading" class="details-skeleton">
-  <div class="details-skeleton__hero skeleton-pulse"></div>
-  <div class="details-skeleton__content">
-    <div class="details-skeleton__title skeleton-pulse"></div>
-    <div class="details-skeleton__text skeleton-pulse"></div>
-    <div class="details-skeleton__text skeleton-pulse"></div>
-    <div class="details-skeleton__card skeleton-pulse"></div>
-  </div>
+  <app-loading-skeleton [count]="4" />
 </div>
 
 <!-- ===== Error State ===== -->

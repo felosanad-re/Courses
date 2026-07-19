@@ -45,17 +45,7 @@
   </div>
 
   <section class="my-courses__skeleton-grid" *ngIf="isLoading">
-    <article class="course-skeleton" *ngFor="let item of [1, 2, 3, 4, 5, 6]">
-      <div class="course-skeleton__image skeleton-pulse"></div>
-      <div class="course-skeleton__body">
-        <span class="course-skeleton__chip skeleton-pulse"></span>
-        <span class="course-skeleton__title skeleton-pulse"></span>
-        <span class="course-skeleton__line skeleton-pulse"></span>
-        <span
-          class="course-skeleton__line course-skeleton__line--short skeleton-pulse"
-        ></span>
-      </div>
-    </article>
+    <app-loading-skeleton [count]="6" />
   </section>
 
   <section class="state-card state-card--error" *ngIf="!isLoading && error">

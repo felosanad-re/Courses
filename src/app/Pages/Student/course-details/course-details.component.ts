@@ -9,11 +9,12 @@ import { EnrollmentService } from '../../../Core/Services/Enrollments/enrollment
 import { EnrollmentWithCourseResponse } from '../../../Core/Interfaces/Enrollments/enrollment-with-course-response';
 import { CourseDetailsToReturnDTO } from '../../../Core/Interfaces/Courses/course-details-to-return-dto';
 import { CourseType } from '../../../Core/Interfaces/Courses/course-type';
+import { LoadingSkeletonComponent } from '../../../Shared/loading-skeleton/loading-skeleton.component';
 
 @Component({
   selector: 'app-course-details',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, LoadingSkeletonComponent],
   templateUrl: './course-details.component.html',
   styleUrls: ['./course-details.component.scss'],
 })

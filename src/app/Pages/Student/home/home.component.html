@@ -30,18 +30,9 @@
   </div>
 
   <!-- Loading skeleton -->
-  <div class="courses-grid" *ngIf="isLoadingTopRated">
-    <div *ngFor="let i of [1, 2, 3, 4]" class="skeleton-card">
-      <div class="skeleton-card__image skeleton-pulse"></div>
-      <div class="skeleton-card__body">
-        <div class="skeleton-card__badge skeleton-pulse"></div>
-        <div class="skeleton-card__title skeleton-pulse"></div>
-        <div class="skeleton-card__text skeleton-pulse"></div>
-        <div class="skeleton-card__text skeleton-pulse"></div>
-        <div class="skeleton-card__footer skeleton-pulse"></div>
-      </div>
-    </div>
-  </div>
+  @if (isLoadingTopRated) {
+    <app-loading-skeleton [count]="4" />
+  }
 
   <!-- Courses grid -->
   <div
@@ -146,18 +137,9 @@
   </div>
 
   <!-- Loading skeleton -->
-  <div class="courses-grid" *ngIf="isLoadingPopular">
-    <div *ngFor="let i of [1, 2, 3, 4]" class="skeleton-card">
-      <div class="skeleton-card__image skeleton-pulse"></div>
-      <div class="skeleton-card__body">
-        <div class="skeleton-card__badge skeleton-pulse"></div>
-        <div class="skeleton-card__title skeleton-pulse"></div>
-        <div class="skeleton-card__text skeleton-pulse"></div>
-        <div class="skeleton-card__text skeleton-pulse"></div>
-        <div class="skeleton-card__footer skeleton-pulse"></div>
-      </div>
-    </div>
-  </div>
+  @if (isLoadingPopular) {
+    <app-loading-skeleton [count]="4" />
+  }
 
   <!-- Courses grid -->
   <div
@@ -262,18 +244,9 @@
   </div>
 
   <!-- Loading skeleton -->
-  <div class="courses-grid" *ngIf="isLoadingNewest">
-    <div *ngFor="let i of [1, 2, 3, 4]" class="skeleton-card">
-      <div class="skeleton-card__image skeleton-pulse"></div>
-      <div class="skeleton-card__body">
-        <div class="skeleton-card__badge skeleton-pulse"></div>
-        <div class="skeleton-card__title skeleton-pulse"></div>
-        <div class="skeleton-card__text skeleton-pulse"></div>
-        <div class="skeleton-card__text skeleton-pulse"></div>
-        <div class="skeleton-card__footer skeleton-pulse"></div>
-      </div>
-    </div>
-  </div>
+  @if (isLoadingNewest) {
+    <app-loading-skeleton [count]="4" />
+  }
 
   <!-- Courses grid -->
   <div

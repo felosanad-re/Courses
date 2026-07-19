@@ -14,6 +14,7 @@ import { ChartsRequest } from '../../../Core/Interfaces/Analyzer/charts-request'
 import { ApplicationResult } from '../../../Core/Interfaces/application-result';
 import { NotificationsService } from '../../../Core/Services/notifications.service';
 import { finalize } from 'rxjs';
+import { LoadingSkeletonComponent } from '../../../Shared/loading-skeleton/loading-skeleton.component';
 
 interface StatCard {
   icon: string;
@@ -32,7 +33,13 @@ interface TimePeriod {
 @Component({
   selector: 'app-earning-instructor',
   standalone: true,
-  imports: [CommonModule, ChartModule, ButtonModule, PaginatorModule],
+  imports: [
+    CommonModule,
+    ChartModule,
+    ButtonModule,
+    PaginatorModule,
+    LoadingSkeletonComponent,
+  ],
   templateUrl: './earning-instructor.component.html',
   styleUrl: './earning-instructor.component.scss',
 })

@@ -9,9 +9,7 @@
     </div>
 
     <div class="lecture-sidebar__loading" *ngIf="isSectionsLoading">
-      <span class="skeleton-pulse"></span>
-      <span class="skeleton-pulse"></span>
-      <span class="skeleton-pulse"></span>
+      <app-loading-skeleton [count]="3" />
     </div>
 
     <div

@@ -8,11 +8,12 @@ import { ProgressService } from '../../../Core/Services/Progress/progress.servic
 import { EnrollmentWithCoursesResponse } from '../../../Core/Interfaces/Enrollments/enrollment-with-courses-response';
 import { RatingModule } from 'primeng/rating';
 import { FormsModule } from '@angular/forms';
+import { LoadingSkeletonComponent } from '../../../Shared/loading-skeleton/loading-skeleton.component';
 
 @Component({
   selector: 'app-my-courses',
   standalone: true,
-  imports: [CommonModule, RatingModule, FormsModule],
+  imports: [CommonModule, RatingModule, FormsModule, LoadingSkeletonComponent],
   templateUrl: './my-courses.component.html',
   styleUrl: './my-courses.component.scss',
 })

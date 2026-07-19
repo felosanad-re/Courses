@@ -13,11 +13,12 @@ import { EnrollmentWithCourseResponse } from '../../../Core/Interfaces/Enrollmen
 import { RatingModule } from 'primeng/rating';
 import { finalize } from 'rxjs';
 import { CourseOptionsSorting } from '../../../Core/Interfaces/Courses/course-options-sorting';
+import { LoadingSkeletonComponent } from '../../../Shared/loading-skeleton/loading-skeleton.component';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, FormsModule, RatingModule],
+  imports: [CommonModule, FormsModule, RatingModule, LoadingSkeletonComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
 })

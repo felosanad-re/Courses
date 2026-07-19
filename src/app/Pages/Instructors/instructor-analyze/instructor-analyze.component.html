@@ -12,16 +12,7 @@
   <!-- Stats Cards -->
   <div class="analytics__stats">
     @if (isLoading) {
-      @for (_ of [1, 2, 3, 4, 5, 6, 7]; track $index) {
-        <div class="stat-card stat-card--skeleton">
-          <div class="stat-card__icon skeleton"></div>
-          <div class="stat-card__content">
-            <span class="skeleton skeleton--text-sm"></span>
-            <span class="skeleton skeleton--text-lg"></span>
-            <span class="skeleton skeleton--text-xs"></span>
-          </div>
-        </div>
-      }
+      <app-loading-skeleton [count]="7" />
     } @else {
       @for (stat of statsCards; track stat.title) {
         <div class="stat-card">
