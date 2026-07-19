@@ -123,14 +123,12 @@
   border-color: var(--primary);
   box-shadow: 0 0 0 4px rgba(108, 99, 255, 0.12);
 }
-.courses-grid,
-.my-courses__skeleton-grid {
+.courses-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 1.5rem;
 }
 .course-card,
-.course-skeleton,
 .state-card {
   overflow: hidden;
   border: 1px solid var(--gray-300);
@@ -147,8 +145,7 @@
   transform: translateY(-4px);
   box-shadow: var(--shadow-lg);
 }
-.course-card__media,
-.course-skeleton__image {
+.course-card__media {
   height: 180px;
 }
 .course-card__media {
@@ -322,48 +319,6 @@
   background: var(--primary-dark);
   box-shadow: var(--shadow-md);
 }
-.course-skeleton__body {
-  padding: 1.15rem 1.25rem;
-}
-.course-skeleton__chip,
-.course-skeleton__title,
-.course-skeleton__line {
-  display: block;
-  border-radius: var(--radius-sm);
-}
-.course-skeleton__chip {
-  width: 90px;
-  height: 24px;
-  margin-bottom: 1rem;
-}
-.course-skeleton__title {
-  width: 75%;
-  height: 20px;
-  margin-bottom: 0.8rem;
-}
-.course-skeleton__line {
-  width: 100%;
-  height: 14px;
-  margin-bottom: 0.45rem;
-}
-.course-skeleton__line--short {
-  width: 62%;
-}
-.skeleton-pulse {
-  animation: skeleton-pulse 1.45s ease-in-out infinite;
-  background: linear-gradient(
-    90deg,
-    var(--gray-100) 25%,
-    var(--gray-300) 50%,
-    var(--gray-100) 75%
-  );
-  background-size: 200% 100%;
-}
-@keyframes skeleton-pulse {
-  to {
-    background-position: -200% 0;
-  }
-}
 .state-card {
   max-width: 520px;
   margin: 3rem auto;
@@ -435,8 +390,7 @@
   .my-courses {
     padding: 1.5rem 1rem;
   }
-  .courses-grid,
-  .my-courses__skeleton-grid {
+  .courses-grid {
     grid-template-columns: 1fr;
   }
 }

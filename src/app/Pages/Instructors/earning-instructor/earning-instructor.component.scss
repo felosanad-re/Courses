@@ -199,11 +199,6 @@ $border-color: #e5e7eb;
     font-size: 12px;
     color: $text-light;
   }
-
-  // Skeleton loading state
-  &--skeleton {
-    pointer-events: none;
-  }
 }
 
 // ─── Chart Card ───
@@ -279,36 +274,6 @@ $border-color: #e5e7eb;
       text-align: center;
     }
   }
-}
-
-// ─── Skeleton Placeholders ───
-.skeleton {
-  background: linear-gradient(90deg, $bg-light 25%, #e5e7eb 50%, $bg-light 75%);
-  background-size: 200% 100%;
-  animation: shimmer 1.5s ease-in-out infinite;
-  border-radius: 8px;
-
-  &--text-sm {
-    width: 80px;
-    height: 14px;
-  }
-
-  &--text-lg {
-    width: 60px;
-    height: 32px;
-    margin: 4px 0;
-  }
-
-  &--text-xs {
-    width: 100px;
-    height: 12px;
-  }
-}
-
-.stat-card__icon.skeleton {
-  width: 56px;
-  height: 56px;
-  border-radius: 14px;
 }
 
 @keyframes shimmer {

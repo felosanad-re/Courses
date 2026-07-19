@@ -15,11 +15,18 @@ import { CourseCategoriesService } from '../../../Core/Services/CourseCategory/c
 import { CoursesService } from '../../../Core/Services/Courses/courses.service';
 import { EnrollmentService } from '../../../Core/Services/Enrollments/enrollment.service';
 import { NotificationsService } from '../../../Core/Services/notifications.service';
+import { LoadingSkeletonComponent } from '../../../Shared/loading-skeleton/loading-skeleton.component';
 
 @Component({
   selector: 'app-all-courses',
   standalone: true,
-  imports: [CommonModule, FormsModule, RatingModule, PaginatorModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    RatingModule,
+    PaginatorModule,
+    LoadingSkeletonComponent,
+  ],
   templateUrl: './all-courses.component.html',
   styleUrl: './all-courses.component.scss',
 })

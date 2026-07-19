@@ -11,6 +11,7 @@ import { ChartsRequest } from '../../../Core/Interfaces/Analyzer/charts-request'
 import { ApplicationResult } from '../../../Core/Interfaces/application-result';
 import { NotificationsService } from '../../../Core/Services/notifications.service';
 import { finalize } from 'rxjs';
+import { LoadingSkeletonComponent } from '../../../Shared/loading-skeleton/loading-skeleton.component';
 
 interface StatCard {
   icon: string;
@@ -28,6 +29,7 @@ interface StatCard {
     ChartModule,
     CalendarModule,
     ButtonModule,
+    LoadingSkeletonComponent,
   ],
   templateUrl: './instructor-analyze.component.html',
   styleUrl: './instructor-analyze.component.scss',

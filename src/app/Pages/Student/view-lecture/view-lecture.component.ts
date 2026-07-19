@@ -22,11 +22,12 @@ import { NotificationsService } from '../../../Core/Services/notifications.servi
 import { RatingCoursesService } from '../../../Core/Services/Courses/rating-courses.service';
 import { StudentService } from '../../../Core/Services/Student/student.service';
 import { ProgressService } from '../../../Core/Services/Progress/progress.service';
+import { LoadingSkeletonComponent } from '../../../Shared/loading-skeleton/loading-skeleton.component';
 
 @Component({
   selector: 'app-view-lecture',
   standalone: true,
-  imports: [CommonModule, FormsModule, RatingModule],
+  imports: [CommonModule, FormsModule, RatingModule, LoadingSkeletonComponent],
   templateUrl: './view-lecture.component.html',
   styleUrl: './view-lecture.component.scss',
 })
