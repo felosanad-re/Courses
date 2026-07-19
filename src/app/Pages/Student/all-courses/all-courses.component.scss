@@ -1,0 +1,622 @@
+/* ===== All Courses Page ===== */
+.hero {
+  position: relative;
+  background: linear-gradient(
+    135deg,
+    var(--primary) 0%,
+    var(--primary-dark) 50%,
+    #16213e 100%
+  );
+  padding: 4rem 2rem 3rem;
+  overflow: hidden;
+
+  &__overlay {
+    position: absolute;
+    inset: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="dots" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="10" cy="10" r="1.5" fill="rgba(255,255,255,0.08)"/></pattern></defs><rect fill="url(%23dots)" width="100" height="100"/></svg>');
+    pointer-events: none;
+  }
+
+  &__content {
+    position: relative;
+    z-index: 1;
+    max-width: 1200px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  &__title {
+    font-size: 3rem;
+    font-weight: 800;
+    color: var(--white);
+    margin-bottom: 0.5rem;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  &__subtitle {
+    font-size: 1.2rem;
+    color: rgba(255, 255, 255, 0.85);
+    margin-bottom: 2rem;
+    font-weight: 400;
+  }
+
+  &__search {
+    max-width: 560px;
+    margin: 0 auto;
+    position: relative;
+
+    &-icon {
+      position: absolute;
+      left: 1.25rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 1.1rem;
+    }
+
+    &-input {
+      width: 100%;
+      padding: 1rem 1.5rem 1rem 3rem;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      border-radius: var(--radius-xl);
+      font-size: 1rem;
+      font-family: "Inter", sans-serif;
+      background: rgba(255, 255, 255, 0.12);
+      color: var(--white);
+      backdrop-filter: blur(10px);
+      transition: var(--transition);
+
+      &::placeholder {
+        color: rgba(255, 255, 255, 0.5);
+      }
+
+      &:focus {
+        outline: none;
+        border-color: rgba(255, 255, 255, 0.5);
+        background: rgba(255, 255, 255, 0.18);
+        box-shadow: 0 0 0 4px rgba(108, 99, 255, 0.3);
+      }
+    }
+  }
+}
+
+.courses-section {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  &__title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--dark);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    i {
+      color: var(--primary);
+    }
+  }
+
+  &__subtitle {
+    font-size: 0.85rem;
+    color: var(--gray-500);
+    font-weight: 500;
+  }
+}
+
+.category-filter {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.25rem;
+  overflow-x: auto;
+
+  &__item {
+    flex: 0 0 auto;
+    border: 1.5px solid var(--gray-300);
+    background: var(--white);
+    color: var(--gray-700);
+    border-radius: var(--radius-xl);
+    padding: 0.6rem 1rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    font-family: "Inter", sans-serif;
+    cursor: pointer;
+    transition: var(--transition);
+
+    &:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+      background: rgba(108, 99, 255, 0.05);
+    }
+
+    &--active {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: var(--white);
+      box-shadow: var(--shadow-sm);
+
+      &:hover {
+        background: var(--primary-dark);
+        border-color: var(--primary-dark);
+        color: var(--white);
+      }
+    }
+  }
+}
+
+.skeleton-card {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+
+  &__image {
+    height: 180px;
+    background: var(--gray-100);
+  }
+
+  &__body {
+    padding: 1.25rem;
+  }
+
+  &__badge {
+    width: 80px;
+    height: 24px;
+    border-radius: 12px;
+    margin-bottom: 0.75rem;
+  }
+
+  &__title {
+    width: 70%;
+    height: 20px;
+    border-radius: 4px;
+    margin-bottom: 0.5rem;
+  }
+
+  &__text {
+    width: 100%;
+    height: 14px;
+    border-radius: 4px;
+    margin-bottom: 0.4rem;
+  }
+
+  &__footer {
+    width: 60%;
+    height: 40px;
+    border-radius: var(--radius-sm);
+    margin-top: 1rem;
+  }
+}
+
+.skeleton-pulse {
+  animation: pulse 1.5s ease-in-out infinite;
+  background: linear-gradient(
+    90deg,
+    var(--gray-100) 25%,
+    var(--gray-300) 50%,
+    var(--gray-100) 75%
+  );
+  background-size: 200% 100%;
+}
+
+@keyframes pulse {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.courses-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
+
+.course-card {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
+  display: flex;
+  flex-direction: column;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+  }
+
+  &__image-wrapper {
+    position: relative;
+    height: 180px;
+    overflow: hidden;
+  }
+
+  &__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+
+    .course-card:hover & {
+      transform: scale(1.05);
+    }
+  }
+
+  &__type-badge {
+    position: absolute;
+    top: 0.75rem;
+    left: 0.75rem;
+    max-width: calc(100% - 7rem);
+    padding: 0.3rem 0.75rem;
+    border-radius: var(--radius-xl);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--white);
+    backdrop-filter: blur(8px);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    &--paid {
+      background: rgba(108, 99, 255, 0.85);
+    }
+
+    &--free {
+      background: rgba(0, 201, 167, 0.85);
+    }
+  }
+
+  &__status-badge {
+    position: absolute;
+    top: 3rem;
+    left: 0.75rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.35rem 0.8rem;
+    border-radius: var(--radius-xl);
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--white);
+    backdrop-filter: blur(8px);
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.18);
+
+    i {
+      font-size: 0.75rem;
+    }
+
+    &--online {
+      background: rgba(79, 70, 229, 0.9);
+    }
+
+    &--recorded {
+      background: rgba(245, 158, 11, 0.9);
+    }
+  }
+
+  &__price-badge {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    padding: 0.35rem 0.85rem;
+    border-radius: var(--radius-xl);
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--white);
+    background: var(--secondary);
+
+    &--free {
+      background: var(--accent);
+    }
+  }
+
+  &__body {
+    padding: 1.25rem 1.5rem 0.75rem;
+    flex: 1;
+  }
+
+  &__title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--dark);
+    margin-bottom: 0.5rem;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  &__description {
+    font-size: 0.85rem;
+    color: var(--gray-500);
+    line-height: 1.6;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  &__rating {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+
+    ::ng-deep .p-rating {
+      gap: 0.15rem;
+
+      .p-rating-item {
+        .p-rating-icon {
+          color: var(--primary);
+
+          &.p-rating-icon-active {
+            color: var(--primary);
+          }
+        }
+      }
+    }
+  }
+
+  &__rating-count {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--gray-500);
+    white-space: nowrap;
+  }
+
+  &__footer {
+    padding: 1rem 1.5rem 1.25rem;
+    display: flex;
+    gap: 0.75rem;
+  }
+
+  &__btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    padding: 0.7rem 1rem;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 0.85rem;
+    font-weight: 600;
+    font-family: "Inter", sans-serif;
+    cursor: pointer;
+    transition: var(--transition);
+
+    i {
+      font-size: 0.8rem;
+    }
+
+    &--details {
+      background: var(--gray-100);
+      color: var(--gray-700);
+      border: 1.5px solid var(--gray-300);
+
+      &:hover {
+        background: var(--primary);
+        color: var(--white);
+        border-color: var(--primary);
+      }
+    }
+
+    &--enroll {
+      background: var(--primary);
+      color: var(--white);
+
+      &:hover {
+        background: var(--primary-dark);
+      }
+    }
+
+    &--enroll-free {
+      background: var(--accent);
+
+      &:hover {
+        background: #00b396;
+      }
+    }
+  }
+}
+
+.courses-section__pagination {
+  margin-top: 2.5rem;
+  padding: 1rem 0;
+  display: flex;
+  justify-content: center;
+
+  ::ng-deep .p-paginator {
+    background: transparent;
+    border: none;
+    padding: 0;
+    gap: 0.35rem;
+
+    .p-paginator-pages .p-paginator-page,
+    .p-paginator-first,
+    .p-paginator-prev,
+    .p-paginator-next,
+    .p-paginator-last {
+      border-radius: var(--radius-sm);
+      min-width: 38px;
+      height: 38px;
+      margin: 0 0.15rem;
+      border: 1.5px solid var(--gray-300);
+      color: var(--gray-700);
+      transition: var(--transition);
+
+      &:hover:not(.p-disabled):not(.p-highlight) {
+        border-color: var(--primary);
+        color: var(--primary);
+        background: rgba(108, 99, 255, 0.05);
+      }
+    }
+
+    .p-paginator-page.p-highlight {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: var(--white);
+    }
+
+    .p-paginator-current {
+      color: var(--gray-500);
+      font-weight: 600;
+      font-size: 0.85rem;
+    }
+
+    .p-paginator-rpp-options {
+      border-radius: var(--radius-sm);
+      border: 1.5px solid var(--gray-300);
+    }
+  }
+}
+
+.empty-state {
+  padding: 4rem 2rem;
+  text-align: center;
+
+  &__icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: var(--gray-100);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+
+    i {
+      font-size: 2rem;
+      color: var(--gray-500);
+    }
+  }
+
+  &__title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--dark);
+    margin-bottom: 0.5rem;
+  }
+
+  &__text {
+    font-size: 0.95rem;
+    color: var(--gray-500);
+    margin-bottom: 1.5rem;
+  }
+
+  &__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background: var(--primary);
+    color: var(--white);
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 0.9rem;
+    font-weight: 600;
+    font-family: "Inter", sans-serif;
+    cursor: pointer;
+    transition: var(--transition);
+
+    &:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .hero {
+    padding: 2.5rem 1.5rem 2rem;
+
+    &__title {
+      font-size: 2rem;
+    }
+
+    &__subtitle {
+      font-size: 1rem;
+    }
+
+    &__search-input {
+      padding: 0.85rem 1.25rem 0.85rem 2.75rem;
+      font-size: 0.9rem;
+    }
+  }
+
+  .courses-section {
+    padding: 1.5rem 1rem;
+
+    &__header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.25rem;
+    }
+
+    &__title {
+      font-size: 1.25rem;
+    }
+  }
+
+  .category-filter {
+    gap: 0.5rem;
+
+    &__item {
+      padding: 0.55rem 0.85rem;
+      font-size: 0.8rem;
+    }
+  }
+
+  .courses-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .course-card {
+    &__image-wrapper {
+      height: 160px;
+    }
+
+    &__title {
+      font-size: 1rem;
+    }
+
+    &__btn {
+      padding: 0.6rem 0.8rem;
+      font-size: 0.8rem;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .hero {
+    padding: 2rem 1rem 1.5rem;
+
+    &__title {
+      font-size: 1.6rem;
+    }
+  }
+
+  .course-card__footer {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+}

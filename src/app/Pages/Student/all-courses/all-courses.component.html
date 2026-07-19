@@ -1,0 +1,177 @@
+<section class="hero">
+  <div class="hero__overlay"></div>
+  <div class="hero__content">
+    <h1 class="hero__title">All Courses</h1>
+    <p class="hero__subtitle">Explore every course and filter by category</p>
+    <div class="hero__search">
+      <i class="pi pi-search hero__search-icon"></i>
+      <input
+        type="text"
+        placeholder="Search for courses..."
+        [value]="courseParams.search || ''"
+        (input)="onSearchChange($event)"
+        class="hero__search-input"
+      />
+    </div>
+  </div>
+</section>
+
+<section class="courses-section">
+  <div class="courses-section__header">
+    <h2 class="courses-section__title">
+      <i class="pi pi-book"></i>
+      Courses
+    </h2>
+    <span class="courses-section__subtitle">
+      {{ totalCount }} courses available
+    </span>
+  </div>
+
+  <div class="category-filter">
+    <button
+      type="button"
+      class="category-filter__item"
+      [ngClass]="{
+        'category-filter__item--active': selectedCategoryId === null,
+      }"
+      (click)="selectCategory(null)"
+    >
+      All
+    </button>
+
+    <button
+      type="button"
+      class="category-filter__item"
+      *ngFor="let category of categories"
+      [ngClass]="{
+        'category-filter__item--active': selectedCategoryId === category.id,
+      }"
+      (click)="selectCategory(category.id)"
+    >
+      {{ category.name }}
+    </button>
+  </div>
+
+  <div class="courses-grid" *ngIf="isLoadingCourses">
+    <div *ngFor="let i of [1, 2, 3, 4, 5, 6]" class="skeleton-card">
+      <div class="skeleton-card__image skeleton-pulse"></div>
+      <div class="skeleton-card__body">
+        <div class="skeleton-card__badge skeleton-pulse"></div>
+        <div class="skeleton-card__title skeleton-pulse"></div>
+        <div class="skeleton-card__text skeleton-pulse"></div>
+        <div class="skeleton-card__text skeleton-pulse"></div>
+        <div class="skeleton-card__footer skeleton-pulse"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="courses-grid" *ngIf="!isLoadingCourses && courses.length > 0">
+    <article *ngFor="let course of courses" class="course-card">
+      <div class="course-card__image-wrapper">
+        <img
+          [src]="course.image"
+          [alt]="course.name"
+          class="course-card__image"
+          loading="lazy"
+        />
+        <span
+          class="course-card__type-badge"
+          [ngClass]="{
+            'course-card__type-badge--paid': course.isPaid,
+            'course-card__type-badge--free': !course.isPaid,
+          }"
+        >
+          {{ course.courseCategory }}
+        </span>
+        <span
+          class="course-card__status-badge"
+          [ngClass]="{
+            'course-card__status-badge--online': isOnlineCourse(course.type),
+            'course-card__status-badge--recorded': !isOnlineCourse(course.type),
+          }"
+        >
+          <i
+            class="pi"
+            [ngClass]="
+              isOnlineCourse(course.type) ? 'pi-video' : 'pi-play-circle'
+            "
+          ></i>
+          {{ getCourseTypeLabel(course.type) }}
+        </span>
+        <span
+          class="course-card__price-badge"
+          [ngClass]="{ 'course-card__price-badge--free': !course.isPaid }"
+        >
+          {{ course.isPaid ? "$" + course.price : "FREE" }}
+        </span>
+      </div>
+
+      <div class="course-card__body">
+        <h3 class="course-card__title">{{ course.name }}</h3>
+        <p class="course-card__description">{{ course.description }}</p>
+        <div class="course-card__rating">
+          <p-rating
+            [(ngModel)]="course.averageRating"
+            [readonly]="true"
+            [cancel]="false"
+          />
+          <span class="course-card__rating-count">{{
+            course.ratingCount
+          }}</span>
+        </div>
+      </div>
+
+      <div class="course-card__footer">
+        <button
+          type="button"
+          class="course-card__btn course-card__btn--details"
+          (click)="viewCourseDetails(course)"
+        >
+          <i class="pi pi-eye"></i>
+          Details
+        </button>
+        <button
+          type="button"
+          class="course-card__btn course-card__btn--enroll"
+          [ngClass]="{ 'course-card__btn--enroll-free': !course.isPaid }"
+          (click)="enrollInCourse(course)"
+        >
+          <i class="pi pi-sign-in"></i>
+          {{ course.isPaid ? "Enroll Now" : "Start Free" }}
+        </button>
+      </div>
+    </article>
+  </div>
+
+  <section
+    class="empty-state"
+    *ngIf="!isLoadingCourses && courses.length === 0"
+  >
+    <div class="empty-state__icon">
+      <i class="pi pi-folder-open"></i>
+    </div>
+    <h3 class="empty-state__title">No Courses Found</h3>
+    <p class="empty-state__text">
+      Try another category or search term to find more courses.
+    </p>
+    <button type="button" class="empty-state__btn" (click)="resetFilters()">
+      <i class="pi pi-refresh"></i>
+      Browse All Courses
+    </button>
+  </section>
+
+  <div
+    class="courses-section__pagination"
+    *ngIf="!isLoadingCourses && totalCount > 0"
+  >
+    <p-paginator
+      [first]="first"
+      [rows]="pageSize"
+      [totalRecords]="totalCount"
+      [rowsPerPageOptions]="[5, 10, 20]"
+      [showCurrentPageReport]="true"
+      currentPageReportTemplate="Showing {first} to {last} of {totalRecords} courses"
+      (onPageChange)="onPageChange($event)"
+    />
+  </div>
+</section>

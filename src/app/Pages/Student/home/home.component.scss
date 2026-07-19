@@ -83,85 +83,23 @@
   }
 }
 
-/* ===== Category Filter Chips ===== */
-.categories {
-  background: var(--white);
-  border-bottom: 1px solid var(--gray-300);
-  padding: 1rem 2rem;
-  position: sticky;
-  top: 0;
-  z-index: 10;
-
-  &__wrapper {
-    max-width: 1200px;
-    margin: 0 auto;
-    display: flex;
-    gap: 0.5rem;
-    overflow-x: auto;
-    padding-bottom: 0.25rem;
-    scrollbar-width: thin;
-
-    &::-webkit-scrollbar {
-      height: 4px;
-    }
-
-    &::-webkit-scrollbar-thumb {
-      background: var(--gray-300);
-      border-radius: 4px;
-    }
-  }
-
-  &__chip {
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    padding: 0.6rem 1.2rem;
-    border: 1.5px solid var(--gray-300);
-    border-radius: var(--radius-xl);
-    background: var(--white);
-    color: var(--gray-700);
-    font-size: 0.85rem;
-    font-weight: 500;
-    font-family: "Inter", sans-serif;
-    cursor: pointer;
-    transition: var(--transition);
-    white-space: nowrap;
-
-    i {
-      font-size: 0.8rem;
-    }
-
-    &:hover {
-      border-color: var(--primary);
-      color: var(--primary);
-      background: rgba(108, 99, 255, 0.05);
-    }
-
-    &--active {
-      background: var(--primary);
-      color: var(--white);
-      border-color: var(--primary);
-
-      &:hover {
-        background: var(--primary-dark);
-        color: var(--white);
-        border-color: var(--primary-dark);
-      }
-    }
-  }
-}
-
 /* ===== Courses Section ===== */
 .courses-section {
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem;
 
+  & + & {
+    padding-top: 0;
+  }
+
   &__header {
     display: flex;
     align-items: center;
     justify-content: space-between;
     margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
   }
 
   &__title {
@@ -177,10 +115,57 @@
     }
   }
 
+  &__subtitle {
+    font-size: 0.85rem;
+    color: var(--gray-500);
+    font-weight: 500;
+  }
+
   &__count {
     font-size: 0.85rem;
     color: var(--gray-500);
     font-weight: 500;
+  }
+
+  &__empty {
+    text-align: center;
+    padding: 2rem 1rem;
+    color: var(--gray-500);
+    font-size: 0.95rem;
+    font-weight: 500;
+  }
+}
+
+/* ===== View All Button ===== */
+.view-all-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.55rem 1.1rem;
+  border: 1.5px solid var(--primary);
+  background: rgba(108, 99, 255, 0.08);
+  color: var(--primary);
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  font-weight: 600;
+  font-family: "Inter", sans-serif;
+  cursor: pointer;
+  transition: var(--transition);
+
+  i {
+    font-size: 0.8rem;
+    transition: transform 0.25s ease;
+  }
+
+  &:hover {
+    background: var(--primary);
+    color: var(--white);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+
+    i {
+      transform: translateX(3px);
+    }
   }
 }
 
@@ -628,15 +613,6 @@
     &__search-input {
       padding: 0.85rem 1.25rem 0.85rem 2.75rem;
       font-size: 0.9rem;
-    }
-  }
-
-  .categories {
-    padding: 0.75rem 1rem;
-
-    &__chip {
-      padding: 0.5rem 1rem;
-      font-size: 0.8rem;
     }
   }
 

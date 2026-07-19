@@ -1,51 +1,99 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { CoursesToReturnDTO } from '../../../Core/Interfaces/Courses/courses-to-return-dto';
 import { CoursesParams } from '../../../Core/Interfaces/Courses/courses-params';
 import { CoursesService } from '../../../Core/Services/Courses/courses.service';
 import { NotificationsService } from '../../../Core/Services/notifications.service';
 import { ApplicationResult } from '../../../Core/Interfaces/application-result';
 import { Pagination } from '../../../Core/Interfaces/Courses/pagination';
-import { CourseCategoriesService } from '../../../Core/Services/CourseCategory/course-Categories.service';
-import { CourseCategoryToReturnDTO } from '../../../Core/Interfaces/CourseCategories/course-Category-to-return-dto';
 import { EnrollmentService } from '../../../Core/Services/Enrollments/enrollment.service';
 import { EnrollmentWithCourseResponse } from '../../../Core/Interfaces/Enrollments/enrollment-with-course-response';
-import { PaginatorModule } from 'primeng/paginator';
-import { finalize } from 'rxjs';
 import { RatingModule } from 'primeng/rating';
+import { finalize } from 'rxjs';
+import { CourseOptionsSorting } from '../../../Core/Interfaces/Courses/course-options-sorting';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, PaginatorModule, RatingModule],
+  imports: [CommonModule, FormsModule, RatingModule],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
 })
 export class HomeComponent {
-  courses: CoursesToReturnDTO[] = [];
-  types: CourseCategoryToReturnDTO[] = [];
+  // Section course lists (8 courses each)
+  topRatedCourses: CoursesToReturnDTO[] = [];
+  popularCourses: CoursesToReturnDTO[] = [];
+  newestCourses: CoursesToReturnDTO[] = [];
+
+  // Loading flags per section
+  isLoadingTopRated = false;
+  isLoadingPopular = false;
+  isLoadingNewest = false;
+
+  // Global state
   courseParams = new CoursesParams();
-  isLoading = false;
   error: string | null = null;
-  noCoursesMessage: string = 'No courses available at the moment.';
-  first: number = 0;
-  pageSize: number = 10; // rows
-  pageIndex: number = 1;
-  courseCount: number = 0;
   searchTimeout: any;
+
+  // Number of courses to display per section
+  readonly sectionSize = 8;
 
   constructor(
     private readonly _courseService: CoursesService,
-    private readonly _courseCategoriesService: CourseCategoriesService,
     private readonly _enrollmentServices: EnrollmentService,
     private readonly _notifications: NotificationsService,
     private readonly _router: Router,
   ) {}
 
   ngOnInit() {
-    this.getAllCourses();
-    this.getAllCoursesTypes();
+    this.loadAllSections();
+  }
+
+  // Load all three sections in parallel
+  loadAllSections() {
+    this.loadSectionCourses(CourseOptionsSorting.Rating, 'topRated');
+    this.loadSectionCourses(CourseOptionsSorting.Popular, 'popular');
+    this.loadSectionCourses(CourseOptionsSorting.Newest, 'newest');
+  }
+
+  // Fetch a single section of courses by sort option
+  loadSectionCourses(
+    sort: CourseOptionsSorting,
+    section: 'topRated' | 'popular' | 'newest',
+  ) {
+    const loadingFlag =
+      section === 'topRated'
+        ? 'isLoadingTopRated'
+        : section === 'popular'
+          ? 'isLoadingPopular'
+          : 'isLoadingNewest';
+
+    (this as any)[loadingFlag] = true;
+
+    const params: CoursesParams = {
+      ...this.courseParams,
+      pageIndex: 1,
+      pageSize: this.sectionSize,
+      sort,
+    };
+
+    this._courseService
+      .getAllCourses(params)
+      .pipe(finalize(() => ((this as any)[loadingFlag] = false)))
+      .subscribe({
+        next: (res: ApplicationResult<Pagination<CoursesToReturnDTO[]>>) => {
+          if (res.succeed && res.data) {
+            (this as any)[section + 'Courses'] = res.data.data;
+          } else {
+            (this as any)[section + 'Courses'] = [];
+          }
+        },
+        error: () => {
+          (this as any)[section + 'Courses'] = [];
+        },
+      });
   }
 
   // Search with debounce
@@ -57,65 +105,8 @@ export class HomeComponent {
 
     this.searchTimeout = setTimeout(() => {
       this.courseParams.search = query;
-      this.getAllCourses(true);
+      this.loadAllSections();
     }, 500);
-  }
-
-  // Pagination
-  onPageChange(event: any): void {
-    this.first = event.first ?? 0;
-    this.pageSize = event.rows ?? 10;
-    this.pageIndex = Math.floor(this.first / this.pageSize) + 1;
-    this.getAllCourses(true);
-  }
-
-  // Filter by course type
-  filterByType(typeId: number): void {
-    this.courseParams.type = String(typeId);
-    this.getAllCourses(true);
-  }
-
-  // Check if a type chip is active
-  isActiveType(typeId: number): boolean {
-    return this.courseParams.type === String(typeId);
-  }
-
-  // Clear type filter
-  clearFilter(): void {
-    this.courseParams.type = undefined;
-    this.getAllCourses(true);
-  }
-
-  // Fetch all courses from API
-  getAllCourses(isSearch: boolean = false) {
-    this.isLoading = true;
-    this.error = null;
-
-    if (!isSearch) {
-      this.courseParams.pageIndex = 1;
-    }
-
-    this.courseParams.pageIndex = this.pageIndex;
-    this.courseParams.pageSize = this.pageSize;
-
-    this.courseParams.sort = 'Rating';
-    this._courseService
-      .getAllCourses(this.courseParams)
-      .pipe(finalize(() => (this.isLoading = false)))
-      .subscribe({
-        next: (res: ApplicationResult<Pagination<CoursesToReturnDTO[]>>) => {
-          if (res.succeed && res.data) {
-            this.courses = res.data.data;
-            this.courseCount = res.data.count;
-            this.noCoursesMessage =
-              res.message || 'No courses available at the moment.';
-          } else {
-            this.courses = [];
-            this.noCoursesMessage =
-              res.message || 'No courses available at the moment.';
-          }
-        },
-      });
   }
 
   // Navigate to course details
@@ -133,7 +124,6 @@ export class HomeComponent {
         next: (res: ApplicationResult<EnrollmentWithCourseResponse>) => {
           if (res.succeed && res.data) {
             if (course.isPaid) {
-              const type = course.type.toLowerCase();
               this._notifications.showSuccess(
                 res.message || 'Enrollment created. Complete your payment.',
                 'Enrollment',
@@ -161,17 +151,6 @@ export class HomeComponent {
       });
   }
 
-  // Fetch course types for filter chips
-  getAllCoursesTypes() {
-    this._courseCategoriesService.getAllCourseCategories().subscribe({
-      next: (res: ApplicationResult<CourseCategoryToReturnDTO[]>) => {
-        if (res.succeed && res.data) {
-          this.types = res.data;
-        }
-      },
-    });
-  }
-
   isOnlineCourse(type: string): boolean {
     const normalizedStatus = this.normalizeCourseType(type);
     return normalizedStatus === 'onlinecourse' || normalizedStatus === '0';
@@ -179,6 +158,12 @@ export class HomeComponent {
 
   getCourseTypeLabel(type: string): string {
     return this.isOnlineCourse(type) ? 'Online' : 'Recorded';
+  }
+
+  viewAll(sort: string) {
+    this._router.navigate(['/student', 'courses'], {
+      queryParams: { sort },
+    });
   }
 
   private getCourseTypeParam(course: CoursesToReturnDTO): string {
