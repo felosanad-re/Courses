@@ -188,15 +188,17 @@
               <div class="course-card__stat">
                 <i class="pi pi-users"></i>
                 <span
-                  >{{
-                    analyzeData.topCourseRating.enrollments
-                  }}
-                  Enrollments</span
+                  >{{ analyzeData.topCourseRating.ratingCount }} Rating
+                  Count</span
                 >
               </div>
               <div class="course-card__stat">
                 <i class="pi pi-dollar"></i>
-                <span>${{ analyzeData.topCourseRating.revenue }} Revenue</span>
+                <p-rating
+                  [(ngModel)]="analyzeData.topCourseRating.averageRating"
+                  [readonly]="true"
+                  [cancel]="false"
+                />
               </div>
             </div>
           </div>
