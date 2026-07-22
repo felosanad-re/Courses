@@ -48,6 +48,8 @@ export class InstructorStudentsComponent implements OnInit {
     totalRevenues: 0,
     newTotalStudentsInMonth: 0,
     newTotalRevenuesInMonth: 0,
+    averageRating: 0,
+    newAverageRatingInMonth: 0,
   };
 
   expandedRows: Record<number, boolean> = {};

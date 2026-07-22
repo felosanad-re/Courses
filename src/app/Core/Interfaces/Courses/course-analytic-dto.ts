@@ -4,4 +4,6 @@ export interface CourseAnalyticDTO {
   image: string;
   enrollments: number;
   revenue: number;
+  averageRating: Number;
+  ratingCount: Number;
 }

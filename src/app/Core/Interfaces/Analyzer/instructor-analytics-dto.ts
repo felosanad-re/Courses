@@ -5,7 +5,7 @@ export interface InstructorAnalyticsDto {
   totalEnrollments: number;
   totalStudents: number;
   totalRevenue: number;
-  averageCourseRating?: number;
+  totalCourseRatings?: number;
   publishedCourses?: number;
   draftCourses?: number;
   topCourseSelling?: CourseAnalyticDTO;

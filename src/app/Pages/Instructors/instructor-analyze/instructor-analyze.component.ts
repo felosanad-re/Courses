@@ -12,6 +12,7 @@ import { ApplicationResult } from '../../../Core/Interfaces/application-result';
 import { NotificationsService } from '../../../Core/Services/notifications.service';
 import { finalize } from 'rxjs';
 import { LoadingSkeletonComponent } from '../../../Shared/loading-skeleton/loading-skeleton.component';
+import { RatingModule } from 'primeng/rating';
 
 interface StatCard {
   icon: string;
@@ -30,6 +31,7 @@ interface StatCard {
     CalendarModule,
     ButtonModule,
     LoadingSkeletonComponent,
+    RatingModule,
   ],
   templateUrl: './instructor-analyze.component.html',
   styleUrl: './instructor-analyze.component.scss',
@@ -167,7 +169,7 @@ export class InstructorAnalyzeComponent implements OnInit {
       {
         icon: 'pi-star',
         title: 'Average Rating',
-        value: this.analyzeData.averageCourseRating ?? 0,
+        value: this.analyzeData.totalCourseRatings ?? 0,
         subtitle: 'Course ratings',
       },
     ];

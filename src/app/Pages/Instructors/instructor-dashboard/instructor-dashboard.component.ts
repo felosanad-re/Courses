@@ -18,6 +18,8 @@ import { PaginatorModule } from 'primeng/paginator';
 import { InstructorDashboardStatsService } from '../../../Core/Services/DashboardStats/instructor-dashboard-stats.service';
 import { InstructorStats } from '../../../Core/Interfaces/DashboardStats/instructor-stats';
 import { NotificationsService } from '../../../Core/Services/notifications.service';
+import { Review } from '../../../Core/Interfaces/DashboardStats/review';
+import { RatingParams } from '../../../Core/Interfaces/DashboardStats/rating-params';
 
 interface StatsCard {
   icon: string;
@@ -35,16 +37,6 @@ interface Activity {
   type: 'enrollment' | 'review' | 'payment' | 'course';
 }
 
-interface Review {
-  id: number;
-  studentName: string;
-  avatar: string;
-  rating: number;
-  comment: string;
-  course: string;
-  date: string;
-}
-
 @Component({
   selector: 'app-instructor-dashboard',
   standalone: true,
@@ -55,6 +47,7 @@ interface Review {
 export class InstructorDashboardComponent implements OnInit, OnDestroy {
   instructorName = '';
   isLoading = true;
+  isReviewsLoading = true;
   courses: CourseResponseForInstructor[] = [];
   stats: InstructorStats = {
     totalCourses: 0,
@@ -63,6 +56,8 @@ export class InstructorDashboardComponent implements OnInit, OnDestroy {
     totalRevenues: 0,
     newTotalStudentsInMonth: 0,
     newTotalRevenuesInMonth: 0,
+    averageRating: 0,
+    newAverageRatingInMonth: 0,
   };
 
   // ─── Pagination Variables ───
@@ -118,36 +113,7 @@ export class InstructorDashboardComponent implements OnInit, OnDestroy {
     },
   ];
 
-  reviews: Review[] = [
-    {
-      id: 1,
-      studentName: 'Sarah Ahmed',
-      avatar: 'S',
-      rating: 5,
-      comment:
-        'Excellent explanation! The course helped me understand complex concepts easily.',
-      course: 'Advanced Mathematics',
-      date: '2 days ago',
-    },
-    {
-      id: 2,
-      studentName: 'Mohamed Ali',
-      avatar: 'M',
-      rating: 4,
-      comment: 'Great course overall. Would love more practice problems.',
-      course: 'Physics for Beginners',
-      date: '3 days ago',
-    },
-    {
-      id: 3,
-      studentName: 'Fatima Hassan',
-      avatar: 'F',
-      rating: 5,
-      comment: 'Best instructor! Very patient and clear in explanations.',
-      course: 'Calculus Fundamentals',
-      date: '1 week ago',
-    },
-  ];
+  reviews: Review[] = [];
 
   constructor(
     private readonly _instructorsService: InstructorsService,
@@ -173,6 +139,7 @@ export class InstructorDashboardComponent implements OnInit, OnDestroy {
 
     this.getStats();
     this.loadCourses();
+    this.loadReviews();
   }
 
   loadUserName(): void {
@@ -222,6 +189,44 @@ export class InstructorDashboardComponent implements OnInit, OnDestroy {
     });
   }
 
+  loadReviews(): void {
+    this.isReviewsLoading = true;
+    const ratingParams = new RatingParams();
+    this._statsService.getReviews(ratingParams).subscribe({
+      next: (res: ApplicationResult<Pagination<Review[]>>) => {
+        if (res.succeed && res.data) {
+          this.reviews = res.data.data.map((review) => ({
+            ...review,
+            avatar: this.getAvatar(review.studentName),
+          }));
+        } else {
+          this._notifications.showError(
+            res.message || 'Failed to load reviews.',
+            'Error',
+          );
+        }
+        this.isReviewsLoading = false;
+      },
+      error: () => {
+        this.isReviewsLoading = false;
+      },
+    });
+  }
+
+  /** Static avatar fallback derived from the student's name initials */
+  private getAvatar(name: string): string {
+    if (!name) {
+      return '?';
+    }
+    const parts = name.trim().split(/\s+/);
+    if (parts.length === 1) {
+      return parts[0].charAt(0).toUpperCase();
+    }
+    return (
+      parts[0].charAt(0) + parts[parts.length - 1].charAt(0)
+    ).toUpperCase();
+  }
+
   private buildStatsCards(): void {
     this.statsCards = [
       {
@@ -248,8 +253,8 @@ export class InstructorDashboardComponent implements OnInit, OnDestroy {
       {
         icon: 'pi-star',
         title: 'Average Rating',
-        value: 0,
-        change: '+0 this month',
+        value: `${this.stats.averageRating}`,
+        change: `+${this.stats.newAverageRatingInMonth}$ This month`,
         changeType: 'positive',
       },
     ];
