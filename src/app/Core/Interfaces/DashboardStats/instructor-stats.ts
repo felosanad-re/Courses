@@ -5,4 +5,6 @@ export interface InstructorStats {
   totalRevenues: number;
   newTotalStudentsInMonth: number;
   newTotalRevenuesInMonth: number;
+  averageRating: number;
+  newAverageRatingInMonth: number;
 }

@@ -63,6 +63,8 @@ export class InstructorDashboardComponent implements OnInit, OnDestroy {
     totalRevenues: 0,
     newTotalStudentsInMonth: 0,
     newTotalRevenuesInMonth: 0,
+    averageRating: 0,
+    newAverageRatingInMonth:0
   };
 
   // ─── Pagination Variables ───
@@ -248,8 +250,8 @@ export class InstructorDashboardComponent implements OnInit, OnDestroy {
       {
         icon: 'pi-star',
         title: 'Average Rating',
-        value: 0,
-        change: '+0 this month',
+        value: `${this.stats.averageRating}`,
+        change: `+${this.stats.newAverageRatingInMonth}$ This month`,
         changeType: 'positive',
       },
     ];
