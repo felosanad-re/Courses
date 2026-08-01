@@ -34,15 +34,6 @@ export const roleGuard: CanActivateFn = (route, state) => {
     return true;
   }
 
-  // Admin – redirect to student home (temporary – will be updated later)
-  if (userRoles.includes('Admin')) {
-    if (requiredRoles.includes('Student')) {
-      return true;
-    }
-    _router.navigate(['/student/home']);
-    return false;
-  }
-
   // Check if user has any of the required roles
   const hasRequiredRole = userRoles.some((role) =>
     requiredRoles.includes(role),

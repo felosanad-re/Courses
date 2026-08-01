@@ -1,5 +1,7 @@
 <app-admin-nav />
-<div class="admin-layout__content">
+
+<div class="layout-content" [class.collapsed]="isSidebarCollapsed">
   <router-outlet />
 </div>
+
 <app-admin-footer />
