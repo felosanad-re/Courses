@@ -1,0 +1,248 @@
+<div class="dashboard">
+  <!-- Header -->
+  <div class="dashboard__header">
+    <div class="dashboard__welcome">
+      <h1 class="dashboard__title">Welcome back, {{ adminName }}!</h1>
+      <p class="dashboard__subtitle">
+        Here's the platform overview and management tools.
+      </p>
+    </div>
+    <div class="dashboard__actions">
+      <a
+        routerLink="/admin/create"
+        class="dashboard__btn dashboard__btn--primary"
+      >
+        <i class="pi pi-plus"></i>
+        Add Instructor
+      </a>
+      <button class="dashboard__btn dashboard__btn--secondary">
+        <i class="pi pi-download"></i>
+        Export Report
+      </button>
+    </div>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="dashboard__stats">
+    @for (stat of statsCards; track stat.title) {
+      <div class="stat-card" [class]="'stat-card--' + stat.color">
+        <div class="stat-card__icon">
+          <i class="pi {{ stat.icon }}"></i>
+        </div>
+        <div class="stat-card__content">
+          <span class="stat-card__title">{{ stat.title }}</span>
+          <span class="stat-card__value">{{ stat.value }}</span>
+          @if (stat.change) {
+            <span
+              class="stat-card__change"
+              [class.stat-card__change--positive]="
+                stat.changeType === 'positive'
+              "
+              [class.stat-card__change--negative]="
+                stat.changeType === 'negative'
+              "
+            >
+              {{ stat.change }}
+            </span>
+          }
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- Charts Section -->
+  <div class="dashboard__charts">
+    <div class="dashboard__section-header">
+      <h2 class="dashboard__section-title">Analytics</h2>
+      <div class="dashboard__filters">
+        <button
+          pButton
+          label="Last Month"
+          [class.dashboard__filter--active]="selectedRange === 1"
+          (click)="changeRange(1)"
+        ></button>
+
+        <button
+          pButton
+          label="Last 6 Months"
+          [class.dashboard__filter--active]="selectedRange === 5"
+          (click)="changeRange(5)"
+        ></button>
+
+        <button
+          pButton
+          label="Last Year"
+          [class.dashboard__filter--active]="selectedRange === 11"
+          (click)="changeRange(11)"
+        ></button>
+      </div>
+    </div>
+    <div class="charts-grid">
+      @if (isChartsLoading) {
+        @for (item of [1, 2, 3]; track item) {
+          <div class="chart-card chart-card--loading">
+            <div class="chart-card__skeleton"></div>
+          </div>
+        }
+      } @else if (charts.charts.length === 0) {
+        <div class="chart-card chart-card--empty">
+          <i class="pi pi-chart-bar"></i>
+          <span>No chart data available</span>
+        </div>
+      } @else {
+        @for (chart of charts.charts; track chart.key) {
+          <div class="chart-card">
+            <div class="chart-card__header">
+              <h3 class="chart-card__title">{{ chart.title }}</h3>
+              <span class="chart-card__badge">{{ chart.data.length }} pts</span>
+            </div>
+            <div class="chart-card__body">
+              <div class="chart-card__bars">
+                @for (point of chart.data; track point.lable) {
+                  <div class="chart-card__bar-group">
+                    <div
+                      class="chart-card__bar"
+                      [style.height.%]="
+                        (point.value / getMaxValue(chart.data)) * 100
+                      "
+                      [attr.data-value]="point.value"
+                    >
+                      <span class="chart-card__bar-tooltip">{{
+                        point.value
+                      }}</span>
+                    </div>
+                    <span class="chart-card__bar-label">{{ point.lable }}</span>
+                  </div>
+                }
+              </div>
+            </div>
+          </div>
+        }
+      }
+    </div>
+  </div>
+
+  <!-- Main Content Grid -->
+  <div class="dashboard__grid">
+    <!-- Latest Reviews -->
+    <div class="dashboard__section dashboard__section--reviews">
+      <div class="dashboard__section-header">
+        <h2 class="dashboard__section-title">Latest Reviews</h2>
+        <a routerLink="/admin/reviews" class="dashboard__section-link"
+          >View All</a
+        >
+      </div>
+
+      <div class="reviews-list">
+        @if (isReviewsLoading) {
+          <div class="reviews-list__loading">
+            <i class="pi pi-spin pi-spinner"></i>
+            <span>Loading reviews...</span>
+          </div>
+        } @else if (reviews.length === 0) {
+          <div class="reviews-list__empty">
+            <i class="pi pi-comments"></i>
+            <span>No reviews yet.</span>
+          </div>
+        } @else {
+          @for (review of reviews; track review.id) {
+            <div class="review-card">
+              <div class="review-card__header">
+                <div class="review-card__avatar">
+                  {{ getAvatar(review.studentName) }}
+                </div>
+                <div class="review-card__info">
+                  <span class="review-card__name">{{
+                    review.studentName
+                  }}</span>
+                  <span class="review-card__course">{{
+                    review.courseName
+                  }}</span>
+                </div>
+                <div class="review-card__rating">
+                  <p-rating
+                    [ngModel]="review.rating"
+                    [readonly]="true"
+                    [cancel]="false"
+                  />
+                </div>
+              </div>
+              @if (review.comment) {
+                <p class="review-card__comment">{{ review.comment }}</p>
+              }
+              <span class="review-card__time">{{
+                getTimeAgo(review.createdAt)
+              }}</span>
+            </div>
+          }
+        }
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="dashboard__right">
+      <div class="dashboard__section">
+        <div class="dashboard__section-header">
+          <h2 class="dashboard__section-title">Quick Actions</h2>
+        </div>
+        <div class="quick-actions">
+          @for (action of quickActionItems; track action.label) {
+            <a
+              [routerLink]="action.route"
+              class="quick-action"
+              [class]="'quick-action--' + action.color"
+            >
+              <div class="quick-action__icon">
+                <i class="pi {{ action.icon }}"></i>
+              </div>
+              <div class="quick-action__content">
+                <span class="quick-action__label">{{ action.label }}</span>
+                <span class="quick-action__count"
+                  >{{ action.count }} pending</span
+                >
+              </div>
+              <i class="pi pi-chevron-right quick-action__arrow"></i>
+            </a>
+          }
+        </div>
+      </div>
+
+      <!-- Platform Summary -->
+      <div class="dashboard__section">
+        <div class="dashboard__section-header">
+          <h2 class="dashboard__section-title">Platform Summary</h2>
+        </div>
+        <div class="summary-list">
+          <div class="summary-item">
+            <span class="summary-item__label">Total Users</span>
+            <span class="summary-item__value">{{ stats.users }}</span>
+          </div>
+          <div class="summary-item">
+            <span class="summary-item__label">Active Students</span>
+            <span class="summary-item__value">{{ stats.students }}</span>
+          </div>
+          <div class="summary-item">
+            <span class="summary-item__label">Instructors</span>
+            <span class="summary-item__value">{{ stats.instructors }}</span>
+          </div>
+          <div class="summary-item">
+            <span class="summary-item__label">Total Courses</span>
+            <span class="summary-item__value">{{ stats.courses }}</span>
+          </div>
+          <div class="summary-item">
+            <span class="summary-item__label">Published Courses</span>
+            <span class="summary-item__value">{{
+              stats.publishedCourses
+            }}</span>
+          </div>
+          <div class="summary-item summary-item--revenue">
+            <span class="summary-item__label">Total Revenue</span>
+            <span class="summary-item__value"
+              >${{ formatNumber(stats.revenue) }}</span
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

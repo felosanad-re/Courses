@@ -1,16 +1,19 @@
 :host {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-  background: var(--gray-100);
+  display: block;
 }
 
-.admin-layout {
-  &__content {
-    flex: 1;
-    padding: 84px 2rem 2rem;
-    max-width: 1200px;
-    margin: 0 auto;
-    width: 100%;
+.layout-content {
+  margin-left: 280px;
+  margin-top: 70px;
+  min-height: calc(100vh - 70px);
+  background: #f8fafc;
+  transition: margin-left 0.3s ease;
+
+  &.collapsed {
+    margin-left: 80px;
+  }
+
+  @media (max-width: 992px) {
+    margin-left: 0;
   }
 }

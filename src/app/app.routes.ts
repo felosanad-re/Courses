@@ -268,4 +268,77 @@ export const routes: Routes = [
       },
     ],
   },
+  // Admin
+  {
+    path: 'admin',
+    canActivate: [roleGuard],
+    data: { roles: ['Admin'] },
+    loadComponent: () =>
+      import(`./Layouts/admin-layout/admin-layout.component`).then(
+        (c) => c.AdminLayoutComponent,
+      ),
+    children: [
+      {
+        path: '',
+        redirectTo: 'dashboard',
+        pathMatch: 'full',
+      },
+      {
+        path: 'dashboard',
+        loadComponent: () =>
+          import(
+            `./Pages/Admin/admin-dashboard/admin-dashboard.component`
+          ).then((c) => c.AdminDashboardComponent),
+      },
+      {
+        path: 'students',
+        loadComponent: () =>
+          import(`./Pages/Admin/admin-students/admin-students.component`).then(
+            (c) => c.AdminStudentsComponent,
+          ),
+      },
+      {
+        path: 'student/:studentId',
+        loadComponent: () =>
+          import(
+            `./Pages/Admin/student-details/student-details.component`
+          ).then((c) => c.StudentDetailsComponent),
+      },
+      {
+        path: 'instructors',
+        loadComponent: () =>
+          import(
+            `./Pages/Admin/admin-instructors/admin-instructors.component`
+          ).then((c) => c.AdminInstructorsComponent),
+      },
+      {
+        path: 'instructors/:instructorId',
+        loadComponent: () =>
+          import(
+            `./Pages/Admin/instructor-details/instructor-details.component`
+          ).then((c) => c.InstructorDetailsComponent),
+      },
+      {
+        path: 'reviews',
+        loadComponent: () =>
+          import(`./Pages/Admin/admin-reviews/admin-reviews.component`).then(
+            (c) => c.AdminReviewsComponent,
+          ),
+      },
+      {
+        path: 'courses',
+        loadComponent: () =>
+          import(`./Pages/Admin/admin-courses/admin-courses.component`).then(
+            (c) => c.AdminCoursesComponent,
+          ),
+      },
+      {
+        path: 'course/:courseId',
+        loadComponent: () =>
+          import(`./Pages/Admin/course-details/course-details.component`).then(
+            (c) => c.CourseDetailsComponent,
+          ),
+      },
+    ],
+  },
 ];
