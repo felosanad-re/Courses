@@ -1,0 +1,353 @@
+:host {
+  display: block;
+}
+
+.courses-page {
+  padding: 32px;
+  min-height: calc(100vh - 70px);
+  background: #f8fafc;
+}
+
+.page-header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 24px;
+  padding: 32px 36px;
+  overflow: hidden;
+  color: #ffffff;
+  background: linear-gradient(135deg, #4338ca 0%, #6c63ff 55%, #818cf8 100%);
+  border-radius: 20px;
+  box-shadow: 0 14px 35px rgba(79, 70, 229, 0.22);
+
+  &::before,
+  &::after {
+    position: absolute;
+    content: "";
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  &::before {
+    width: 190px;
+    height: 190px;
+    top: -100px;
+    right: 100px;
+  }
+
+  &::after {
+    width: 120px;
+    height: 120px;
+    right: -35px;
+    bottom: -50px;
+  }
+
+  &__content {
+    position: relative;
+    z-index: 1;
+  }
+
+  &__eyebrow {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #dddafe;
+  }
+
+  h1 {
+    margin: 0 0 6px;
+    font-size: clamp(26px, 3vw, 36px);
+    font-weight: 800;
+    line-height: 1.25;
+  }
+
+  p {
+    margin: 0;
+    max-width: 620px;
+    color: rgba(255, 255, 255, 0.82);
+    font-size: 14px;
+  }
+
+  &__icon {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    flex: 0 0 72px;
+    width: 72px;
+    height: 72px;
+    place-items: center;
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.14);
+    backdrop-filter: blur(8px);
+
+    i {
+      font-size: 30px;
+    }
+  }
+}
+
+.status-filters {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(150px, 1fr));
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.status-filter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 50px;
+  padding: 12px 18px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background: #ffffff;
+  color: #64748b;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+  transition: all 0.2s ease;
+
+  &:hover:not(:disabled) {
+    color: #4f46e5;
+    border-color: #a5b4fc;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 18px rgba(79, 70, 229, 0.12);
+  }
+
+  &:focus-visible {
+    outline: 3px solid rgba(99, 102, 241, 0.2);
+    outline-offset: 2px;
+  }
+
+  &:disabled {
+    cursor: wait;
+    opacity: 0.7;
+  }
+
+  &--active {
+    color: #ffffff;
+    border-color: #4f46e5;
+    background: linear-gradient(135deg, #4f46e5, #6c63ff);
+    box-shadow: 0 8px 20px rgba(79, 70, 229, 0.24);
+
+    &:hover:not(:disabled) {
+      color: #ffffff;
+      border-color: #4338ca;
+    }
+
+    .status-filter__dot {
+      background: #ffffff;
+      box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.2);
+    }
+  }
+
+  &__dot {
+    width: 8px;
+    height: 8px;
+    flex: 0 0 8px;
+    border-radius: 50%;
+    background: #a5b4fc;
+    transition: inherit;
+  }
+}
+
+.table-card {
+  overflow: hidden;
+  border: 1px solid #e8edf4;
+  border-radius: 18px;
+  background: #ffffff;
+  box-shadow: 0 8px 26px rgba(15, 23, 42, 0.06);
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 24px 26px;
+    border-bottom: 1px solid #eef2f7;
+
+    h2 {
+      margin: 0 0 4px;
+      color: #1e293b;
+      font-size: 20px;
+      font-weight: 750;
+    }
+
+    p {
+      margin: 0;
+      color: #94a3b8;
+      font-size: 13px;
+    }
+  }
+}
+
+.courses-count {
+  flex: 0 0 auto;
+  padding: 7px 12px;
+  border-radius: 999px;
+  color: #4f46e5;
+  background: #eef2ff;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.course-price {
+  color: #0f766e;
+  font-weight: 700;
+}
+
+.actions-heading {
+  text-align: center;
+}
+
+.row-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 58px 20px;
+  text-align: center;
+
+  i {
+    margin-bottom: 16px;
+    color: #a5b4fc;
+    font-size: 42px;
+  }
+
+  h3 {
+    margin: 0 0 6px;
+    color: #334155;
+    font-size: 17px;
+  }
+
+  p {
+    margin: 0;
+    color: #94a3b8;
+    font-size: 13px;
+  }
+}
+
+:host ::ng-deep {
+  .courses-table {
+    .p-datatable-wrapper {
+      overflow-x: auto;
+    }
+
+    .p-datatable-thead > tr > th {
+      padding: 16px 20px;
+      border: none;
+      border-bottom: 1px solid #e8edf4;
+      background: #f8fafc;
+      color: #64748b;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.35px;
+      text-transform: uppercase;
+    }
+
+    .p-datatable-tbody > tr {
+      transition: background-color 0.2s ease;
+
+      &:hover {
+        background: #fafaff;
+      }
+
+      > td {
+        padding: 17px 20px;
+        border-width: 0 0 1px;
+        border-color: #f1f5f9;
+        color: #475569;
+        font-size: 14px;
+      }
+    }
+
+    .p-paginator {
+      padding: 18px 20px !important;
+      border-top: 1px solid #eef2f7 !important;
+    }
+
+    .p-datatable-loading-overlay {
+      background: rgba(255, 255, 255, 0.78);
+      backdrop-filter: blur(2px);
+    }
+  }
+
+  .p-dropdown {
+    border-color: #cbd5e1;
+    border-radius: 9px;
+  }
+
+  .p-tag {
+    min-width: 105px;
+    justify-content: center;
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+  }
+
+  .p-button.p-button-rounded {
+    width: 36px;
+    height: 36px;
+  }
+}
+
+@media (max-width: 900px) {
+  .courses-page {
+    padding: 24px;
+  }
+
+  .status-filters {
+    grid-template-columns: repeat(2, minmax(150px, 1fr));
+  }
+}
+
+@media (max-width: 576px) {
+  .courses-page {
+    padding: 16px;
+  }
+
+  .page-header {
+    padding: 26px 22px;
+
+    &__icon {
+      display: none;
+    }
+  }
+
+  .status-filters {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .status-filter {
+    min-height: 46px;
+    padding: 10px 8px;
+    font-size: 12px;
+  }
+
+  .table-card__header {
+    align-items: flex-start;
+    padding: 20px;
+  }
+
+  .courses-count {
+    display: none;
+  }
+}

@@ -1,1 +1,194 @@
-<p>admin-courses works!</p>
+<section class="courses-page">
+  <header class="page-header">
+    <div class="page-header__content">
+      <span class="page-header__eyebrow">Course administration</span>
+      <h1>Manage Courses</h1>
+      <p>Review courses and control their publishing status from one place.</p>
+    </div>
+
+    <div class="page-header__icon" aria-hidden="true">
+      <i class="pi pi-book"></i>
+    </div>
+  </header>
+
+  <nav class="status-filters" aria-label="Filter courses by status">
+    <button
+      *ngFor="let option of courseStatus"
+      type="button"
+      class="status-filter"
+      [class.status-filter--active]="status === option.value"
+      [attr.aria-pressed]="status === option.value"
+      [disabled]="isLoading"
+      (click)="filterCoursesByStatus(option.value)"
+    >
+      <span class="status-filter__dot"></span>
+      {{ option.label }}
+    </button>
+  </nav>
+
+  <div class="table-card">
+    <div class="table-card__header">
+      <div>
+        <h2>{{ getStatusLabel(status) }} Courses</h2>
+        <p>View and update the status of the selected courses.</p>
+      </div>
+      <span class="courses-count">{{ totalCount }} courses</span>
+    </div>
+
+    <p-table
+      [value]="courses"
+      dataKey="id"
+      editMode="row"
+      [loading]="isLoading"
+      styleClass="courses-table"
+      [paginator]="true"
+      [lazy]="true"
+      [lazyLoadOnInit]="false"
+      [first]="first"
+      [rows]="coursesParams.pageSize"
+      [totalRecords]="totalCount"
+      [rowsPerPageOptions]="[5, 10, 20]"
+      [showCurrentPageReport]="true"
+      currentPageReportTemplate="Showing {first} to {last} of {totalRecords} courses"
+      (onPage)="onPageChange($event)"
+      [tableStyle]="{ 'min-width': '50rem' }"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th style="width: 15%">Number</th>
+          <th style="width: 30%">Name</th>
+          <th style="width: 30%">Image</th>
+          <th style="width: 25%">Course Status</th>
+          <th style="width: 15%">Price</th>
+          <th style="width: 15%">Type</th>
+          <th style="width: 15%">Enrollments Count</th>
+          <th style="width: 15%">Instructor Name</th>
+          <th style="width: 15%">Course Category</th>
+          <th style="width: 15%" class="actions-heading">Actions</th>
+        </tr>
+      </ng-template>
+      <ng-template
+        pTemplate="body"
+        let-course
+        let-editing="editing"
+        let-ri="rowIndex"
+      >
+        <tr [pEditableRow]="course">
+          <td>
+            {{ course.id }}
+          </td>
+          <td>
+            {{ course.name }}
+          </td>
+          <td>
+            <p-cellEditor>
+              <ng-template pTemplate="output">
+                <img [src]="course.image" width="50" alt="course Image" />
+              </ng-template>
+            </p-cellEditor>
+          </td>
+          <td>
+            <p-cellEditor>
+              <ng-template pTemplate="input">
+                <p-dropdown
+                  [options]="courseStatus"
+                  optionLabel="label"
+                  optionValue="value"
+                  appendTo="body"
+                  [(ngModel)]="course.status"
+                  [style]="{ width: '100%' }"
+                />
+              </ng-template>
+              <ng-template pTemplate="output">
+                <p-tag
+                  [value]="getStatusLabel(course.status)"
+                  [severity]="getSeverity(course.status)"
+                />
+              </ng-template>
+            </p-cellEditor>
+          </td>
+          <td>
+            <span class="course-price">
+              {{ course.price | currency: "USD" }}
+            </span>
+          </td>
+          <td>
+            <span class="course-price">
+              {{ course.type }}
+            </span>
+          </td>
+          <td>
+            <span class="course-price">
+              {{ course.enrollmentsCount }}
+            </span>
+          </td>
+          <td>
+            <span class="course-price">
+              {{ course.instructorName }}
+            </span>
+          </td>
+          <td>
+            <span class="course-price">
+              {{ course.courseCategory }}
+            </span>
+          </td>
+          <td>
+            <div class="row-actions">
+              <button
+                *ngIf="!editing"
+                pButton
+                pRipple
+                type="button"
+                pInitEditableRow
+                icon="pi pi-pencil"
+                (click)="onRowEditInit(course)"
+                class="p-button-rounded p-button-text"
+              ></button>
+              <button
+                pButton
+                pRipple
+                type="button"
+                pInitEditableRow
+                icon="pi pi-eye"
+                (click)="viewDetails(course)"
+                class="p-button-rounded p-button-text"
+              ></button>
+              <button
+                *ngIf="editing"
+                pButton
+                pRipple
+                type="button"
+                pSaveEditableRow
+                icon="pi pi-check"
+                (click)="onRowEditSave(course)"
+                class="p-button-rounded p-button-text p-button-success mr-2"
+              ></button>
+              <button
+                *ngIf="editing"
+                pButton
+                pRipple
+                type="button"
+                pCancelEditableRow
+                icon="pi pi-times"
+                (click)="onRowEditCancel(course, ri)"
+                class="p-button-rounded p-button-text p-button-danger"
+              ></button>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="5">
+            <div class="empty-state">
+              <i class="pi pi-inbox"></i>
+              <h3>No {{ getStatusLabel(status) | lowercase }} courses</h3>
+              <p>There are no courses matching this status right now.</p>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</section>
