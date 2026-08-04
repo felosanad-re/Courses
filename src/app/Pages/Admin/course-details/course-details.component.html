@@ -1,1 +1,277 @@
-<p>course-details works!</p>
+<p-confirmDialog
+  key="positionDialog"
+  [position]="position"
+  styleClass="delete-confirm-dialog"
+  rejectButtonStyleClass="p-button-text delete-confirm-dialog__cancel"
+  acceptButtonStyleClass="p-button-danger delete-confirm-dialog__accept"
+/>
+
+<main class="course-details-page">
+  <header
+    class="page-heading flex flex-column md:flex-row md:align-items-center justify-content-between gap-3"
+  >
+    <div>
+      <span class="page-heading__eyebrow">Course administration</span>
+      <h1>Course Details</h1>
+      <p>Review the course information and its organized content.</p>
+    </div>
+
+    @if (!isLoading && course.id) {
+      <p-button
+        label="Delete course"
+        icon="pi pi-trash"
+        severity="danger"
+        [outlined]="true"
+        (onClick)="confirmPosition('top')"
+      />
+    }
+  </header>
+
+  @if (isLoading) {
+    <p-card styleClass="course-card loading-card">
+      <div class="grid">
+        <div class="col-12 lg:col-4">
+          <p-skeleton width="100%" height="16rem" borderRadius="8px" />
+        </div>
+        <div class="col-12 lg:col-8">
+          <p-skeleton width="35%" height="1.25rem" styleClass="mb-3" />
+          <p-skeleton width="75%" height="2rem" styleClass="mb-4" />
+          <p-skeleton width="100%" styleClass="mb-2" />
+          <p-skeleton width="88%" styleClass="mb-4" />
+          <div class="grid">
+            @for (item of [1, 2, 3, 4]; track item) {
+              <div class="col-12 sm:col-6">
+                <p-skeleton height="3.5rem" />
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    </p-card>
+  } @else if (course.id) {
+    <p-card styleClass="course-card">
+      <div class="grid align-items-stretch">
+        <div class="col-12 lg:col-4">
+          <div class="course-image-wrap">
+            @if (course.image) {
+              <img
+                class="course-image"
+                [src]="course.image"
+                [alt]="course.name"
+              />
+            } @else {
+              <div class="course-image-placeholder">
+                <i class="pi pi-image"></i>
+                <span>No course image</span>
+              </div>
+            }
+          </div>
+        </div>
+
+        <div class="col-12 lg:col-8">
+          <div class="course-summary">
+            <div class="flex flex-wrap align-items-center gap-2 mb-3">
+              <p-tag
+                [value]="getCourseStatusLabel()"
+                [severity]="getCourseStatusSeverity()"
+              />
+              <p-tag
+                [value]="course.type || 'Course'"
+                severity="info"
+                [rounded]="true"
+              />
+            </div>
+
+            <h2>{{ course.name }}</h2>
+            <p class="course-description">
+              {{ course.description || "No description available." }}
+            </p>
+
+            <p-divider />
+
+            <div class="details-grid">
+              <div class="detail-item">
+                <span class="detail-item__icon"
+                  ><i class="pi pi-user"></i
+                ></span>
+                <span>
+                  <small>Instructor</small>
+                  <strong>{{ course.instructorName || "Not assigned" }}</strong>
+                </span>
+              </div>
+
+              <div class="detail-item">
+                <span class="detail-item__icon"
+                  ><i class="pi pi-folder"></i
+                ></span>
+                <span>
+                  <small>Category</small>
+                  <strong>{{
+                    course.courseCategory || "Uncategorized"
+                  }}</strong>
+                </span>
+              </div>
+
+              <div class="detail-item">
+                <span class="detail-item__icon"
+                  ><i class="pi pi-wallet"></i
+                ></span>
+                <span>
+                  <small>Price</small>
+                  <strong>
+                    {{
+                      course.price === 0 ? "Free" : (course.price | currency)
+                    }}
+                  </strong>
+                </span>
+              </div>
+
+              <div class="detail-item">
+                <span class="detail-item__icon"
+                  ><i class="pi pi-book"></i
+                ></span>
+                <span>
+                  <small>Course type</small>
+                  <strong>{{ course.type || "Not specified" }}</strong>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </p-card>
+
+    <section class="content-section" aria-labelledby="course-content-title">
+      <div
+        class="content-heading flex flex-column sm:flex-row sm:align-items-end justify-content-between gap-3"
+      >
+        <div>
+          <span class="content-heading__eyebrow">Curriculum</span>
+          <h2 id="course-content-title">Course Content</h2>
+          <p>Sections and learning items included in this course.</p>
+        </div>
+
+        <div class="content-stats flex gap-2">
+          <span class="stat-chip">
+            <i class="pi pi-folder"></i>
+            {{ course.sections.length }}
+            {{ course.sections.length === 1 ? "section" : "sections" }}
+          </span>
+          <span class="stat-chip">
+            <i class="pi pi-list"></i>
+            {{ totalContentItems }} items
+          </span>
+        </div>
+      </div>
+
+      @if (course.sections.length) {
+        <p-accordion [multiple]="true" styleClass="content-accordion">
+          @for (
+            section of course.sections;
+            track section.id;
+            let index = $index
+          ) {
+            <p-accordionTab>
+              <ng-template pTemplate="header">
+                <div class="section-header">
+                  <span class="section-number">{{ index + 1 }}</span>
+                  <span class="section-header__text">
+                    <strong>{{ section.title }}</strong>
+                    <small>
+                      {{ section.content.length }}
+                      {{ section.content.length === 1 ? "item" : "items" }}
+                    </small>
+                  </span>
+                </div>
+              </ng-template>
+
+              @if (section.content.length) {
+                <div class="content-list">
+                  @for (
+                    item of getContentItems(section.content);
+                    track item.id
+                  ) {
+                    <div class="content-item">
+                      <span
+                        class="content-item__icon"
+                        [class.content-item__icon--session]="
+                          isLiveSession(item)
+                        "
+                      >
+                        <i
+                          class="pi"
+                          [class.pi-play-circle]="!isLiveSession(item)"
+                          [class.pi-video]="isLiveSession(item)"
+                        ></i>
+                      </span>
+
+                      <div class="content-item__main">
+                        <strong>{{ getItemTitle(item) }}</strong>
+
+                        @if (isLiveSession(item)) {
+                          <div class="content-item__meta">
+                            @if (item.scheduledAt) {
+                              <span>
+                                <i class="pi pi-calendar"></i>
+                                {{ item.scheduledAt | date: "medium" }}
+                              </span>
+                            }
+                            @if (item.durationMinutes) {
+                              <span>
+                                <i class="pi pi-clock"></i>
+                                {{ item.durationMinutes }} min
+                              </span>
+                            }
+                          </div>
+                        }
+                      </div>
+
+                      <div class="content-item__tags">
+                        <p-tag
+                          [value]="
+                            isLiveSession(item) ? 'Live session' : 'Lecture'
+                          "
+                          [severity]="isLiveSession(item) ? 'warning' : 'info'"
+                          [rounded]="true"
+                        />
+                        @if (isLiveSession(item) && item.status) {
+                          <p-tag
+                            [value]="item.status"
+                            [severity]="getSessionStatusSeverity(item.status)"
+                            [rounded]="true"
+                          />
+                        }
+                      </div>
+                    </div>
+                  }
+                </div>
+              } @else {
+                <div class="empty-state empty-state--compact">
+                  <i class="pi pi-inbox"></i>
+                  <strong>No content found.</strong>
+                  <span>This section has no lectures or live sessions.</span>
+                </div>
+              }
+            </p-accordionTab>
+          }
+        </p-accordion>
+      } @else {
+        <p-card styleClass="empty-card">
+          <div class="empty-state">
+            <i class="pi pi-folder-open"></i>
+            <strong>No sections available.</strong>
+            <span>This course does not contain any sections yet.</span>
+          </div>
+        </p-card>
+      }
+    </section>
+  } @else {
+    <p-card styleClass="empty-card">
+      <div class="empty-state">
+        <i class="pi pi-exclamation-circle"></i>
+        <strong>Course details are unavailable.</strong>
+        <span>The requested course could not be loaded.</span>
+      </div>
+    </p-card>
+  }
+</main>

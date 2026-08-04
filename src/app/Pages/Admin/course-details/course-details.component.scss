@@ -1,0 +1,561 @@
+:host {
+  display: block;
+}
+
+.course-details-page {
+  min-height: calc(100vh - 70px);
+  padding: 2rem;
+  background: #f6f8fb;
+}
+
+.page-heading {
+  max-width: 1400px;
+  margin: 0 auto 1.5rem;
+}
+
+.page-heading__eyebrow,
+.content-heading__eyebrow {
+  display: block;
+  margin-bottom: 0.25rem;
+  color: #4f46e5;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.page-heading h1,
+.content-heading h2 {
+  margin: 0;
+  color: #172033;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+.page-heading h1 {
+  font-size: 1.75rem;
+}
+
+.page-heading p,
+.content-heading p {
+  margin: 0.35rem 0 0;
+  color: #667085;
+  font-size: 0.9rem;
+}
+
+.course-image-wrap {
+  width: 100%;
+  height: 100%;
+  min-height: 17rem;
+  overflow: hidden;
+  border-radius: 8px;
+  background: #eef1f6;
+}
+
+.course-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 17rem;
+  object-fit: cover;
+}
+
+.course-image-placeholder {
+  display: flex;
+  min-height: 17rem;
+  height: 100%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  color: #8a94a6;
+}
+
+.course-image-placeholder i {
+  font-size: 2.5rem;
+}
+
+.course-summary {
+  height: 100%;
+  padding: 0.5rem 0.75rem 0.5rem 1rem;
+}
+
+.course-summary h2 {
+  margin: 0 0 0.75rem;
+  color: #172033;
+  font-size: 1.6rem;
+  line-height: 1.3;
+  letter-spacing: 0;
+  overflow-wrap: anywhere;
+}
+
+.course-description {
+  margin: 0;
+  color: #667085;
+  font-size: 0.925rem;
+  line-height: 1.7;
+  white-space: pre-line;
+}
+
+.details-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.detail-item {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.8rem;
+  border: 1px solid #e7eaf0;
+  border-radius: 8px;
+  background: #fafbfc;
+}
+
+.detail-item__icon {
+  display: grid;
+  width: 2.25rem;
+  height: 2.25rem;
+  flex: 0 0 2.25rem;
+  place-items: center;
+  border-radius: 8px;
+  color: #4f46e5;
+  background: #eef2ff;
+}
+
+.detail-item > span:last-child {
+  min-width: 0;
+}
+
+.detail-item small,
+.detail-item strong {
+  display: block;
+}
+
+.detail-item small {
+  margin-bottom: 0.1rem;
+  color: #8a94a6;
+  font-size: 0.72rem;
+}
+
+.detail-item strong {
+  color: #344054;
+  font-size: 0.86rem;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.content-section {
+  max-width: 1400px;
+  margin: 2rem auto 0;
+}
+
+.content-heading {
+  margin-bottom: 1rem;
+}
+
+.content-heading h2 {
+  font-size: 1.35rem;
+}
+
+.content-stats {
+  flex-wrap: wrap;
+}
+
+.stat-chip {
+  display: inline-flex;
+  min-height: 2.25rem;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.45rem 0.75rem;
+  border: 1px solid #e1e6ee;
+  border-radius: 8px;
+  color: #475467;
+  background: #fff;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.stat-chip i {
+  color: #4f46e5;
+}
+
+.section-header {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.section-number {
+  display: grid;
+  width: 2rem;
+  height: 2rem;
+  flex: 0 0 2rem;
+  place-items: center;
+  border-radius: 8px;
+  color: #4338ca;
+  background: #eef2ff;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.section-header__text {
+  min-width: 0;
+}
+
+.section-header__text strong,
+.section-header__text small {
+  display: block;
+}
+
+.section-header__text strong {
+  color: #273142;
+  font-size: 0.92rem;
+  overflow-wrap: anywhere;
+}
+
+.section-header__text small {
+  margin-top: 0.15rem;
+  color: #8a94a6;
+  font-size: 0.72rem;
+  font-weight: 500;
+}
+
+.content-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.content-item {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.9rem 0;
+  border-bottom: 1px solid #edf0f4;
+}
+
+.content-item:first-child {
+  padding-top: 0;
+}
+
+.content-item:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.content-item__icon {
+  display: grid;
+  width: 2.5rem;
+  height: 2.5rem;
+  flex: 0 0 2.5rem;
+  place-items: center;
+  border-radius: 8px;
+  color: #2563eb;
+  background: #eff6ff;
+}
+
+.content-item__icon--session {
+  color: #b45309;
+  background: #fffbeb;
+}
+
+.content-item__main {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.content-item__main > strong {
+  display: block;
+  color: #344054;
+  font-size: 0.88rem;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.content-item__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+  margin-top: 0.3rem;
+  color: #7c8799;
+  font-size: 0.72rem;
+}
+
+.content-item__meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.content-item__tags {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.4rem;
+}
+
+.empty-state {
+  display: flex;
+  min-height: 15rem;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  text-align: center;
+}
+
+.empty-state i {
+  margin-bottom: 0.9rem;
+  color: #98a2b3;
+  font-size: 2.25rem;
+}
+
+.empty-state strong {
+  color: #344054;
+  font-size: 0.95rem;
+}
+
+.empty-state span {
+  margin-top: 0.3rem;
+  color: #8a94a6;
+  font-size: 0.8rem;
+}
+
+.empty-state--compact {
+  min-height: 10rem;
+  padding: 1.5rem;
+}
+
+:host ::ng-deep {
+  .course-card,
+  .empty-card {
+    max-width: 1400px;
+    margin: 0 auto;
+    overflow: hidden;
+    border: 1px solid #e7eaf0;
+    border-radius: 8px;
+    box-shadow: 0 5px 18px rgba(16, 24, 40, 0.06);
+  }
+
+  .course-card .p-card-body,
+  .course-card .p-card-content,
+  .empty-card .p-card-body,
+  .empty-card .p-card-content {
+    padding: 0;
+  }
+
+  .course-card .p-card-content {
+    padding: 1.25rem;
+  }
+
+  .loading-card .p-card-content {
+    padding: 1.5rem;
+  }
+
+  .content-accordion .p-accordion-tab {
+    margin-bottom: 0.75rem;
+    overflow: hidden;
+    border: 1px solid #e3e7ed;
+    border-radius: 8px;
+    background: #fff;
+    box-shadow: 0 3px 12px rgba(16, 24, 40, 0.04);
+  }
+
+  .content-accordion .p-accordion-header .p-accordion-header-link {
+    padding: 1rem 1.15rem;
+    border: 0;
+    border-radius: 0;
+    background: #fff;
+    box-shadow: none;
+  }
+
+  .content-accordion
+    .p-accordion-header:not(.p-disabled).p-highlight
+    .p-accordion-header-link,
+  .content-accordion
+    .p-accordion-header:not(.p-highlight):not(.p-disabled):hover
+    .p-accordion-header-link {
+    border: 0;
+    background: #fafbfc;
+  }
+
+  .content-accordion .p-accordion-content {
+    padding: 1rem 1.25rem;
+    border: 0;
+    border-top: 1px solid #edf0f4;
+    background: #fff;
+  }
+
+  .content-accordion .p-accordion-toggle-icon {
+    color: #667085;
+  }
+
+  .p-tag {
+    font-size: 0.72rem;
+    font-weight: 600;
+  }
+
+  .delete-confirm-dialog {
+    width: min(30rem, calc(100vw - 2rem));
+    overflow: hidden;
+    border: 1px solid #e4e7ec;
+    border-radius: 8px;
+    box-shadow: 0 22px 60px rgba(16, 24, 40, 0.22);
+  }
+
+  .delete-confirm-dialog .p-dialog-header {
+    padding: 1.25rem 1.4rem;
+    border-bottom: 1px solid #edf0f4;
+    background: #fff;
+  }
+
+  .delete-confirm-dialog .p-dialog-title {
+    color: #1d2939;
+    font-size: 1.05rem;
+    font-weight: 700;
+  }
+
+  .delete-confirm-dialog .p-dialog-header-icon {
+    width: 2rem;
+    height: 2rem;
+    color: #667085;
+    border-radius: 8px;
+  }
+
+  .delete-confirm-dialog .p-dialog-content {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1.5rem 1.4rem;
+    color: #667085;
+    background: #fff;
+    font-size: 0.88rem;
+    line-height: 1.6;
+  }
+
+  .delete-confirm-dialog .p-confirm-dialog-icon {
+    display: grid;
+    width: 2.75rem;
+    height: 2.75rem;
+    flex: 0 0 2.75rem;
+    place-items: center;
+    margin: 0;
+    border-radius: 8px;
+    color: #d92d20;
+    background: #fef3f2;
+    font-size: 1.2rem;
+  }
+
+  .delete-confirm-dialog .p-confirm-dialog-message {
+    margin: 0;
+  }
+
+  .delete-confirm-dialog .p-dialog-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.65rem;
+    padding: 1rem 1.4rem 1.25rem;
+    border-top: 1px solid #edf0f4;
+    background: #fafbfc;
+  }
+
+  .delete-confirm-dialog .p-dialog-footer .p-button {
+    min-width: 6.5rem;
+    justify-content: center;
+    margin: 0;
+    border-radius: 8px;
+    font-size: 0.84rem;
+    font-weight: 600;
+  }
+
+  .delete-confirm-dialog .delete-confirm-dialog__cancel {
+    color: #475467;
+  }
+
+  .delete-confirm-dialog .delete-confirm-dialog__cancel:hover {
+    background: #f2f4f7;
+  }
+
+  .delete-confirm-dialog .delete-confirm-dialog__accept {
+    border-color: #d92d20;
+    background: #d92d20;
+  }
+
+  .delete-confirm-dialog .delete-confirm-dialog__accept:hover {
+    border-color: #b42318;
+    background: #b42318;
+  }
+}
+
+@media (max-width: 991px) {
+  .course-summary {
+    padding: 1rem 0 0;
+  }
+}
+
+@media (max-width: 640px) {
+  .course-details-page {
+    padding: 1rem;
+  }
+
+  .page-heading h1 {
+    font-size: 1.45rem;
+  }
+
+  .course-image-wrap,
+  .course-image,
+  .course-image-placeholder {
+    min-height: 12rem;
+  }
+
+  .details-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .course-summary h2 {
+    font-size: 1.25rem;
+  }
+
+  .content-item {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .content-item__main {
+    width: calc(100% - 3.35rem);
+    flex: 1 1 calc(100% - 3.35rem);
+  }
+
+  .content-item__tags {
+    width: 100%;
+    justify-content: flex-start;
+    padding-left: 3.35rem;
+  }
+
+  :host ::ng-deep .content-accordion .p-accordion-content {
+    padding: 1rem;
+  }
+
+  :host ::ng-deep .delete-confirm-dialog .p-dialog-content {
+    gap: 0.75rem;
+    padding: 1.25rem 1rem;
+  }
+
+  :host ::ng-deep .delete-confirm-dialog .p-dialog-header,
+  :host ::ng-deep .delete-confirm-dialog .p-dialog-footer {
+    padding-right: 1rem;
+    padding-left: 1rem;
+  }
+
+  :host ::ng-deep .delete-confirm-dialog .p-dialog-footer {
+    flex-direction: column-reverse;
+  }
+
+  :host ::ng-deep .delete-confirm-dialog .p-dialog-footer .p-button {
+    width: 100%;
+  }
+}
