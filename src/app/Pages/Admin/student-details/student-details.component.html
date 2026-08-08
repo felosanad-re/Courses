@@ -1,1 +1,272 @@
-<p>student-details works!</p>
+<section class="student-details-page">
+  @if (isLoading) {
+    <div
+      class="details-loading"
+      aria-live="polite"
+      aria-label="Loading student details"
+    >
+      <div class="loading-spinner"><i class="pi pi-spin pi-spinner"></i></div>
+      <h2>Loading student details...</h2>
+      <p>Please wait while we retrieve the account information.</p>
+    </div>
+  } @else {
+    <header class="page-header">
+      <div class="page-header__content">
+        <span class="page-header__eyebrow">Account administration</span>
+        <h1>Student Details</h1>
+        <p>
+          Review profile information, enrollment activity, and account access.
+        </p>
+      </div>
+      <div class="page-header__icon" aria-hidden="true">
+        <i class="pi pi-user"></i>
+      </div>
+    </header>
+
+    <div class="details-grid">
+      <article class="profile-card card">
+        <div class="profile-card__top">
+          <div class="profile-avatar">
+            {{ student.name?.charAt(0) | uppercase }}
+          </div>
+          <div class="profile-heading">
+            <h2>{{ student.name || "Student" }}</h2>
+            <span class="profile-username"
+              >&#64;{{ student.userName || "username" }}</span
+            >
+            <span
+              class="status-badge"
+              [class.status-badge--deleted]="student.isDeleted"
+            >
+              <i
+                [class]="
+                  student.isDeleted ? 'pi pi-trash' : 'pi pi-check-circle'
+                "
+              ></i>
+              {{ student.isDeleted ? "Deleted" : student.status || "Active" }}
+            </span>
+          </div>
+        </div>
+
+        <div class="profile-divider"></div>
+
+        <div class="profile-stats">
+          <div class="profile-stat">
+            <span class="profile-stat__icon profile-stat__icon--primary"
+              ><i class="pi pi-book"></i
+            ></span>
+            <div>
+              <strong>{{ student.numberOfEnrollments || 0 }}</strong
+              ><span>Enrollments</span>
+            </div>
+          </div>
+          <div class="profile-stat">
+            <span class="profile-stat__icon profile-stat__icon--success"
+              ><i class="pi pi-calendar"></i
+            ></span>
+            <div>
+              <strong>{{ student.age || "—" }}</strong
+              ><span>Age</span>
+            </div>
+          </div>
+          <div class="profile-stat">
+            <span class="profile-stat__icon profile-stat__icon--warning"
+              ><i class="pi pi-clock"></i
+            ></span>
+            <div>
+              <strong>{{ student.createdAt | date: "mediumDate" }}</strong
+              ><span>Joined</span>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="info-card card">
+        <div class="card-heading">
+          <div class="card-heading__icon"><i class="pi pi-id-card"></i></div>
+          <div>
+            <h2>Personal information</h2>
+            <p>Contact details associated with this account.</p>
+          </div>
+        </div>
+        <div class="info-list">
+          <div class="info-item">
+            <span><i class="pi pi-envelope"></i>Email</span
+            ><strong>{{ student.email || "Not provided" }}</strong>
+          </div>
+          <div class="info-item">
+            <span><i class="pi pi-phone"></i>Phone</span
+            ><strong>{{ student.phone || "Not provided" }}</strong>
+          </div>
+          <div class="info-item">
+            <span><i class="pi pi-map-marker"></i>Address</span
+            ><strong>{{ student.address || "Not provided" }}</strong>
+          </div>
+          <div class="info-item">
+            <span><i class="pi pi-user"></i>Username</span
+            ><strong>{{ student.userName || "Not provided" }}</strong>
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <article class="enrollments-card card">
+      <div class="card-heading card-heading--between">
+        <div class="card-heading__group">
+          <div class="card-heading__icon card-heading__icon--green">
+            <i class="pi pi-graduation-cap"></i>
+          </div>
+          <div>
+            <h2>Enrolled courses</h2>
+            <p>Courses and payment status for this student.</p>
+          </div>
+        </div>
+        <span class="count-badge"
+          >{{ student.enrollments?.length || 0 }} courses</span
+        >
+      </div>
+
+      @if (student.enrollments?.length) {
+        <div class="enrollments-table-wrapper">
+          <table class="enrollments-table">
+            <thead>
+              <tr>
+                <th>Course</th>
+                <th>Type</th>
+                <th>Amount</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (enrollment of student.enrollments; track enrollment.id) {
+                <tr>
+                  <td>
+                    <div class="course-cell">
+                      <span class="course-icon"
+                        ><i class="pi pi-book"></i
+                      ></span>
+                      <div>
+                        <strong>{{ enrollment.courseName }}</strong
+                        ><small>Course #{{ enrollment.courseId }}</small>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <span
+                      class="type-badge"
+                      [class.type-badge--free]="!enrollment.isPaid"
+                      >{{
+                        enrollment.isPaid ? "Paid course" : "Free course"
+                      }}</span
+                    >
+                  </td>
+                  <td>
+                    <strong class="amount">{{
+                      enrollment.isPaid
+                        ? (enrollment.amount | currency: "USD")
+                        : "Free"
+                    }}</strong>
+                  </td>
+                  <td>
+                    <span class="enrollment-status"
+                      ><i class="pi pi-check-circle"></i
+                      >{{ enrollment.status || "Enrolled" }}</span
+                    >
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      } @else {
+        <div class="empty-enrollments">
+          <i class="pi pi-book"></i>
+          <h3>No enrollments yet</h3>
+          <p>This student has not enrolled in any courses.</p>
+        </div>
+      }
+    </article>
+
+    <article class="actions-card card">
+      <div class="card-heading">
+        <div class="card-heading__icon card-heading__icon--danger">
+          <i class="pi pi-shield"></i>
+        </div>
+        <div>
+          <h2>Account actions</h2>
+          <p>Manage access to the student's account.</p>
+        </div>
+      </div>
+      <div class="account-actions">
+        <button
+          type="button"
+          class="account-action account-action--activate"
+          (click)="activeStudent(student)"
+        >
+          <i class="pi pi-check-circle"></i
+          ><span
+            ><strong>Activate account</strong
+            ><small>Allow the student to access the platform.</small></span
+          >
+        </button>
+        <button
+          type="button"
+          class="account-action account-action--suspend"
+          (click)="suspendStudent(student)"
+        >
+          <i class="pi pi-pause-circle"></i
+          ><span
+            ><strong>Suspend account</strong
+            ><small>Temporarily restrict platform access.</small></span
+          >
+        </button>
+        <button
+          type="button"
+          class="account-action account-action--restore"
+          (click)="restoreStudent(student)"
+        >
+          <i class="pi pi-refresh"></i
+          ><span
+            ><strong>Restore account</strong
+            ><small>Restore a previously deleted account.</small></span
+          >
+        </button>
+        <button
+          type="button"
+          class="account-action account-action--delete"
+          (click)="deleteStudent(student)"
+        >
+          <i class="pi pi-trash"></i
+          ><span
+            ><strong>Delete account</strong
+            ><small>Permanently remove this student account.</small></span
+          >
+        </button>
+      </div>
+    </article>
+  }
+</section>
+
+<p-confirmDialog
+  styleClass="student-action-dialog"
+  acceptLabel="Confirm"
+  rejectLabel="Cancel"
+  acceptIcon="pi pi-check"
+  rejectIcon="pi pi-times"
+>
+  <ng-template pTemplate="message" let-message>
+    <div class="confirmation-content">
+      <div class="confirmation-message">
+        <i class="pi pi-info-circle"></i><span>{{ message.message }}</span>
+      </div>
+      <label for="account-action-reason">Reason</label>
+      <textarea
+        id="account-action-reason"
+        rows="4"
+        pInputTextarea
+        [(ngModel)]="reason"
+        placeholder="Add a reason for this account action"
+      ></textarea>
+    </div>
+  </ng-template>
+</p-confirmDialog>
