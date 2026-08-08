@@ -1,1 +1,195 @@
-<p>admin-students works!</p>
+<section class="students-page">
+  <header class="page-header">
+    <div class="page-header__content">
+      <span class="page-header__eyebrow">Account administration</span>
+      <h1>Manage Students</h1>
+      <p>
+        Review student accounts, enrollment activity, and account access from
+        one place.
+      </p>
+    </div>
+
+    <div class="page-header__icon" aria-hidden="true">
+      <i class="pi pi-users"></i>
+    </div>
+  </header>
+
+  <div class="table-card">
+    <div class="table-card__header">
+      <div>
+        <h2>Students</h2>
+        <p>View student details and manage account status.</p>
+      </div>
+      <span class="students-count">{{ totalCount }} students</span>
+    </div>
+
+    @if (isLoading) {
+      <div class="table-skeleton" aria-label="Loading students">
+        @for (row of [1, 2, 3, 4, 5]; track row) {
+          <div class="skeleton-row">
+            <p-skeleton width="42px" height="18px" />
+            <div class="skeleton-student">
+              <p-skeleton shape="circle" size="38px" />
+              <p-skeleton width="130px" height="18px" />
+            </div>
+            <p-skeleton width="90px" height="18px" />
+            <p-skeleton width="60px" height="26px" borderRadius="14px" />
+            <p-skeleton width="32px" height="18px" />
+            <p-skeleton width="190px" height="36px" borderRadius="8px" />
+          </div>
+        }
+      </div>
+    } @else {
+      <p-table
+        [value]="students"
+        dataKey="id"
+        styleClass="students-table"
+        [paginator]="true"
+        [lazy]="true"
+        [lazyLoadOnInit]="false"
+        [first]="first"
+        [rows]="studentParam.pageSize"
+        [totalRecords]="totalCount"
+        [rowsPerPageOptions]="[5, 10, 20]"
+        [showCurrentPageReport]="true"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} students"
+        (onPage)="onPageChange($event)"
+        [tableStyle]="{ 'min-width': '800px' }"
+      >
+        <ng-template pTemplate="header">
+          <tr>
+            <th style="width: 8%">ID</th>
+            <th style="width: 22%">Name</th>
+            <th style="width: 15%">Joined</th>
+            <th style="width: 14%">Enrollments</th>
+            <th style="width: 8%">Age</th>
+            <th style="width: 33%" class="actions-heading">Actions</th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-student>
+          <tr [class.instructor-row]="student.isInstructor">
+            <td>
+              <span class="student-id">#{{ student.id }}</span>
+            </td>
+            <td>
+              <div class="student-name">
+                <span class="student-avatar">{{
+                  student.name?.charAt(0) | uppercase
+                }}</span>
+                <div class="student-identity">
+                  <span>{{ student.name }}</span>
+                  @if (student.isInstructor) {
+                    <p-tag
+                      value="Instructor"
+                      severity="info"
+                      icon="pi pi-verified"
+                    />
+                  }
+                </div>
+              </div>
+            </td>
+            <td>{{ student.createdAt | date: "mediumDate" }}</td>
+            <td>
+              <span class="enrollment-count">{{
+                student.numberOfEnrollments
+              }}</span>
+            </td>
+            <td>{{ student.age }}</td>
+            <td>
+              <div class="row-actions">
+                <button
+                  pButton
+                  type="button"
+                  icon="pi pi-eye"
+                  class="p-button-rounded p-button-text action-view"
+                  (click)="viewDetails(student)"
+                  pTooltip="View details"
+                  tooltipPosition="top"
+                  aria-label="View student details"
+                ></button>
+                <button
+                  pButton
+                  type="button"
+                  icon="pi pi-check-circle"
+                  class="p-button-rounded p-button-text action-activate"
+                  (click)="activeStudent(student)"
+                  pTooltip="Activate"
+                  tooltipPosition="top"
+                  aria-label="Activate student"
+                ></button>
+                <button
+                  pButton
+                  type="button"
+                  icon="pi pi-pause-circle"
+                  class="p-button-rounded p-button-text action-suspend"
+                  (click)="suspendStudent(student)"
+                  pTooltip="Suspend"
+                  tooltipPosition="top"
+                  aria-label="Suspend student"
+                ></button>
+                <button
+                  pButton
+                  type="button"
+                  icon="pi pi-refresh"
+                  class="p-button-rounded p-button-text action-restore"
+                  (click)="restoreStudent(student)"
+                  pTooltip="Restore"
+                  tooltipPosition="top"
+                  aria-label="Restore student"
+                ></button>
+                <button
+                  pButton
+                  type="button"
+                  icon="pi pi-trash"
+                  class="p-button-rounded p-button-text action-delete"
+                  (click)="deleteStudent(student)"
+                  pTooltip="Delete"
+                  tooltipPosition="top"
+                  aria-label="Delete student"
+                ></button>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="6">
+              <div class="empty-state">
+                <i class="pi pi-users"></i>
+                <h3>No students found</h3>
+                <p>There are no student accounts to display right now.</p>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    }
+  </div>
+</section>
+
+<p-confirmDialog
+  styleClass="student-action-dialog"
+  acceptLabel="Confirm"
+  rejectLabel="Cancel"
+  acceptIcon="pi pi-check"
+  rejectIcon="pi pi-times"
+>
+  <ng-template pTemplate="message" let-message>
+    <div class="confirmation-content">
+      <div class="confirmation-message">
+        <i class="pi pi-info-circle"></i>
+        <span>{{ message.message }}</span>
+      </div>
+      <label for="account-action-reason">Reason</label>
+      <textarea
+        id="account-action-reason"
+        rows="4"
+        pInputTextarea
+        [(ngModel)]="reason"
+        placeholder="Add a reason for this account action"
+      ></textarea>
+    </div>
+  </ng-template>
+</p-confirmDialog>
