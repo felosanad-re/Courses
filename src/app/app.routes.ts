@@ -312,7 +312,7 @@ export const routes: Routes = [
           ).then((c) => c.AdminInstructorsComponent),
       },
       {
-        path: 'instructors/:instructorId',
+        path: 'instructor/:instructorId',
         loadComponent: () =>
           import(
             `./Pages/Admin/instructor-details/instructor-details.component`

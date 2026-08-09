@@ -189,6 +189,7 @@
           @for (action of quickActionItems; track action.label) {
             <a
               [routerLink]="action.route"
+              [queryParams]="action.queryParams"
               class="quick-action"
               [class]="'quick-action--' + action.color"
             >
