@@ -19,6 +19,7 @@ import { FormsModule } from '@angular/forms';
 import { InputTextareaModule } from 'primeng/inputtextarea';
 import { AccountActionRequest } from '../../../Core/Interfaces/AdminInterfaces/account-action-request';
 import { AccountActionsService } from '../../../Core/Services/Admin/account-actions.service';
+import { PaginatorState } from 'primeng/paginator';
 
 @Component({
   selector: 'app-admin-students',
@@ -133,14 +134,15 @@ export class AdminStudentsComponent implements OnInit {
     );
   }
 
-  onPageChange(event: { first?: number; rows?: number }): void {
+  onPageChange(event: PaginatorState): void {
     const pageSize = event.rows ?? this.studentParam.pageSize;
     const first = event.first ?? 0;
-    const pageIndex = Math.floor(first / pageSize) + 1;
 
     this.first = first;
-    this.studentParam.pageIndex = pageIndex;
+
     this.studentParam.pageSize = pageSize;
+    this.studentParam.pageIndex = Math.floor(first / pageSize) + 1;
+
     this.loadStudents();
   }
 }

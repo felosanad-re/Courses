@@ -1,5 +1,5 @@
 import { UpdateCourseStatusRequest } from './../../../Core/Interfaces/AdminInterfaces/update-course-status-request';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AdminManagementCoursesService } from './../../../Core/Services/Admin/admin-management-courses.service';
 import { Component, OnInit } from '@angular/core';
 import { NotificationsService } from '../../../Core/Services/notifications.service';
@@ -51,6 +51,7 @@ export class AdminCoursesComponent implements OnInit {
   constructor(
     private readonly _adminManagementCoursesService: AdminManagementCoursesService,
     private readonly _router: Router,
+    private readonly _route: ActivatedRoute,
     private readonly _notifications: NotificationsService,
   ) {}
 
@@ -62,7 +63,19 @@ export class AdminCoursesComponent implements OnInit {
       { label: 'Suspended', value: CourseStatus.Suspended },
     ];
 
-    this.loadCourses();
+    this._route.queryParams.subscribe((params) => {
+      const requestedStatus = Number(params['status']);
+      const isValidStatus = this.courseStatus.some(
+        (option) => option.value === requestedStatus,
+      );
+
+      this.status = isValidStatus
+        ? (requestedStatus as CourseStatus)
+        : CourseStatus.PendingReview;
+      this.first = 0;
+      this.coursesParams.pageIndex = 1;
+      this.loadCourses();
+    });
   }
 
   loadCourses(): void {

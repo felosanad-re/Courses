@@ -1,1 +1,190 @@
-<p>admin-instructors works!</p>
+<section class="instructors-page">
+  <header class="page-header">
+    <div class="page-header__content">
+      <span class="page-header__eyebrow">Account administration</span>
+      <h1>Manage Instructors</h1>
+      <p>
+        Review instructor accounts, published courses, and account access from
+        one place.
+      </p>
+    </div>
+
+    <div class="page-header__icon" aria-hidden="true">
+      <i class="pi pi-users"></i>
+    </div>
+  </header>
+
+  <div class="table-card">
+    <div class="table-card__header">
+      <div>
+        <h2>Instructors</h2>
+        <p>View instructor details and manage account status.</p>
+      </div>
+      <span class="instructors-count">{{ totalCount }} instructors</span>
+    </div>
+
+    @if (isLoading) {
+      <div class="table-skeleton" aria-label="Loading instructors">
+        @for (row of [1, 2, 3, 4, 5]; track row) {
+          <div class="skeleton-row">
+            <p-skeleton width="42px" height="18px" />
+            <div class="skeleton-instructor">
+              <p-skeleton shape="circle" size="38px" />
+              <p-skeleton width="130px" height="18px" />
+            </div>
+            <p-skeleton width="90px" height="18px" />
+            <p-skeleton width="60px" height="26px" borderRadius="14px" />
+            <p-skeleton width="32px" height="18px" />
+            <p-skeleton width="190px" height="36px" borderRadius="8px" />
+          </div>
+        }
+      </div>
+    } @else {
+      <p-table
+        [value]="instructors"
+        dataKey="id"
+        styleClass="instructors-table"
+        [paginator]="true"
+        [lazy]="true"
+        [lazyLoadOnInit]="false"
+        [first]="first"
+        [rows]="instructorParams.pageSize"
+        [totalRecords]="totalCount"
+        [rowsPerPageOptions]="[5, 10, 20]"
+        [showCurrentPageReport]="true"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} instructors"
+        (onPage)="onPageChange($event)"
+        [tableStyle]="{ 'min-width': '800px' }"
+      >
+        <ng-template pTemplate="header">
+          <tr>
+            <th style="width: 8%">ID</th>
+            <th style="width: 20%">Name</th>
+            <th style="width: 12%">Joined</th>
+            <th style="width: 12%">Specialization</th>
+            <th style="width: 12%">Approved At</th>
+            <th style="width: 12%">Courses</th>
+            <th style="width: 8%">Age</th>
+            <th style="width: 16%" class="actions-heading">Actions</th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-instructor>
+          <tr>
+            <td>
+              <span class="instructor-id">#{{ instructor.id }}</span>
+            </td>
+            <td>
+              <div class="instructor-name">
+                <span class="instructor-avatar">
+                  {{ instructor.name?.charAt(0) | uppercase }}
+                </span>
+                <span>{{ instructor.name || "Unnamed instructor" }}</span>
+              </div>
+            </td>
+            <td>{{ instructor.createdAt | date: "mediumDate" }}</td>
+            <td>{{ instructor.specialization }}</td>
+            <td>{{ instructor.approvedAt | date: "mediumDate" }}</td>
+            <td>
+              <span class="courses-count">{{
+                instructor.numberOfCourses
+              }}</span>
+            </td>
+            <td>{{ instructor.age }}</td>
+            <td>
+              <div class="row-actions">
+                <button
+                  pButton
+                  type="button"
+                  icon="pi pi-eye"
+                  class="p-button-rounded p-button-text action-view"
+                  (click)="viewDetails(instructor)"
+                  pTooltip="View details"
+                  tooltipPosition="top"
+                  aria-label="View Instructor details"
+                ></button>
+                <button
+                  pButton
+                  type="button"
+                  icon="pi pi-check-circle"
+                  class="p-button-rounded p-button-text action-activate"
+                  (click)="activeInstructor(instructor)"
+                  pTooltip="Activate"
+                  tooltipPosition="top"
+                  aria-label="Activate Instructor"
+                ></button>
+                <button
+                  pButton
+                  type="button"
+                  icon="pi pi-pause-circle"
+                  class="p-button-rounded p-button-text action-suspend"
+                  (click)="suspendInstructor(instructor)"
+                  pTooltip="Suspend"
+                  tooltipPosition="top"
+                  aria-label="Suspend Instructor"
+                ></button>
+                <button
+                  pButton
+                  type="button"
+                  icon="pi pi-refresh"
+                  class="p-button-rounded p-button-text action-restore"
+                  (click)="restoreInstructor(instructor)"
+                  pTooltip="Restore"
+                  tooltipPosition="top"
+                  aria-label="Restore Instructor"
+                ></button>
+                <button
+                  pButton
+                  type="button"
+                  icon="pi pi-trash"
+                  class="p-button-rounded p-button-text action-delete"
+                  (click)="deleteInstructor(instructor)"
+                  pTooltip="Delete"
+                  tooltipPosition="top"
+                  aria-label="Delete Instructor"
+                ></button>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="8">
+              <div class="empty-state">
+                <i class="pi pi-users"></i>
+                <h3>No instructors found</h3>
+                <p>There are no instructor accounts to display right now.</p>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    }
+  </div>
+</section>
+
+<p-confirmDialog
+  styleClass="instructor-action-dialog"
+  acceptLabel="Confirm"
+  rejectLabel="Cancel"
+  acceptIcon="pi pi-check"
+  rejectIcon="pi pi-times"
+>
+  <ng-template pTemplate="message" let-message>
+    <div class="confirmation-content">
+      <div class="confirmation-message">
+        <i class="pi pi-info-circle"></i>
+        <span>{{ message.message }}</span>
+      </div>
+      <label for="account-action-reason">Reason</label>
+      <textarea
+        id="account-action-reason"
+        rows="4"
+        pInputTextarea
+        [(ngModel)]="reason"
+        placeholder="Add a reason for this account action"
+      ></textarea>
+    </div>
+  </ng-template>
+</p-confirmDialog>

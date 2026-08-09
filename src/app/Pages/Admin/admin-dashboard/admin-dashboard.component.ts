@@ -1,7 +1,7 @@
 import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { AdminDashboardService } from '../../../Core/Services/Admin/admin-dashboard.service';
 import { NotificationsService } from '../../../Core/Services/notifications.service';
 import { ApplicationResult } from '../../../Core/Interfaces/application-result';
@@ -13,6 +13,7 @@ import { finalize } from 'rxjs';
 import { ButtonDirective } from 'primeng/button';
 import { RatingModule } from 'primeng/rating';
 import { ChartsRequest } from '../../../Core/Interfaces/Analyzer/charts-request';
+import { CourseStatus } from '../../../Core/Interfaces/Courses/course-status';
 
 interface StatsCard {
   icon: string;
@@ -26,6 +27,7 @@ interface StatsCard {
 interface QuickAction {
   icon: string;
   label: string;
+  queryParams: any;
   count: number;
   route: string;
   color: string;
@@ -90,6 +92,7 @@ export class AdminDashboardComponent implements OnInit {
   constructor(
     private readonly _adminDashboardService: AdminDashboardService,
     private readonly _notifications: NotificationsService,
+    private readonly _router: Router,
     @Inject(PLATFORM_ID) private readonly _platformId: object,
   ) {}
 
@@ -135,8 +138,6 @@ export class AdminDashboardComponent implements OnInit {
       fromDate: this.fromDate.toISOString(),
       toDate: this.toDate.toISOString(),
     };
-    console.log(this.fromDate);
-    console.log(this.toDate);
     this.isChartsLoading = true;
     this._adminDashboardService
       .getCharts(chartRequest)
@@ -244,21 +245,24 @@ export class AdminDashboardComponent implements OnInit {
         icon: 'pi-file-edit',
         label: 'Draft Courses',
         count: this.quickActions.draftCoursesCount,
-        route: '/admin/courses?status=draft',
+        route: '/admin/courses',
+        queryParams: { status: CourseStatus.Draft },
         color: 'gray',
       },
       {
         icon: 'pi-clock',
         label: 'Pending Courses',
         count: this.quickActions.pendingCoursesCount,
-        route: '/admin/courses?status=pending',
+        route: '/admin/courses',
+        queryParams: { status: CourseStatus.PendingReview },
         color: 'yellow',
       },
       {
         icon: 'pi-user-plus',
         label: 'Pending Instructors',
         count: this.quickActions.pendingInstructorsCount,
-        route: '/admin/instructors?status=pending',
+        route: '/admin/instructors',
+        queryParams: { status: 'pending' },
         color: 'indigo',
       },
     ];
