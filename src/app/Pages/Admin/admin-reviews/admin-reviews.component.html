@@ -1,1 +1,214 @@
-<p>admin-reviews works!</p>
+<section class="reviews-page">
+  <header class="page-header">
+    <div class="page-header__content">
+      <span class="page-header__eyebrow">Content moderation</span>
+      <h1>Manage Reviews</h1>
+      <p>
+        Monitor course feedback, inspect student comments, and remove
+        inappropriate reviews.
+      </p>
+    </div>
+
+    <div class="page-header__icon" aria-hidden="true">
+      <i class="pi pi-star-fill"></i>
+    </div>
+  </header>
+
+  <div class="table-card">
+    <div class="table-card__header">
+      <div>
+        <h2>Course Reviews</h2>
+        <p>Review the latest ratings and feedback shared by students.</p>
+      </div>
+      <span class="reviews-count">{{ totalCount }} reviews</span>
+    </div>
+
+    <p-table
+      [value]="reviews"
+      dataKey="id"
+      [loading]="isLoading"
+      styleClass="reviews-table"
+      [paginator]="true"
+      [lazy]="true"
+      [lazyLoadOnInit]="false"
+      [first]="first"
+      [rows]="reviewParams.pageSize"
+      [totalRecords]="totalCount"
+      [rowsPerPageOptions]="[5, 10, 20]"
+      [showCurrentPageReport]="true"
+      currentPageReportTemplate="Showing {first} to {last} of {totalRecords} reviews"
+      (onPage)="onPageChange($event)"
+      [tableStyle]="{ 'min-width': '920px' }"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th style="width: 8%">ID</th>
+          <th style="width: 28%">Course</th>
+          <th style="width: 22%">Student</th>
+          <th style="width: 15%">Average rating</th>
+          <th style="width: 12%">Reviews</th>
+          <th style="width: 15%" class="actions-heading">Actions</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-review>
+        <tr>
+          <td>
+            <span class="review-id">#{{ review.id }}</span>
+          </td>
+          <td>
+            <div class="course-cell">
+              <img [src]="review.image" [alt]="review.courseName + ' cover'" />
+              <span class="course-cell__name">{{ review.courseName }}</span>
+            </div>
+          </td>
+          <td>
+            <div class="student-cell">
+              <span class="student-avatar">{{
+                review.studentName?.charAt(0) | uppercase
+              }}</span>
+              <span>{{ review.studentName }}</span>
+            </div>
+          </td>
+          <td>
+            <div
+              class="rating-summary"
+              [attr.aria-label]="review.averageRating + ' out of 5 stars'"
+            >
+              <span class="rating-value">{{
+                review.averageRating | number: "1.1-1"
+              }}</span>
+              <span class="stars" aria-hidden="true">
+                @for (star of [1, 2, 3, 4, 5]; track star) {
+                  <i
+                    class="pi"
+                    [class.pi-star-fill]="star <= review.averageRating"
+                    [class.pi-star]="star > review.averageRating"
+                  ></i>
+                }
+              </span>
+            </div>
+          </td>
+          <td>
+            <span class="rating-count">{{ review.ratingCount }}</span>
+          </td>
+          <td>
+            <div class="row-actions">
+              <button
+                pButton
+                type="button"
+                icon="pi pi-eye"
+                class="p-button-rounded p-button-text action-view"
+                (click)="showDialog(review.id)"
+                aria-label="View review details"
+                pTooltip="View details"
+                tooltipPosition="top"
+              ></button>
+              <button
+                pButton
+                type="button"
+                icon="pi pi-book"
+                class="p-button-rounded p-button-text action-course"
+                (click)="viewCourse(review.courseId)"
+                aria-label="View course"
+                pTooltip="View course"
+                tooltipPosition="top"
+              ></button>
+              <button
+                pButton
+                type="button"
+                icon="pi pi-trash"
+                class="p-button-rounded p-button-text action-delete"
+                [disabled]="isLoadingDetails"
+                (click)="confirm(review)"
+                aria-label="Delete review"
+                pTooltip="Delete review"
+                tooltipPosition="top"
+              ></button>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="6">
+            <div class="empty-state">
+              <i class="pi pi-comments"></i>
+              <h3>No reviews found</h3>
+              <p>There are no course reviews to display right now.</p>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</section>
+
+<p-dialog
+  header="Review details"
+  [(visible)]="visible"
+  [modal]="true"
+  [draggable]="false"
+  [resizable]="false"
+  appendTo="body"
+  styleClass="review-dialog"
+>
+  @if (isLoadingDetails) {
+    <div class="details-loading" aria-label="Loading review details">
+      <i class="pi pi-spin pi-spinner"></i>
+      <span>Loading review details...</span>
+    </div>
+  } @else {
+    <div class="details-course">
+      <img [src]="review.image" [alt]="review.courseName + ' cover'" />
+      <div>
+        <span class="details-label">Course</span>
+        <h3>{{ review.courseName }}</h3>
+      </div>
+    </div>
+
+    <div class="details-grid">
+      <div class="detail-item">
+        <span class="details-label">Student</span>
+        <strong>{{ review.studentName }}</strong>
+      </div>
+      <div class="detail-item">
+        <span class="details-label">Rating</span>
+        <strong class="detail-rating"
+          ><i class="pi pi-star-fill"></i>
+          {{ review.rating | number: "1.0-1" }}/5</strong
+        >
+      </div>
+      <div class="detail-item detail-item--wide">
+        <span class="details-label">Submitted</span>
+        <strong>{{ review.createdAt | date: "mediumDate" }}</strong>
+      </div>
+    </div>
+
+    <div class="comment-block">
+      <span class="details-label">Comment</span>
+      <p>{{ review.comment || "This review does not include a comment." }}</p>
+    </div>
+  }
+</p-dialog>
+
+<p-confirmDialog
+  styleClass="review-confirm-dialog"
+  acceptLabel="Delete review"
+  rejectLabel="Keep review"
+  acceptIcon="pi pi-trash"
+  rejectIcon="pi pi-times"
+>
+  <ng-template pTemplate="message" let-message>
+    <div class="confirmation-content">
+      <div class="confirmation-message">
+        <i class="pi pi-exclamation-triangle"></i>
+        <div>
+          <strong>{{ message.header }}</strong>
+          <p>{{ message.message }}</p>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+</p-confirmDialog>
