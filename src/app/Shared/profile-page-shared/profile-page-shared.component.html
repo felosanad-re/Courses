@@ -1,0 +1,319 @@
+<section class="profile-page" aria-labelledby="profile-title">
+  <div class="profile-shell">
+    @if (isLoading) {
+      <div class="profile-card loading-card" aria-busy="true">
+        <p-skeleton width="100%" height="9rem" borderRadius="8px" />
+        <div class="loading-content">
+          <p-skeleton shape="circle" size="7rem" />
+          <p-skeleton width="15rem" height="1.75rem" />
+          <p-skeleton width="10rem" height="1rem" />
+          <div class="loading-grid">
+            <p-skeleton width="100%" height="5.5rem" borderRadius="8px" />
+            <p-skeleton width="100%" height="5.5rem" borderRadius="8px" />
+            <p-skeleton width="100%" height="5.5rem" borderRadius="8px" />
+            <p-skeleton width="100%" height="5.5rem" borderRadius="8px" />
+          </div>
+        </div>
+        <span class="sr-only">Loading profile information</span>
+      </div>
+    } @else {
+      <article class="profile-card">
+        <div class="profile-cover" aria-hidden="true">
+          <span class="profile-cover__shape profile-cover__shape--one"></span>
+          <span class="profile-cover__shape profile-cover__shape--two"></span>
+        </div>
+
+        <div class="profile-content">
+          <header class="profile-header">
+            <div class="profile-avatar" aria-hidden="true">
+              {{ initials || "U" }}
+            </div>
+
+            <div class="profile-identity">
+              <div class="profile-identity__title-row">
+                <div>
+                  <p class="eyebrow">My account</p>
+                  <h1 id="profile-title">
+                    {{ displayName || "User profile" }}
+                  </h1>
+                </div>
+
+                @if (!isEditing) {
+                  <div class="profile-actions">
+                    @if (!isInstructor) {
+                      <a
+                        class="button button--secondary"
+                        routerLink="/set-instructor-role"
+                      >
+                        <i class="pi pi-graduation-cap" aria-hidden="true"></i>
+                        Become an instructor
+                      </a>
+                    }
+                    <button
+                      class="button button--primary"
+                      type="button"
+                      (click)="startEditing()"
+                    >
+                      <i class="pi pi-pencil" aria-hidden="true"></i>
+                      Edit profile
+                    </button>
+                  </div>
+                }
+              </div>
+
+              <div class="profile-meta">
+                <span class="role-badge">
+                  <span class="role-badge__dot"></span>
+                  {{ data.userRoles?.[0] || "Student" }}
+                </span>
+                <span
+                  class="status-badge"
+                  [class.status-badge--verified]="data.emailConfirmed"
+                >
+                  <i
+                    class="pi"
+                    [class.pi-verified]="data.emailConfirmed"
+                    [class.pi-exclamation-circle]="!data.emailConfirmed"
+                    aria-hidden="true"
+                  ></i>
+                  {{
+                    data.emailConfirmed
+                      ? "Verified email"
+                      : "Email not verified"
+                  }}
+                </span>
+              </div>
+            </div>
+          </header>
+
+          @if (!isEditing) {
+            <section class="details-section" aria-labelledby="details-title">
+              <div class="section-heading">
+                <div>
+                  <p class="eyebrow">Personal information</p>
+                  <h2 id="details-title">Profile details</h2>
+                </div>
+                <p>Manage your personal information and contact details.</p>
+              </div>
+
+              <dl class="details-grid">
+                <div class="detail-item">
+                  <span class="detail-icon"
+                    ><i class="pi pi-user" aria-hidden="true"></i
+                  ></span>
+                  <div>
+                    <dt>Full name</dt>
+                    <dd>{{ displayName || "Not provided" }}</dd>
+                  </div>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-icon"
+                    ><i class="pi pi-envelope" aria-hidden="true"></i
+                  ></span>
+                  <div>
+                    <dt>Email address</dt>
+                    <dd>{{ data.email || "Not provided" }}</dd>
+                  </div>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-icon"
+                    ><i class="pi pi-phone" aria-hidden="true"></i
+                  ></span>
+                  <div>
+                    <dt>Phone number</dt>
+                    <dd>{{ data.phoneNumber || "Not provided" }}</dd>
+                  </div>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-icon"
+                    ><i class="pi pi-map-marker" aria-hidden="true"></i
+                  ></span>
+                  <div>
+                    <dt>Address</dt>
+                    <dd>{{ data.address || "Not provided" }}</dd>
+                  </div>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-icon"
+                    ><i class="pi pi-calendar" aria-hidden="true"></i
+                  ></span>
+                  <div>
+                    <dt>Birthday</dt>
+                    <dd>
+                      {{
+                        data.birthday
+                          ? (data.birthday | date: "MMMM d, y")
+                          : "Not provided"
+                      }}
+                    </dd>
+                  </div>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-icon"
+                    ><i class="pi pi-at" aria-hidden="true"></i
+                  ></span>
+                  <div>
+                    <dt>Username</dt>
+                    <dd>{{ data.userName || "Not provided" }}</dd>
+                  </div>
+                </div>
+              </dl>
+            </section>
+          } @else {
+            <section class="edit-section" aria-labelledby="edit-title">
+              <div class="section-heading">
+                <div>
+                  <p class="eyebrow">Update information</p>
+                  <h2 id="edit-title">Edit profile</h2>
+                </div>
+                <p>Fields marked with an asterisk are required.</p>
+              </div>
+
+              <form
+                [formGroup]="profileForm"
+                (ngSubmit)="submitEdit()"
+                novalidate
+              >
+                <div class="form-grid">
+                  <div class="form-field">
+                    <label for="firstName">First name <span>*</span></label>
+                    <input
+                      id="firstName"
+                      type="text"
+                      formControlName="firstName"
+                      autocomplete="given-name"
+                      placeholder="Enter your first name"
+                      [class.input--invalid]="
+                        profileForm.controls.firstName.invalid &&
+                        profileForm.controls.firstName.touched
+                      "
+                    />
+                    @if (
+                      profileForm.controls.firstName.invalid &&
+                      profileForm.controls.firstName.touched
+                    ) {
+                      <small>Please enter a valid first name.</small>
+                    }
+                  </div>
+
+                  <div class="form-field">
+                    <label for="lastName">Last name <span>*</span></label>
+                    <input
+                      id="lastName"
+                      type="text"
+                      formControlName="lastName"
+                      autocomplete="family-name"
+                      placeholder="Enter your last name"
+                      [class.input--invalid]="
+                        profileForm.controls.lastName.invalid &&
+                        profileForm.controls.lastName.touched
+                      "
+                    />
+                    @if (
+                      profileForm.controls.lastName.invalid &&
+                      profileForm.controls.lastName.touched
+                    ) {
+                      <small>Please enter a valid last name.</small>
+                    }
+                  </div>
+
+                  <div class="form-field">
+                    <label for="phoneNumber">Phone number <span>*</span></label>
+                    <input
+                      id="phoneNumber"
+                      type="tel"
+                      formControlName="phoneNumber"
+                      autocomplete="tel"
+                      placeholder="Enter your phone number"
+                      [class.input--invalid]="
+                        profileForm.controls.phoneNumber.invalid &&
+                        profileForm.controls.phoneNumber.touched
+                      "
+                    />
+                    @if (
+                      profileForm.controls.phoneNumber.invalid &&
+                      profileForm.controls.phoneNumber.touched
+                    ) {
+                      <small>Please enter a valid phone number.</small>
+                    }
+                  </div>
+
+                  <div class="form-field">
+                    <label for="address">Address <span>*</span></label>
+                    <input
+                      id="address"
+                      type="text"
+                      formControlName="address"
+                      autocomplete="street-address"
+                      placeholder="Enter your address"
+                      [class.input--invalid]="
+                        profileForm.controls.address.invalid &&
+                        profileForm.controls.address.touched
+                      "
+                    />
+                    @if (
+                      profileForm.controls.address.invalid &&
+                      profileForm.controls.address.touched
+                    ) {
+                      <small>Please enter your address.</small>
+                    }
+                  </div>
+
+                  <div class="form-field">
+                    <label for="birthday">Birthday <span>*</span></label>
+                    <input
+                      id="birthday"
+                      type="date"
+                      formControlName="birthday"
+                      autocomplete="bday"
+                      [max]="maxBirthday"
+                      [class.input--invalid]="
+                        profileForm.controls.birthday.invalid &&
+                        profileForm.controls.birthday.touched
+                      "
+                    />
+                    @if (
+                      profileForm.controls.birthday.invalid &&
+                      profileForm.controls.birthday.touched
+                    ) {
+                      <small>Please select your birthday.</small>
+                    }
+                  </div>
+                </div>
+
+                <div class="readonly-note">
+                  <i class="pi pi-info-circle" aria-hidden="true"></i>
+                  Email and username cannot be changed from this page.
+                </div>
+
+                <div class="form-actions">
+                  <button
+                    class="button button--secondary"
+                    type="button"
+                    [disabled]="isSaving"
+                    (click)="cancelEditing()"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    class="button button--primary"
+                    type="submit"
+                    [disabled]="isSaving"
+                  >
+                    @if (isSaving) {
+                      <i class="pi pi-spin pi-spinner" aria-hidden="true"></i>
+                      Saving changes...
+                    } @else {
+                      <i class="pi pi-check" aria-hidden="true"></i>
+                      Save changes
+                    }
+                  </button>
+                </div>
+              </form>
+            </section>
+          }
+        </div>
+      </article>
+    }
+  </div>
+</section>
