@@ -9,8 +9,19 @@
       </p>
     </div>
 
-    <div class="page-header__icon" aria-hidden="true">
-      <i class="pi pi-users"></i>
+    <div class="page-header__actions">
+      <button
+        pButton
+        type="button"
+        label="Pending Requests"
+        icon="pi pi-clock"
+        class="pending-requests-button"
+        (click)="goToPendingRequests()"
+      ></button>
+
+      <div class="page-header__icon" aria-hidden="true">
+        <i class="pi pi-users"></i>
+      </div>
     </div>
   </header>
 

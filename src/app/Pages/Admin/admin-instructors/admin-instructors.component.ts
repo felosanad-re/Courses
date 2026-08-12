@@ -73,6 +73,10 @@ export class AdminInstructorsComponent implements OnInit {
     this._router.navigate([`/admin/instructor/${instructor.id}`]);
   }
 
+  goToPendingRequests(): void {
+    this._router.navigate(['/admin/instructor-requests']);
+  }
+
   deleteInstructor(instructor: AdminInstructorResponse): void {
     const req: AccountActionRequest = { reason: this.reason.trim() };
     this._accountActions.accountAction(

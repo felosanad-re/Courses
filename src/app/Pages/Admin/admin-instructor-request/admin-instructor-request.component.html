@@ -1,0 +1,247 @@
+@if (isLoading) {
+  <p-skeleton width="100%" height="9rem" borderRadius="8px"></p-skeleton>
+  <div class="loading-content">
+    <p-skeleton shape="circle" size="7rem"></p-skeleton>
+    <p-skeleton width="15rem" height="1.75rem"></p-skeleton>
+    <p-skeleton width="10rem" height="1rem"></p-skeleton>
+    <div class="loading-grid">
+      <p-skeleton width="100%" height="5.5rem" borderRadius="8px"></p-skeleton>
+      <p-skeleton width="100%" height="5.5rem" borderRadius="8px"></p-skeleton>
+      <p-skeleton width="100%" height="5.5rem" borderRadius="8px"></p-skeleton>
+      <p-skeleton width="100%" height="5.5rem" borderRadius="8px"></p-skeleton>
+    </div>
+  </div>
+  <span class="sr-only">Loading instructor requests</span>
+} @else {
+  <section class="requests-page">
+    <header class="page-header">
+      <div class="page-header__content">
+        <span class="page-header__eyebrow">Application management</span>
+        <h1>Instructor Requests</h1>
+        <p>
+          Review instructor applications, inspect applicant details, and manage
+          acceptance decisions from one place.
+        </p>
+      </div>
+
+      <div class="page-header__icon" aria-hidden="true">
+        <i class="pi pi-user-plus"></i>
+      </div>
+    </header>
+
+    <div class="table-card">
+      <div class="table-card__header">
+        <div>
+          <h2>Pending Applications</h2>
+          <p>Review the latest requests submitted by potential instructors.</p>
+        </div>
+        <span class="requests-count">{{ totalCount }} requests</span>
+      </div>
+
+      <p-table
+        [value]="requests"
+        dataKey="id"
+        styleClass="requests-table"
+        [paginator]="true"
+        [lazy]="true"
+        [lazyLoadOnInit]="false"
+        [first]="first"
+        [rows]="instructorRequestParams.pageSize"
+        [totalRecords]="totalCount"
+        [rowsPerPageOptions]="[5, 10, 20]"
+        [showCurrentPageReport]="true"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} requests"
+        (onPage)="onPageChange($event)"
+        [tableStyle]="{ 'min-width': '800px' }"
+      >
+        <ng-template pTemplate="header">
+          <tr>
+            <th style="width: 8%">ID</th>
+            <th style="width: 22%">Full Name</th>
+            <th style="width: 16%">Created At</th>
+            <th style="width: 16%">Experience</th>
+            <th style="width: 18%">Specialty</th>
+            <th style="width: 20%" class="actions-heading">Actions</th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-request>
+          <tr>
+            <td>
+              <span class="request-id">#{{ request.id }}</span>
+            </td>
+            <td>
+              <div class="request-name">
+                <span class="request-avatar" aria-hidden="true">{{
+                  request.fullName?.charAt(0) | uppercase
+                }}</span>
+                <span>{{ request.fullName }}</span>
+              </div>
+            </td>
+            <td>{{ request.createdAt | date: "mediumDate" }}</td>
+            <td>
+              <span class="experience-value"
+                >{{ request.experienceYears }} years</span
+              >
+            </td>
+            <td>{{ request.specialty }}</td>
+            <td>
+              <div class="row-actions">
+                <button
+                  pButton
+                  type="button"
+                  icon="pi pi-eye"
+                  class="p-button-rounded p-button-text action-view"
+                  (click)="getRequestDetails(request)"
+                  pTooltip="View details"
+                  tooltipPosition="top"
+                  aria-label="View request details"
+                ></button>
+                <button
+                  pButton
+                  type="button"
+                  icon="pi pi-check"
+                  class="p-button-rounded p-button-text action-approve"
+                  (click)="approveRequest(request)"
+                  pTooltip="Accept request"
+                  tooltipPosition="top"
+                  aria-label="Accept instructor request"
+                ></button>
+                <button
+                  pButton
+                  type="button"
+                  icon="pi pi-times"
+                  class="p-button-rounded p-button-text action-reject"
+                  (click)="rejectedRequest(request)"
+                  pTooltip="Reject request"
+                  tooltipPosition="top"
+                  aria-label="Reject instructor request"
+                ></button>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="6">
+              <div class="empty-state">
+                <i class="pi pi-users"></i>
+                <h3>No requests found</h3>
+                <p>There are no instructor requests to display right now.</p>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </section>
+}
+
+<p-dialog
+  header="Instructor request details"
+  [(visible)]="visible"
+  [modal]="true"
+  [draggable]="false"
+  [resizable]="false"
+  appendTo="body"
+  styleClass="request-details-dialog"
+>
+  @if (isLoadingDetails) {
+    <div class="details-loading" aria-label="Loading request details">
+      <i class="pi pi-spin pi-spinner"></i>
+      <span>Loading request details...</span>
+    </div>
+  } @else {
+    <div class="details-heading">
+      <div class="details-avatar" aria-hidden="true">
+        {{ request.fullName?.charAt(0) | uppercase }}
+      </div>
+      <div>
+        <span class="details-label">Applicant</span>
+        <h3>{{ request.fullName || "—" }}</h3>
+        <span class="request-reference">Request #{{ request.id }}</span>
+      </div>
+      <span class="status-badge">{{ request.status || "Pending" }}</span>
+    </div>
+
+    <div class="details-grid">
+      <div class="detail-item">
+        <span class="details-label">Email</span>
+        <strong>{{ request.email || "—" }}</strong>
+      </div>
+      <div class="detail-item">
+        <span class="details-label">Specialty</span>
+        <strong>{{ request.specialty || "—" }}</strong>
+      </div>
+      <div class="detail-item">
+        <span class="details-label">Experience</span>
+        <strong>{{ request.experienceYears }} years</strong>
+      </div>
+      <div class="detail-item">
+        <span class="details-label">Submitted</span>
+        <strong>{{ request.createdAt | date: "mediumDate" }}</strong>
+      </div>
+    </div>
+
+    <div class="comment-block">
+      <span class="details-label">Bio</span>
+      <p>{{ request.bio || "No bio was provided." }}</p>
+    </div>
+
+    @if (request.rejectionReason) {
+      <div class="comment-block comment-block--rejection">
+        <span class="details-label">Rejection reason</span>
+        <p>{{ request.rejectionReason }}</p>
+      </div>
+    }
+  }
+
+  <ng-template pTemplate="footer">
+    <div class="dialog-actions">
+      <button
+        pButton
+        type="button"
+        label="Reject"
+        icon="pi pi-times"
+        class="p-button-outlined reject-button"
+        [disabled]="isLoadingDetails || isProcessingRequest"
+        (click)="rejectedRequest(request)"
+      ></button>
+      <button
+        pButton
+        type="button"
+        label="Accept"
+        icon="pi pi-check"
+        class="accept-button"
+        [disabled]="isLoadingDetails || isProcessingRequest"
+        (click)="approveRequest(request)"
+      ></button>
+    </div>
+  </ng-template>
+</p-dialog>
+
+<p-confirmDialog
+  styleClass="requests-action-dialog"
+  acceptLabel="Confirm"
+  rejectLabel="Cancel"
+  acceptIcon="pi pi-check"
+  rejectIcon="pi pi-times"
+>
+  <ng-template pTemplate="message" let-message>
+    <div class="confirmation-content">
+      <div class="confirmation-message">
+        <i class="pi pi-info-circle"></i>
+        <span>{{ message.message }}</span>
+      </div>
+      <label for="account-action-reason">Reason</label>
+      <textarea
+        id="account-action-reason"
+        rows="4"
+        pInputTextarea
+        [(ngModel)]="reason"
+        placeholder="Add a reason for this action"
+      ></textarea>
+    </div>
+  </ng-template>
+</p-confirmDialog>
