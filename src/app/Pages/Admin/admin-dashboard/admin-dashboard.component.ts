@@ -27,7 +27,7 @@ interface StatsCard {
 interface QuickAction {
   icon: string;
   label: string;
-  queryParams: any;
+  queryParams?: any;
   count: number;
   route: string;
   color: string;
@@ -261,8 +261,7 @@ export class AdminDashboardComponent implements OnInit {
         icon: 'pi-user-plus',
         label: 'Pending Instructors',
         count: this.quickActions.pendingInstructorsCount,
-        route: '/admin/instructors',
-        queryParams: { status: 'pending' },
+        route: '/admin/instructor-requests',
         color: 'indigo',
       },
     ];

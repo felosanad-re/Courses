@@ -10,6 +10,8 @@ import {
 import { InstructorRequestService } from '../../../Core/Services/InstructorsRequest/instructor-request.service';
 import { ApplicationResult } from '../../../Core/Interfaces/application-result';
 import { ApplyInstructorResponse } from '../../../Core/Interfaces/InstructorsRequest/apply-instructor-response';
+import { finalize } from 'rxjs';
+import { NotificationsService } from '../../../Core/Services/notifications.service';
 
 @Component({
   selector: 'app-set-instructor-role',
@@ -27,17 +29,11 @@ export class SetInstructorRoleComponent {
   constructor(
     private readonly _fb: FormBuilder,
     private readonly _instructorService: InstructorRequestService,
+    private readonly _notifications: NotificationsService,
     private readonly _router: Router,
   ) {
     this.instructorForm = this._fb.group({
-      bio: [
-        '',
-        [
-          Validators.required,
-          Validators.minLength(50),
-          Validators.maxLength(500),
-        ],
-      ],
+      bio: ['', [Validators.required, Validators.maxLength(500)]],
       specialty: [
         '',
         [
@@ -72,22 +68,21 @@ export class SetInstructorRoleComponent {
     this.isSubmitting.set(true);
     this.errorMessage.set(null);
 
-    this._instructorService.applyRequest(this.instructorForm.value).subscribe({
-      next: (response: ApplicationResult<ApplyInstructorResponse>) => {
-        this.isSubmitting.set(false);
-        if (response.succeed) {
-          // Redirect to home after successful request
-          this._router.navigate(['/']);
-        } else {
-          this.errorMessage.set(response.message || 'Failed to submit request');
-        }
-      },
-      error: (err) => {
-        this.isSubmitting.set(false);
-        this.errorMessage.set(
-          err.error?.message || 'An error occurred. Please try again.',
-        );
-      },
-    });
+    this._instructorService
+      .applyRequest(this.instructorForm.value)
+      .pipe(finalize(() => this.isSubmitting.set(false)))
+      .subscribe({
+        next: (response: ApplicationResult<ApplyInstructorResponse>) => {
+          this.isSubmitting.set(false);
+          if (response.succeed) {
+            // Redirect to home after successful request
+            this._router.navigate(['/']);
+            this._notifications.showSuccess(
+              response.message || 'Your request has been submitted',
+              'Success',
+            );
+          }
+        },
+      });
   }
 }

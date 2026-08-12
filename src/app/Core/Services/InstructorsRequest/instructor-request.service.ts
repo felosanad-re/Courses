@@ -21,28 +21,4 @@ export class InstructorRequestService {
       data,
     );
   }
-  // Approve Request
-  approveRequest(
-    reqId: number,
-  ): Observable<ApplicationResult<ApplyInstructorResponse>> {
-    return this._http.put<ApplicationResult<ApplyInstructorResponse>>(
-      `${environment.apiUrl}/InstructorRequest/Approve/${reqId}`,
-      {},
-    );
-  }
-  // Reject Request
-  rejectRequest(
-    reqId: number,
-  ): Observable<ApplicationResult<ApplyInstructorResponse>> {
-    return this._http.put<ApplicationResult<ApplyInstructorResponse>>(
-      `${environment.apiUrl}/InstructorRequest/Reject/${reqId}`,
-      {},
-    );
-  }
-  // Get All Requests
-  getAllRequest(): Observable<ApplicationResult<ApplyInstructorResponse[]>> {
-    return this._http.get<ApplicationResult<ApplyInstructorResponse[]>>(
-      `${environment.apiUrl}/InstructorRequest/All`,
-    );
-  }
 }

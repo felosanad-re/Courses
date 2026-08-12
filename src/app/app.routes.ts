@@ -339,6 +339,13 @@ export const routes: Routes = [
             (c) => c.CourseDetailsComponent,
           ),
       },
+      {
+        path: 'instructor-requests',
+        loadComponent: () =>
+          import(
+            `./Pages/Admin/admin-instructor-request/admin-instructor-request.component`
+          ).then((c) => c.AdminInstructorRequestComponent),
+      },
     ],
   },
   {

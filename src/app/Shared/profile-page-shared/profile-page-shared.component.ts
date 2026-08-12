@@ -102,9 +102,9 @@ export class ProfilePageSharedComponent implements OnChanges {
 
   get isInstructor(): boolean {
     return (
-      this.data.userRoles?.some(
-        (role) => role.toLowerCase() === 'instructor' || 'admin',
-      ) ?? false
+      this.data.userRoles?.some((role) => {
+        role.toLowerCase() === 'instructor' || role.toLowerCase() === 'admin';
+      }) ?? false
     );
   }
 

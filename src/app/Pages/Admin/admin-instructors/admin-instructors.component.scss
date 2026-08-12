@@ -73,9 +73,16 @@
     font-size: 14px;
   }
 
-  &__icon {
+  &__actions {
     position: relative;
     z-index: 1;
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    gap: 14px;
+  }
+
+  &__icon {
     display: grid;
     flex: 0 0 72px;
     width: 72px;
@@ -89,6 +96,29 @@
     i {
       font-size: 30px;
     }
+  }
+}
+
+:host ::ng-deep .pending-requests-button.p-button {
+  min-height: 44px;
+  padding: 0 18px;
+  color: #4338ca;
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: 8px;
+  background: #ffffff;
+  font-weight: 700;
+  box-shadow: 0 8px 20px rgba(30, 27, 75, 0.16);
+
+  &:hover {
+    color: #3730a3;
+    border-color: #ffffff;
+    background: #eef2ff;
+  }
+
+  &:focus-visible {
+    outline: 3px solid rgba(255, 255, 255, 0.38);
+    outline-offset: 2px;
+    box-shadow: 0 8px 20px rgba(30, 27, 75, 0.16);
   }
 }
 
@@ -522,11 +552,22 @@
   }
 
   .page-header {
+    align-items: flex-start;
+    flex-direction: column;
     padding: 26px 22px;
+
+    &__actions {
+      width: 100%;
+    }
 
     &__icon {
       display: none;
     }
+  }
+
+  :host ::ng-deep .pending-requests-button.p-button {
+    width: 100%;
+    justify-content: center;
   }
 
   .table-card__header {
