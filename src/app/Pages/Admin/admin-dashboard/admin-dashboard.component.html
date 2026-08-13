@@ -8,13 +8,14 @@
       </p>
     </div>
     <div class="dashboard__actions">
-      <a
-        routerLink="/admin/create"
+      <button
+        pButton
+        type="button"
         class="dashboard__btn dashboard__btn--primary"
-      >
-        <i class="pi pi-plus"></i>
-        Add Instructor
-      </a>
+        (click)="confirm()"
+        label="Add User"
+        icon="pi pi-user-plus"
+      ></button>
       <button class="dashboard__btn dashboard__btn--secondary">
         <i class="pi pi-download"></i>
         Export Report
@@ -247,3 +248,324 @@
     </div>
   </div>
 </div>
+
+<p-confirmDialog
+  #cd
+  styleClass="create-user-dialog"
+  appendTo="body"
+  [baseZIndex]="10000"
+>
+  <ng-template pTemplate="headless" let-message>
+    <div class="create-user-dialog__content">
+      <div class="create-user-dialog__header">
+        <div class="create-user-dialog__icon">
+          <i class="pi pi-user-plus"></i>
+        </div>
+        <div>
+          <h2>{{ message.header }}</h2>
+          <p>{{ message.message }}</p>
+        </div>
+      </div>
+      <form
+        class="create-user-form"
+        (ngSubmit)="createUser()"
+        [formGroup]="createUserForm"
+      >
+        <!-- First Name -->
+        <div class="form-field">
+          <label class="form-field__label" for="firstName">First Name</label>
+          <div
+            class="form-field__input-wrapper"
+            [class.form-field__input-wrapper--error]="
+              firstName?.invalid && firstName?.touched
+            "
+          >
+            <i class="pi pi-user form-field__icon"></i>
+            <input
+              class="form-field__input"
+              id="firstName"
+              type="text"
+              formControlName="firstName"
+              placeholder="Ahmed"
+            />
+          </div>
+          <div
+            class="form-field__error"
+            *ngIf="firstName?.invalid && firstName?.touched"
+          >
+            <span *ngIf="firstName?.errors?.['required']"
+              >First name is required</span
+            >
+            <span *ngIf="firstName?.errors?.['minlength']"
+              >At least 3 characters</span
+            >
+          </div>
+        </div>
+
+        <!-- Last Name -->
+        <div class="form-field">
+          <label class="form-field__label" for="lastName">Last Name</label>
+          <div
+            class="form-field__input-wrapper"
+            [class.form-field__input-wrapper--error]="
+              lastName?.invalid && lastName?.touched
+            "
+          >
+            <i class="pi pi-user form-field__icon"></i>
+            <input
+              class="form-field__input"
+              id="lastName"
+              type="text"
+              formControlName="lastName"
+              placeholder="Mohamed"
+            />
+          </div>
+          <div
+            class="form-field__error"
+            *ngIf="lastName?.invalid && lastName?.touched"
+          >
+            <span *ngIf="lastName?.errors?.['required']"
+              >Last name is required</span
+            >
+            <span *ngIf="lastName?.errors?.['minlength']"
+              >At least 3 characters</span
+            >
+          </div>
+        </div>
+
+        <!-- User Name -->
+        <div class="form-field">
+          <label class="form-field__label" for="userName">User Name</label>
+          <div
+            class="form-field__input-wrapper"
+            [class.form-field__input-wrapper--error]="
+              userName?.invalid && userName?.touched
+            "
+          >
+            <i class="pi pi-user form-field__icon"></i>
+            <input
+              class="form-field__input"
+              id="userName"
+              type="text"
+              formControlName="userName"
+              placeholder="userName"
+            />
+          </div>
+          <div
+            class="form-field__error"
+            *ngIf="userName?.invalid && userName?.touched"
+          >
+            <span *ngIf="userName?.errors?.['required']"
+              >User name is required</span
+            >
+            <span *ngIf="userName?.errors?.['minlength']"
+              >At least 3 characters</span
+            >
+          </div>
+        </div>
+
+        <!-- Email -->
+        <div class="form-field">
+          <label class="form-field__label" for="email">Email</label>
+          <div
+            class="form-field__input-wrapper"
+            [class.form-field__input-wrapper--error]="
+              email?.invalid && email?.touched
+            "
+          >
+            <i class="pi pi-envelope form-field__icon"></i>
+            <input
+              class="form-field__input"
+              id="email"
+              type="email"
+              formControlName="email"
+              placeholder="instructor@example.com"
+            />
+          </div>
+          <div
+            class="form-field__error"
+            *ngIf="email?.invalid && email?.touched"
+          >
+            <span *ngIf="email?.errors?.['required']">Email is required</span>
+            <span *ngIf="email?.errors?.['email']">
+              Enter a valid email address
+            </span>
+          </div>
+        </div>
+
+        <!-- Specialization -->
+        <div class="form-field">
+          <label class="form-field__label" for="specialization"
+            >Specialization</label
+          >
+          <div
+            class="form-field__input-wrapper"
+            [class.form-field__input-wrapper--error]="
+              specialization?.invalid && specialization?.touched
+            "
+          >
+            <i class="pi pi-user form-field__icon"></i>
+            <input
+              class="form-field__input"
+              id="specialization"
+              type="text"
+              formControlName="specialization"
+              placeholder="Web Development"
+            />
+          </div>
+          <div
+            class="form-field__error"
+            *ngIf="specialization?.invalid && specialization?.touched"
+          >
+            <span *ngIf="specialization?.errors?.['required']"
+              >Specialization is required</span
+            >
+            <span *ngIf="specialization?.errors?.['minlength']"
+              >At least 3 characters</span
+            >
+          </div>
+        </div>
+
+        <!-- password -->
+        <div class="form-field">
+          <label class="form-field__label" for="password">Password</label>
+          <div
+            class="form-field__input-wrapper"
+            [class.form-field__input-wrapper--error]="
+              password?.invalid && password?.touched
+            "
+          >
+            <i class="pi pi-user form-field__icon"></i>
+            <input
+              class="form-field__input"
+              id="password"
+              type="password"
+              formControlName="password"
+              placeholder="password"
+            />
+          </div>
+          <div
+            class="form-field__error"
+            *ngIf="password?.invalid && password?.touched"
+          >
+            <span *ngIf="password?.errors?.['required']"
+              >Password is required</span
+            >
+            <span *ngIf="password?.errors?.['minlength']">
+              Password must be at least 8 characters
+            </span>
+          </div>
+        </div>
+
+        <!-- Confirm Password -->
+        <div class="form-field">
+          <label class="form-field__label" for="confirmPassword"
+            >Confirm Password</label
+          >
+          <div
+            class="form-field__input-wrapper"
+            [class.form-field__input-wrapper--error]="
+              confirmPassword?.touched &&
+              (confirmPassword?.invalid ||
+                createUserForm.hasError('passwordsMismatch'))
+            "
+          >
+            <i class="pi pi-user form-field__icon"></i>
+            <input
+              class="form-field__input"
+              id="confirmPassword"
+              type="password"
+              formControlName="confirmPassword"
+              placeholder="confirmPassword"
+            />
+          </div>
+          <div class="form-field__error" *ngIf="confirmPassword?.touched">
+            <span *ngIf="confirmPassword?.errors?.['required']">
+              Confirm password is required
+            </span>
+            <span
+              *ngIf="
+                !confirmPassword?.errors?.['required'] &&
+                createUserForm.hasError('passwordsMismatch')
+              "
+            >
+              Passwords do not match
+            </span>
+          </div>
+        </div>
+
+        <!-- Address -->
+        <div class="form-field">
+          <label class="form-field__label" for="address">Address</label>
+          <div
+            class="form-field__input-wrapper"
+            [class.form-field__input-wrapper--error]="
+              address?.invalid && address?.touched
+            "
+          >
+            <i class="pi pi-user form-field__icon"></i>
+            <input
+              class="form-field__input"
+              id="address"
+              type="text"
+              formControlName="address"
+              placeholder="1 st el kanesa impapa giza"
+            />
+          </div>
+          <div
+            class="form-field__error"
+            *ngIf="address?.invalid && address?.touched"
+          >
+            <span *ngIf="address?.errors?.['required']"
+              >Address is required</span
+            >
+            <span *ngIf="address?.errors?.['minlength']"
+              >At least 5 characters</span
+            >
+          </div>
+        </div>
+
+        <!-- Roles -->
+        <div class="roles">
+          <div class="form-field">
+            <p-radioButton
+              name="role"
+              value="Admin"
+              formControlName="role"
+              inputId="admin"
+            />
+            <label for="admin">Admin</label>
+          </div>
+
+          <div class="form-field">
+            <p-radioButton
+              name="role"
+              value="Instructor"
+              formControlName="role"
+              inputId="instructor"
+            />
+            <label for="instructor">Instructor</label>
+          </div>
+        </div>
+
+        <div class="create-user-form__actions">
+          <button
+            pButton
+            type="button"
+            label="Cancel"
+            icon="pi pi-times"
+            (click)="cd.reject()"
+            class="create-user-form__button create-user-form__button--cancel"
+          ></button>
+          <button
+            pButton
+            type="submit"
+            label="Create User"
+            icon="pi pi-check"
+            class="create-user-form__button create-user-form__button--submit"
+          ></button>
+        </div>
+      </form>
+    </div>
+  </ng-template>
+</p-confirmDialog>

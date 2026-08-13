@@ -11,6 +11,7 @@ import { AdminWithStudentDetailsResponse } from '../../Interfaces/AdminInterface
 import { InstructorParams } from '../../Interfaces/Instructors/instructor-params';
 import { AdminInstructorResponse } from '../../Interfaces/AdminInterfaces/admin-instructor-response';
 import { AdminInstructorDetailsResponse } from '../../Interfaces/AdminInterfaces/admin-instructor-details-response';
+import { AdminCreateUserReq } from '../../Interfaces/AdminInterfaces/admin-create-user-req';
 
 @Injectable({
   providedIn: 'root',
@@ -98,6 +99,13 @@ export class AdminManagementAccountsService {
     return this._http.patch<ApplicationResult<boolean>>(
       `${environment.apiUrl}/AdminManagementAccounts/${userId}/Activate`,
       {},
+    );
+  }
+
+  createUser(data: AdminCreateUserReq): Observable<ApplicationResult<boolean>> {
+    return this._http.post<ApplicationResult<boolean>>(
+      `${environment.apiUrl}/AdminManagementAccounts/CreateUser`,
+      data,
     );
   }
 }

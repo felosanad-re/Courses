@@ -12,7 +12,7 @@ import { PaginatorModule } from 'primeng/paginator';
 import { TagModule } from 'primeng/tag';
 import { ButtonModule } from 'primeng/button';
 import { TooltipModule } from 'primeng/tooltip';
-import { skip, Subscription } from 'rxjs';
+import { finalize, skip, Subscription } from 'rxjs';
 import { InstructorsService } from '../../../Core/Services/Instructors/instructors.service';
 import { SearchService } from '../../../Core/Services/search.service';
 import { ApplicationResult } from '../../../Core/Interfaces/application-result';
@@ -94,23 +94,26 @@ export class MyCoursesComponent implements OnInit, OnDestroy {
       params.search = this.searchTerm;
     }
 
-    this._instructorsService.getMyCourses(params).subscribe({
-      next: (
-        response: ApplicationResult<
-          Pagination<InstructorWithCoursesResponse[]>
-        >,
-      ) => {
-        if (response.succeed && response.data) {
-          this.courses = response.data.data;
-          this.totalCount = response.data.count;
-          this.computeStats();
-        } else {
-          this.courses = [];
-          this.totalCount = 0;
-        }
-        this.isLoading = false;
-      },
-    });
+    this._instructorsService
+      .getMyCourses(params)
+      .pipe(finalize(() => (this.isLoading = false)))
+      .subscribe({
+        next: (
+          response: ApplicationResult<
+            Pagination<InstructorWithCoursesResponse[]>
+          >,
+        ) => {
+          if (response.succeed && response.data) {
+            this.courses = response.data.data;
+            this.totalCount = response.data.count;
+            this.computeStats();
+          } else {
+            this.courses = [];
+            this.totalCount = 0;
+          }
+          this.isLoading = false;
+        },
+      });
   }
 
   /** Compute aggregate stats from all returned courses */
