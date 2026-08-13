@@ -1,7 +1,16 @@
 import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { Router, RouterModule } from '@angular/router';
+import {
+  AbstractControl,
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  ValidationErrors,
+  ValidatorFn,
+  Validators,
+} from '@angular/forms';
+import { RouterModule } from '@angular/router';
 import { AdminDashboardService } from '../../../Core/Services/Admin/admin-dashboard.service';
 import { NotificationsService } from '../../../Core/Services/notifications.service';
 import { ApplicationResult } from '../../../Core/Interfaces/application-result';
@@ -14,7 +23,11 @@ import { ButtonDirective } from 'primeng/button';
 import { RatingModule } from 'primeng/rating';
 import { ChartsRequest } from '../../../Core/Interfaces/Analyzer/charts-request';
 import { CourseStatus } from '../../../Core/Interfaces/Courses/course-status';
-
+import { AdminManagementAccountsService } from '../../../Core/Services/Admin/admin-management-accounts.service';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { ConfirmationService } from 'primeng/api';
+import { AdminCreateUserReq } from '../../../Core/Interfaces/AdminInterfaces/admin-create-user-req';
+import { RadioButtonModule } from 'primeng/radiobutton';
 interface StatsCard {
   icon: string;
   title: string;
@@ -39,14 +52,19 @@ interface QuickAction {
   imports: [
     CommonModule,
     FormsModule,
+    ReactiveFormsModule,
     RouterModule,
     ButtonDirective,
     RatingModule,
+    ConfirmDialogModule,
+    RadioButtonModule,
   ],
   templateUrl: './admin-dashboard.component.html',
   styleUrl: './admin-dashboard.component.scss',
+  providers: [ConfirmationService],
 })
 export class AdminDashboardComponent implements OnInit {
+  createUserForm!: FormGroup;
   adminName = '';
   isLoading = true;
   isChartsLoading = true;
@@ -92,7 +110,9 @@ export class AdminDashboardComponent implements OnInit {
   constructor(
     private readonly _adminDashboardService: AdminDashboardService,
     private readonly _notifications: NotificationsService,
-    private readonly _router: Router,
+    private readonly _adminManagementAccounts: AdminManagementAccountsService,
+    private readonly _confirmationService: ConfirmationService,
+    private readonly _fb: FormBuilder,
     @Inject(PLATFORM_ID) private readonly _platformId: object,
   ) {}
 
@@ -103,6 +123,98 @@ export class AdminDashboardComponent implements OnInit {
     this.loadCharts();
     this.loadReviews();
     this.loadQuickActions();
+    this.initiateCreateUserForm();
+  }
+
+  private initiateCreateUserForm(): void {
+    this.createUserForm = this._fb.group(
+      {
+        firstName: [
+          '',
+          [
+            Validators.required,
+            Validators.minLength(3),
+            Validators.maxLength(50),
+          ],
+        ],
+        lastName: [
+          '',
+          [
+            Validators.required,
+            Validators.minLength(3),
+            Validators.maxLength(50),
+          ],
+        ],
+        address: [
+          '',
+          [
+            Validators.required,
+            Validators.minLength(5),
+            Validators.maxLength(50),
+          ],
+        ],
+        email: ['', [Validators.required, Validators.email]],
+        userName: [
+          '',
+          [
+            Validators.required,
+            Validators.minLength(3),
+            Validators.maxLength(50),
+          ],
+        ],
+        password: ['', [Validators.required, Validators.minLength(8)]],
+        confirmPassword: ['', [Validators.required]],
+        role: ['Instructor', [Validators.required]],
+        specialization: [
+          '',
+          [
+            Validators.required,
+            Validators.minLength(3),
+            Validators.maxLength(50),
+          ],
+        ],
+      },
+      { validators: this.passwordsMatchValidator() },
+    );
+  }
+
+  private passwordsMatchValidator(): ValidatorFn {
+    return (form: AbstractControl): ValidationErrors | null => {
+      const password = form.get('password')?.value;
+      const confirmPassword = form.get('confirmPassword')?.value;
+
+      return password && confirmPassword && password !== confirmPassword
+        ? { passwordsMismatch: true }
+        : null;
+    };
+  }
+
+  get firstName() {
+    return this.createUserForm.get('firstName');
+  }
+  get lastName() {
+    return this.createUserForm.get('lastName');
+  }
+  get address() {
+    return this.createUserForm.get('address');
+  }
+  get email() {
+    return this.createUserForm.get('email');
+  }
+  get role() {
+    return this.createUserForm.get('role');
+  }
+  get specialization() {
+    return this.createUserForm.get('specialization');
+  }
+  get password() {
+    return this.createUserForm.get('password');
+  }
+  get confirmPassword() {
+    return this.createUserForm.get('confirmPassword');
+  }
+  get userName() {
+    return this.createUserForm.get('userName');
   }
 
   loadUserName(): void {
@@ -315,5 +427,35 @@ export class AdminDashboardComponent implements OnInit {
     else this.fromDate.setMonth(this.fromDate.getMonth() - months);
 
     this.loadCharts();
+  }
+
+  createUser(): void {
+    if (this.createUserForm.invalid) {
+      this.createUserForm.markAllAsTouched();
+      return;
+    }
+
+    const req: AdminCreateUserReq = this.createUserForm.getRawValue();
+
+    this._adminManagementAccounts.createUser(req).subscribe({
+      next: (res: ApplicationResult<boolean>) => {
+        if (res.succeed) {
+          this._notifications.showSuccess(
+            res.message || 'User created successfully',
+            'Success',
+          );
+          this._confirmationService.close();
+          this.createUserForm.reset({ role: 'Instructor' });
+        }
+      },
+    });
+  }
+
+  confirm(): void {
+    this.createUserForm.reset({ role: 'Instructor' });
+    this._confirmationService.confirm({
+      header: 'Create a new user',
+      message: 'Enter the new account details.',
+    });
   }
 }
