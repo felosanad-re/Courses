@@ -158,19 +158,31 @@
           <h2 class="dashboard__section-title">Recent Activity</h2>
         </div>
         <div class="activity-list">
-          @for (activity of recentActivities; track activity.id) {
-            <div class="activity-item">
-              <div
-                class="activity-item__icon"
-                [class]="'activity-item__icon--' + activity.type"
-              >
-                <i class="pi {{ activity.icon }}"></i>
-              </div>
-              <div class="activity-item__content">
-                <p class="activity-item__message">{{ activity.message }}</p>
-                <span class="activity-item__time">{{ activity.time }}</span>
-              </div>
+          @if (isActivitiesLoading) {
+            <div class="courses-list__loading">
+              <i class="pi pi-spin pi-spinner"></i>
+              <span>Loading activities...</span>
             </div>
+          } @else if (recentActivities.length === 0) {
+            <div class="courses-list__empty">
+              <i class="pi pi-bell"></i>
+              <span>No recent activities yet.</span>
+            </div>
+          } @else {
+            @for (activity of recentActivities; track activity.id) {
+              <div class="activity-item">
+                <div
+                  class="activity-item__icon"
+                  [class]="'activity-item__icon--' + activity.type"
+                >
+                  <i class="pi {{ activity.icon }}"></i>
+                </div>
+                <div class="activity-item__content">
+                  <p class="activity-item__message">{{ activity.message }}</p>
+                  <span class="activity-item__time">{{ activity.time }}</span>
+                </div>
+              </div>
+            }
           }
         </div>
       </div>

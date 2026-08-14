@@ -13,13 +13,15 @@ import { CourseResponseForInstructor } from '../../../Core/Interfaces/Instructor
 import { SearchService } from '../../../Core/Services/search.service';
 import { CoursesParams } from '../../../Core/Interfaces/Courses/courses-params';
 import { Pagination } from '../../../Core/Interfaces/Courses/pagination';
-import { skip, Subscription } from 'rxjs';
+import { finalize, skip, Subscription } from 'rxjs';
 import { PaginatorModule } from 'primeng/paginator';
 import { InstructorDashboardStatsService } from '../../../Core/Services/DashboardStats/instructor-dashboard-stats.service';
 import { InstructorStats } from '../../../Core/Interfaces/DashboardStats/instructor-stats';
 import { NotificationsService } from '../../../Core/Services/notifications.service';
 import { Review } from '../../../Core/Interfaces/DashboardStats/review';
 import { RatingParams } from '../../../Core/Interfaces/DashboardStats/rating-params';
+import { InstructorActivitiesResponse } from '../../../Core/Interfaces/Instructors/instructor-activities-response';
+import { InstructorActivityType } from '../../../Core/Interfaces/Instructors/instructor-activity-type';
 
 interface StatsCard {
   icon: string;
@@ -34,7 +36,7 @@ interface Activity {
   icon: string;
   message: string;
   time: string;
-  type: 'enrollment' | 'review' | 'payment' | 'course';
+  type: 'enrollment' | 'review';
 }
 
 @Component({
@@ -46,7 +48,9 @@ interface Activity {
 })
 export class InstructorDashboardComponent implements OnInit, OnDestroy {
   instructorName = '';
+  activities: InstructorActivitiesResponse[] = [];
   isLoading = true;
+  isActivitiesLoading = true;
   isReviewsLoading = true;
   courses: CourseResponseForInstructor[] = [];
   stats: InstructorStats = {
@@ -75,43 +79,7 @@ export class InstructorDashboardComponent implements OnInit, OnDestroy {
 
   statsCards: StatsCard[] = [];
 
-  recentActivities: Activity[] = [
-    {
-      id: 1,
-      icon: 'pi-user-plus',
-      message: 'New student enrolled in Advanced Mathematics',
-      time: '2 min ago',
-      type: 'enrollment',
-    },
-    {
-      id: 2,
-      icon: 'pi-star',
-      message: 'New 5-star review on Physics for Beginners',
-      time: '15 min ago',
-      type: 'review',
-    },
-    {
-      id: 3,
-      icon: 'pi-wallet',
-      message: 'Payment received: $49.99',
-      time: '1 hour ago',
-      type: 'payment',
-    },
-    {
-      id: 4,
-      icon: 'pi-video',
-      message: 'New lecture added to Calculus Fundamentals',
-      time: '3 hours ago',
-      type: 'course',
-    },
-    {
-      id: 5,
-      icon: 'pi-user-plus',
-      message: '5 new students enrolled',
-      time: '5 hours ago',
-      type: 'enrollment',
-    },
-  ];
+  recentActivities: Activity[] = [];
 
   reviews: Review[] = [];
 
@@ -139,6 +107,7 @@ export class InstructorDashboardComponent implements OnInit, OnDestroy {
 
     this.getStats();
     this.loadCourses();
+    this.loadActivities();
     this.loadReviews();
   }
 
@@ -187,6 +156,26 @@ export class InstructorDashboardComponent implements OnInit, OnDestroy {
         }
       },
     });
+  }
+
+  loadActivities(): void {
+    this.isActivitiesLoading = true;
+    this._instructorsService
+      .getInstructorActivities()
+      .pipe(finalize(() => (this.isActivitiesLoading = false)))
+      .subscribe({
+        next: (res: ApplicationResult<InstructorActivitiesResponse[]>) => {
+          if (res.succeed && res.data) {
+            this.activities = res.data;
+            this.buildActivities();
+          } else {
+            this.recentActivities = [];
+          }
+        },
+        error: () => {
+          this.recentActivities = [];
+        },
+      });
   }
 
   loadReviews(): void {
@@ -258,6 +247,82 @@ export class InstructorDashboardComponent implements OnInit, OnDestroy {
         changeType: 'positive',
       },
     ];
+  }
+
+  private buildActivities(): void {
+    this.recentActivities = this.activities.map(
+      (activity, index) => {
+        const activityType = String(activity.type).toLowerCase();
+        const isEnrollment =
+          activityType === InstructorActivityType.Enrollment.toLowerCase() ||
+          activityType === '1';
+        const isRating =
+          activityType === InstructorActivityType.Rating.toLowerCase() ||
+          activityType === '2';
+
+        if (isEnrollment) {
+          return {
+            
+            id: index,
+            icon: 'pi-user-plus',
+            message: `${activity.studentName} enrolled in ${activity.courseTitle}`,
+            time: this.formatActivityDate(activity.createdAt),
+            type: 'enrollment',
+          };
+        } else if (isRating) {
+          return ({
+            id: index,
+            icon: 'pi-star',
+            message: `${activity.studentName} left a ${activity.rating}-star rating`,
+            time: this.getRelativeTime(activity.createdAt),
+            type: 'review',
+          });
+        }
+
+        return null;
+      },
+    ).filter((x): x is Activity => x !== null);
+  }
+
+  private formatActivityDate(createdAt: Date): string {
+    const date = new Date(createdAt);
+    if (Number.isNaN(date.getTime())) {
+      return '';
+    }
+
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    });
+  }
+
+  private getRelativeTime(createdAt: Date): string {
+    const createdAtTime = new Date(createdAt).getTime();
+    if (Number.isNaN(createdAtTime)) {
+      return '';
+    }
+
+    const elapsedSeconds = Math.max(
+      0,
+      Math.floor((Date.now() - createdAtTime) / 1000),
+    );
+
+    if (elapsedSeconds < 60) {
+      return 'Just now';
+    }
+
+    const units = [
+      { seconds: 31536000, label: 'year' },
+      { seconds: 2592000, label: 'month' },
+      { seconds: 86400, label: 'day' },
+      { seconds: 3600, label: 'hour' },
+      { seconds: 60, label: 'minute' },
+    ];
+    const unit = units.find(({ seconds }) => elapsedSeconds >= seconds)!;
+    const value = Math.floor(elapsedSeconds / unit.seconds);
+
+    return `${value} ${unit.label}${value === 1 ? '' : 's'} ago`;
   }
 
   ngOnDestroy() {
