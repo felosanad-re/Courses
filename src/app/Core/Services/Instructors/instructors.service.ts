@@ -11,6 +11,7 @@ import { StudentWithInstructorResponse } from '../../Interfaces/Instructors/stud
 import { InstructorWithCoursesResponse } from '../../Interfaces/Instructors/instructor-with-courses-response';
 import { CourseTypesResponse } from '../../Interfaces/Courses/course-types-response';
 import { SectionListResponse } from '../../Interfaces/Sections/section-list-response';
+import { InstructorActivitiesResponse } from '../../Interfaces/Instructors/instructor-activities-response';
 
 @Injectable({
   providedIn: 'root',
@@ -103,6 +104,14 @@ export class InstructorsService {
   ): Observable<ApplicationResult<SectionListResponse[]>> {
     return this._http.get<ApplicationResult<SectionListResponse[]>>(
       `${environment.apiUrl}/Instructor/Sections/${courseId}`,
+    );
+  }
+
+  getInstructorActivities(): Observable<
+    ApplicationResult<InstructorActivitiesResponse[]>
+  > {
+    return this._http.get<ApplicationResult<InstructorActivitiesResponse[]>>(
+      `${environment.apiUrl}/Instructor/Activities`,
     );
   }
 }
