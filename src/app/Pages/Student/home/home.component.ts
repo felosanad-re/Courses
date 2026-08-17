@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, Inject, PLATFORM_ID } from '@angular/core';
 import { Router } from '@angular/router';
-import { CommonModule } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CoursesToReturnDTO } from '../../../Core/Interfaces/Courses/courses-to-return-dto';
 import { CoursesParams } from '../../../Core/Interfaces/Courses/courses-params';
@@ -46,6 +46,7 @@ export class HomeComponent {
     private readonly _enrollmentServices: EnrollmentService,
     private readonly _notifications: NotificationsService,
     private readonly _router: Router,
+    @Inject(PLATFORM_ID) private readonly _platformId: object,
   ) {}
 
   ngOnInit() {
@@ -119,6 +120,17 @@ export class HomeComponent {
 
   // Enroll in a course
   enrollInCourse(course: CoursesToReturnDTO) {
+    if (!this.isAuthenticated()) {
+      this._notifications.showWarning(
+        'Please log in to enroll in this course.',
+        'Login required',
+      );
+      this._router.navigate(['/login'], {
+        queryParams: { returnUrl: '/student/home' },
+      });
+      return;
+    }
+
     this._enrollmentServices
       .createEnrollment({ courseId: course.id })
       .subscribe({
@@ -165,6 +177,13 @@ export class HomeComponent {
     this._router.navigate(['/student', 'courses'], {
       queryParams: { sort },
     });
+  }
+
+  private isAuthenticated(): boolean {
+    return (
+      isPlatformBrowser(this._platformId) &&
+      Boolean(localStorage.getItem('token'))
+    );
   }
 
   private getCourseTypeParam(course: CoursesToReturnDTO): string {

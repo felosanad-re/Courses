@@ -26,8 +26,9 @@ export const roleGuard: CanActivateFn = (route, state) => {
     return false;
   }
 
-  // Get the required roles from route data
-  const requiredRoles: string[] = route.data?.['roles'] ?? [];
+  // Child routes inherit their required roles from the protected parent route.
+  const requiredRoles: string[] =
+    route.data?.['roles'] ?? route.parent?.data?.['roles'] ?? [];
 
   // If no required roles specified, allow access
   if (requiredRoles.length === 0) {

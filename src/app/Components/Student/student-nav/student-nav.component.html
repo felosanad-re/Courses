@@ -24,48 +24,57 @@
           <span>Home</span>
         </a>
       </li>
-      <li class="student-navbar__item">
-        <a
-          class="student-navbar__link"
-          routerLink="/student/courses"
-          routerLinkActive="student-navbar__link--active"
-        >
-          <i class="pi pi-book"></i>
-          <span>Courses</span>
-        </a>
-      </li>
-      <li class="student-navbar__item">
-        <a
-          class="student-navbar__link"
-          routerLink="/student/my-courses"
-          routerLinkActive="student-navbar__link--active"
-        >
-          <i class="pi pi-play-circle"></i>
-          <span>My Courses</span>
-        </a>
-      </li>
-      <li class="student-navbar__item">
-        <a
-          class="student-navbar__link"
-          routerLink="/profile"
-          routerLinkActive="student-navbar__link--active"
-        >
-          <i class="pi pi-user"></i>
-          <span>Profile</span>
-        </a>
-      </li>
+      @if (isAuthenticated) {
+        <li class="student-navbar__item">
+          <a
+            class="student-navbar__link"
+            routerLink="/student/courses"
+            routerLinkActive="student-navbar__link--active"
+          >
+            <i class="pi pi-book"></i>
+            <span>Courses</span>
+          </a>
+        </li>
+        <li class="student-navbar__item">
+          <a
+            class="student-navbar__link"
+            routerLink="/student/my-courses"
+            routerLinkActive="student-navbar__link--active"
+          >
+            <i class="pi pi-play-circle"></i>
+            <span>My Courses</span>
+          </a>
+        </li>
+        <li class="student-navbar__item">
+          <a
+            class="student-navbar__link"
+            routerLink="/profile"
+            routerLinkActive="student-navbar__link--active"
+          >
+            <i class="pi pi-user"></i>
+            <span>Profile</span>
+          </a>
+        </li>
+      }
     </ul>
 
     <!-- Right Actions -->
     <div class="student-navbar__actions">
-      <button
-        class="student-navbar__logout"
-        (click)="logout()"
-        routerLink="/login"
-      >
-        <i class="pi pi-sign-out"></i>
-        <span>Logout</span>
-      </button>
+      @if (isAuthenticated) {
+        <button
+          class="student-navbar__logout"
+          (click)="logout()"
+          routerLink="/login"
+        >
+          <i class="pi pi-sign-out"></i>
+          <span>Logout</span>
+        </button>
+      } @else {
+        <a class="student-navbar__logout" routerLink="/login">
+          <i class="pi pi-sign-in"></i>
+          <span>LogIn</span>
+        </a>
+      }
 
       <!-- Mobile Toggle -->
       <button class="student-navbar__toggle" (click)="toggleMenu()">

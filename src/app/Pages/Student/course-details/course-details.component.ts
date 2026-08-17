@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { CoursesService } from '../../../Core/Services/Courses/courses.service';
@@ -32,6 +32,7 @@ export class CourseDetailsComponent implements OnInit {
     private readonly _courseService: CoursesService,
     private readonly _enrollmentService: EnrollmentService,
     private readonly _notifications: NotificationsService,
+    @Inject(PLATFORM_ID) private readonly _platformId: object,
   ) {}
 
   ngOnInit(): void {
@@ -77,6 +78,17 @@ export class CourseDetailsComponent implements OnInit {
   }
 
   enrollInCourse(): void {
+    if (!this.isAuthenticated()) {
+      this._notifications.showWarning(
+        'Please log in to enroll in this course.',
+        'Login required',
+      );
+      this._router.navigate(['/login'], {
+        queryParams: { returnUrl: this._router.url },
+      });
+      return;
+    }
+
     this._enrollmentService
       .createEnrollment({ courseId: this.courseId })
       .subscribe({
@@ -119,6 +131,13 @@ export class CourseDetailsComponent implements OnInit {
     return this.courseDetails.sections.reduce(
       (total, section) => total + section.content.length,
       0,
+    );
+  }
+
+  private isAuthenticated(): boolean {
+    return (
+      isPlatformBrowser(this._platformId) &&
+      Boolean(localStorage.getItem('token'))
     );
   }
 

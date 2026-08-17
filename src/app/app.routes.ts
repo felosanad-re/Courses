@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { roleGuard } from './Core/Guards/role.guard';
+import { studentAccessGuard } from './Core/Guards/student-access.guard';
 
 export const routes: Routes = [
   // Auth
@@ -12,7 +13,7 @@ export const routes: Routes = [
     children: [
       {
         path: '',
-        redirectTo: 'login',
+        redirectTo: '/student/home',
         pathMatch: 'full',
       },
       {
@@ -198,7 +199,8 @@ export const routes: Routes = [
   // student
   {
     path: 'student',
-    canActivate: [roleGuard],
+    canActivate: [studentAccessGuard],
+    canActivateChild: [studentAccessGuard],
     data: { roles: ['Student'] },
     loadComponent: () =>
       import(`./Layouts/student-layout/student-layout.component`).then(
