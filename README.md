@@ -1,39 +1,45 @@
-Modern e-learning platform frontend built with Angular 17, featuring course browsing, enrollment, student & instructor dashboards, authentication, and a responsive UI.
+Course Platform — Frontend
 
-README About / Project Description:
+A modern e-learning platform frontend built with Angular 17, providing an interactive learning experience for students and instructors.
 
-🎓 Course Platform — Frontend
+Users can browse and explore courses, enroll in courses, track their learning progress, rate courses, and manage their profiles. Instructors can create and manage courses through a dedicated dashboard.
 
-A modern e-learning platform frontend built with Angular 17, designed to provide an interactive experience for students and instructors.
-
-The application allows users to browse and explore courses, enroll in courses, track their learning progress, rate courses, and manage their profiles. Instructors can create and manage courses through a dedicated dashboard.
-
-✨ Key Features
-🔐 Authentication & Authorization
-📚 Course browsing and course details
-🎓 Student enrollment
-▶️ Lecture and learning experience
-📊 Student learning progress
-⭐ Course ratings and reviews
-👨‍🏫 Instructor dashboard
-📈 Course and enrollment statistics
-💳 Payment integration UI
-🔎 Course search, filtering & sorting
-📱 Responsive design
-💀 Skeleton loading states
-🛠️ Technologies
+Features
+Authentication and Authorization
+Course browsing and course details
+Course search, filtering, sorting, and pagination
+Student enrollment
+Lecture and learning experience
+Learning progress tracking
+Course ratings and reviews
+Student Dashboard
+Instructor Dashboard
+Course management
+Enrollment and course statistics
+Stripe payment integration
+Responsive user interface
+Skeleton loading states
+Technologies
 Angular 17
 TypeScript
 PrimeNG
 PrimeFlex
 RxJS
-HTML5 / CSS3
+HTML5
+CSS3
+Demo Accounts
 
-The frontend communicates with a RESTful ASP.NET Core Web API backend.
+The following accounts are provided for demonstration purposes:
 
-Demo: 
-Username: Student
+Student
+
+Email: student
 Password: Student1234$
 
-userName: felosanad
+Instructor
+
+Email: felosanad
 Password: Felo1234$
+
+The application communicates with a RESTful ASP.NET Core Web API backend.
+Api Repo : https://github.com/felosanad-re/Courses.Api
