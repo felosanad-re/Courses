@@ -11,8 +11,13 @@ import { RouterModule } from '@angular/router';
 })
 export class StudentNavComponent {
   isMenuOpen = false;
+  isAuthenticated = false;
 
-  constructor(@Inject(PLATFORM_ID) private readonly _platformId: object) {}
+  constructor(@Inject(PLATFORM_ID) private readonly _platformId: object) {
+    this.isAuthenticated =
+      isPlatformBrowser(this._platformId) &&
+      Boolean(localStorage.getItem('token'));
+  }
 
   toggleMenu(): void {
     this.isMenuOpen = !this.isMenuOpen;
@@ -21,6 +26,9 @@ export class StudentNavComponent {
   logout(): void {
     if (isPlatformBrowser(this._platformId)) {
       localStorage.removeItem('token');
+      localStorage.removeItem('roles');
+      localStorage.removeItem('username');
+      this.isAuthenticated = false;
     }
   }
 }
