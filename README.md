@@ -1,27 +1,39 @@
-# Cources
+Modern e-learning platform frontend built with Angular 17, featuring course browsing, enrollment, student & instructor dashboards, authentication, and a responsive UI.
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.3.17.
+README About / Project Description:
 
-## Development server
+🎓 Course Platform — Frontend
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+A modern e-learning platform frontend built with Angular 17, designed to provide an interactive experience for students and instructors.
 
-## Code scaffolding
+The application allows users to browse and explore courses, enroll in courses, track their learning progress, rate courses, and manage their profiles. Instructors can create and manage courses through a dedicated dashboard.
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+✨ Key Features
+🔐 Authentication & Authorization
+📚 Course browsing and course details
+🎓 Student enrollment
+▶️ Lecture and learning experience
+📊 Student learning progress
+⭐ Course ratings and reviews
+👨‍🏫 Instructor dashboard
+📈 Course and enrollment statistics
+💳 Payment integration UI
+🔎 Course search, filtering & sorting
+📱 Responsive design
+💀 Skeleton loading states
+🛠️ Technologies
+Angular 17
+TypeScript
+PrimeNG
+PrimeFlex
+RxJS
+HTML5 / CSS3
 
-## Build
+The frontend communicates with a RESTful ASP.NET Core Web API backend.
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+Demo: 
+Username: Student
+Password: Student1234$
 
-## Running unit tests
-
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+userName: felosanad
+Password: Felo1234$
